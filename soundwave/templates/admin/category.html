@@ -1,0 +1,56 @@
+{% extends 'admin/navbar.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title"> Category </h3>
+        <a href="{% url 'add_category' %}">
+        <button class="btn btn-primary btn-icon-text" id="add-category-btn">
+          <i class="mdi mdi-plus btn-icon-prepend"></i> Add
+        </button>
+        </a>
+      </div>
+  
+      <div class="card dark-theme">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-dark">
+              <thead>
+                <tr>
+                  <th> Category Name </th>
+                  <th> Description </th>
+                  <th> Action </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for category in categories %}
+                <tr>
+                  <td>{{category.name}} </td>
+                  <td> {{category.description}} </td>
+                  <td>
+                    <a href="{% url 'edit_category' category.id %}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
+                    {% if category.is_listed %}
+                    <a href="{% url 'unlist_category' category.id %}">
+                    <button class="btn btn-outline-danger btn-sm">Unlist</button>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'list_category' category.id %}">
+                    <button class="btn btn-outline-success btn-sm">List</button>
+                  </a>
+                  {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock %}

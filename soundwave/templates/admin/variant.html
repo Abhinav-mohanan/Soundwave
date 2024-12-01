@@ -1,0 +1,55 @@
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+<style>
+    .select.form-control{
+        color: white !important;
+    }
+    
+</style>
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">Variants</h3>
+            <a href="{% url 'add_variant' product.id %}">
+                <button class="btn btn-primary btn-icon-text" id="add-product-btn">
+                    <i class="mdi mdi-plus btn-icon-prepend"></i> Add Variant
+                </button>
+            </a>
+        </div>
+
+        <div class="card dark-theme">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for variant in variants %}
+                            <tr>
+                                <td><img class="product-img" src="{{ variant.image1.url }}" alt="Image"></td>
+                                <td>{{ variant.product.name }}</td>
+                                <td>{{ variant.product.category.name }}</td>
+                                <td>₹{{ variant.product.price }}</td>
+                                <td>{{ variant.stock }}</td>
+                                <td>{{ variant.color }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            <h1>{{product.name}}</h1>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

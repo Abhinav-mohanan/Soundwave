@@ -1,0 +1,213 @@
+{% extends 'user/navbar.html' %}
+{% block content %}
+{% load static %}
+
+  <!-- Hero Banner with Slick Carousel -->
+  <section class="section-slide">
+    <div class="wrap-slick1">
+        <div class="slick1">
+            <div class="item-slick1" style="background-image: url('/static/images/slide-02.jpeg');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                new Collection 2018
+                            </span>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                NEW collections
+                            </h2>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                            <a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item-slick1" style="background-image: url('/static/images/slide-01.jpeg');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                sound
+                            </span>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                Feel the sound
+                            </h2>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="slideInUp" data-delay="1600">
+                            <a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  
+            <div class="item-slick1" style="background-image: url('/static/images/slide-03.webp');">
+                <div class="container h-full">
+                    <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
+                            <span class="ltext-101 cl2 respon2">
+                                 Collection 2025
+                            </span>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateInUpRight" data-delay="800">
+                            <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                New arrivals
+                            </h2>
+                        </div>
+                            
+                        <div class="layer-slick1 animated visible-false" data-appear="rotateIn" data-delay="1600">
+                            <a href="product.html" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                Shop Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+ 
+
+  
+
+  <div class="container mt-4">
+  <!-- Categories Section -->
+  <div class="categories mt-5">
+    <h2 class="fw-bold mb-4">Explore by Category</h2>
+    <div class="row g-3">
+      <!-- Smart Watches Category -->
+      <div class="col-md-3">
+        <div class="category-card position-relative">
+          <img src="{% static 'images/hero_headphone.png' %}" class="img-fluid rounded" alt="Smart Watches">
+          <div class="overlay">
+            <h5 class="text-light">Headphones</h5>
+          </div>
+        </div>
+      </div>
+      <!-- Audio Gear Category -->
+      <div class="col-md-3">
+        <div class="category-card position-relative">
+          <img src="{% static 'images/hero_headphone.png' %}" class="img-fluid rounded" alt="Audio Gear">
+          <div class="overlay">
+            <h5 class="text-light">Speeakers</h5>
+          </div>
+        </div>
+      </div>
+      <!-- Accessories Category -->
+      <div class="col-md-3">
+        <div class="category-card position-relative">
+          <img src="{% static 'images/hero_headphone.png' %}" class="img-fluid rounded" alt="Accessories">
+          <div class="overlay">
+            <h5 class="text-light">Soundbars</h5>
+          </div>
+        </div>
+      </div>
+      <!-- All Products Category -->
+      <div class="col-md-3">
+        <div class="category-card position-relative">
+          <img src="{% static 'images/hero_headphone.png' %}" class="img-fluid rounded" alt="All Products">
+          <div class="overlay">
+            <h5 class="text-light">All Products</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- New Arrivals Section -->
+<div class="new-arrivals mt-5">
+    <h2 class="fw-bold mb-4">New Arrivals</h2>
+    <div class="row align-items-center">
+        <!-- Left Side: Featured Image -->
+        <div class="col-md-6">
+            <div class="featured-product position-relative">
+                <img src="{% static 'images/hero_headphone.png' %}" class="img-fluid rounded" alt="Featured Headphones">
+                <div class="text-overlay position-absolute top-50 start-50 translate-middle text-light text-center">
+                    <h1 class="fw-bold">Head Phones</h1>
+                    <p class="fs-5">Be Pro Anywhere</p>
+                    <a href="#" class="btn btn-light fw-bold px-4 py-2">From ₹1100</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Product List -->
+        <div class="col-md-6">
+          <div class="row g-2">
+            {% for product in new_arrivals %}
+            {% for variant in product.variants.all %}
+              <div class="col-12">
+                  <div class="d-flex align-items-center product-card">
+                      <!-- Product Image -->
+                      <img src="{{ variant.image1.url }}" class="img-thumbnail me-2" alt="{{ product.name }}" style="width: 60px; height: 60px;">
+                      <div>
+                          <!-- Product Name -->
+                          <h6 class="mb-1 fw-semibold">{{ product.name }}</h6>
+                          
+                          <!-- Static Star Ratings -->
+                          <p class="text-warning mb-1 small">⭐⭐⭐⭐⭐</p>
+                          
+                          <!-- Product Price -->
+                          <p class="fw-bold mb-0">{{ product.price }}</p>
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+              {% endfor %}
+          </div>
+      </div>
+      
+        
+
+<!-- Discount Banner Section -->
+<div class="discount-banner mt-5 p-3 rounded d-flex align-items-center" style="background: linear-gradient(90deg, #e6f0ff, #ffffff); border: 1px solid #cce5ff;">
+    <!-- Discount Information -->
+    <div class="text-center me-4" style="flex: 1; border-right: 1px dashed #a3c1ff;">
+        <h1 class="fw-bold text-primary" style="font-size: 3rem;">20<span style="font-size: 1.5rem;">%</span></h1>
+        <p class="fw-semibold text-primary">OFF</p>
+    </div>
+    <!-- Sale Details -->
+    <div class="text-start ps-4" style="flex: 2;">
+        <h4 class="fw-bold text-dark mb-2">SEASONAL WEEKLY SALE 2024</h4>
+        <p class="mb-0 text-muted">Use code <strong class="text-primary">Sale2024</strong> to get the best offer</p>
+    </div>
+    <!-- Product Image -->
+    <div class="ms-auto">
+        <img src="{% static 'images/hero_headphone.png' %}" alt="Discounted Headphones" class="img-fluid" style="max-height: 80px;">
+    </div>
+</div>
+
+  
+
+<section class="new-arrivals py-5">
+  <div class="container">
+      <h2 class="section-title">New Arrivals</h2>
+      <div class="row">
+          {% for product in new_arrivals %}
+          {% for variant in product.variants.all %}
+          {% include 'user/product_block.html' %}
+          {% endfor %}
+          {% endfor %}
+      </div>
+  </div>
+</div>
+</div>
+  </div>
+</section>
+
+
+
+
+{% endblock %}

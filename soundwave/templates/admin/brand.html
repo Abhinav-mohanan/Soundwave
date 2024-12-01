@@ -1,0 +1,41 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title">Brands</h3>
+        <a href="{% url 'add_brand' %}" class="btn btn-primary add-button">+ Add</a>
+      </div>
+  
+      <div class="card dark-theme">
+        <div class="card-body">
+          <table class="table brand-table">
+            <thead>
+              <tr>
+                <th>Brand Name</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for brand in brands %}
+              <tr>
+                <td>{{ brand.name }}</td>
+                <td class="text-right">
+                  <a href="{% url 'edit_brand' brand.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                  {% if brand.is_listed %}
+                  <a href="{% url 'unlist_brand' brand.id %}" class="btn btn-outline-danger btn-sm">Unlist</a>
+                  {% else %}
+                  <a href="{% url 'list_brand' brand.id %}" class="btn btn-outline-danger btn-sm">List</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+{% endblock content %}

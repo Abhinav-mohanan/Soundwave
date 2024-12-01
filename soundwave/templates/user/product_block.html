@@ -1,0 +1,46 @@
+{% load static %}
+<div class="col-md-3">
+    <div class="card border-0 shadow-sm position-relative">
+        <div class="position-relative overflow-hidden">
+            <!-- Product Image -->
+            <img src="{{ variant.image1.url }}" class="card-img-top rounded product-image" alt="Product Image">
+            <div class="shop-now-overlay position-absolute top-50 start-50 translate-middle text-center">
+               <a href="{% url 'product_details' product.id variant.id %}"><button class="btn btn-primary px-4 py-2">Shop Now</button></a> 
+            </div>
+
+            <!-- Wishlist Button Positioned to the Right -->
+            <div class="wishlist-icon position-absolute top-0 end-0 p-2">
+                <a href="#" class="btn-addwish-b2 pos-relative js-addwish-b2">
+                    <img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="Heart Icon">
+                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="Heart Icon Filled">
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Product Name -->
+            <h6 class="card-title text-muted text-start">{{ product.name }}</h6>
+
+            <!-- Static Star Rating -->
+            <div class="rating text-start mb-2">
+                <span class="fa fa-star text-warning"></span>
+                <span class="fa fa-star text-warning"></span>
+                <span class="fa fa-star text-warning"></span>
+                <span class="fa fa-star text-warning"></span>
+                <span class="fa fa-star-half-alt text-warning"></span>
+                <span class="text-muted">(4.5)</span>
+            </div>
+
+            <!-- Product Price -->
+            <p class="fw-bold text-start">{{ product.price }}</p>
+
+            <!-- Cart Icon -->
+            <div class="text-start">
+                <span class="cart-icon">
+                    <i class="fa fa-shopping-cart text-secondary" style="font-size: 24px; cursor: pointer;"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+

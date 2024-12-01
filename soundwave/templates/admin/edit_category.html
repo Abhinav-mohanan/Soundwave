@@ -1,0 +1,48 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title"> Edit Category </h3>
+        <a href="{% url 'list_category'%}" class="btn btn-outline-light back-link">
+          <i class="mdi mdi-arrow-left"></i> Back
+        </a>
+      </div>
+  
+      <div class="card dark-theme">
+        <div class="card-body">
+          <form action="" method="POST" class="add-product-form">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="category-name">Category</label>
+              <input
+                type="text"
+                id="category-name"
+                name="name"
+                class="form-control"
+                value="{{category.name}}"
+                placeholder="Enter your category name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="category-description">Description</label>
+              <textarea
+                id="category-description"
+                name="description"
+                rows="4"
+                class="form-control"
+                placeholder="Enter Description"
+                required
+              >{{category.description}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Edit Now
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}  

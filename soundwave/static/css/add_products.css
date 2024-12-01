@@ -1,0 +1,68 @@
+/* Add Product Page Styles */
+.add-product-form {
+  background-color: #212529; /* Sidebar matching color */
+  border-radius: 10px;
+  padding: 20px;
+  color: #ffffff;
+}
+
+.add-product-form .form-group {
+  margin-bottom: 15px;
+}
+
+.add-product-form .form-group label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.add-product-form .form-control {
+  background-color: #2a2f35; /* Slightly lighter than sidebar */
+  color: #ffffff;
+  border: 1px solid #444a50;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.add-product-form .form-control::placeholder {
+  color: #888888;
+}
+
+.add-product-form .form-control:focus {
+  border-color: #ff4d4d;
+  box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
+
+.add-product-form button {
+  background-color: #ff4d4d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-product-form button:hover {
+  background-color: #e43c3c;
+}
+
+.add-product-form input[type="file"] {
+  border: none;
+  background-color: transparent;
+  color: #ffffff;
+  padding: 0;
+}
+
+.add-product-form input[type="file"]::-webkit-file-upload-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-product-form input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #e43c3c;
+}

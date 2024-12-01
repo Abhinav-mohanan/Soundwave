@@ -1,0 +1,171 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<style>
+    .preview img {
+        max-width: 300px; 
+        max-height: 300px; 
+        display: block;
+        margin: auto;
+    }
+    .preview {
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        position: relative;
+    }
+    .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        cursor: pointer;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Add Variant</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Color Selection -->
+        <div class="form-group">
+            <label for="color">Color</label>
+            <select class="form-control" id="color" name="color">
+                <option value="Black">Black</option>
+                <option value="White">White</option>
+                <option value="Red">Red</option>
+                <option value="Blue">Blue</option>
+            </select>
+        </div>
+
+        <!-- Stock Input -->
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" class="form-control" id="stock" name="stock" placeholder="Enter stock quantity">
+        </div>
+
+        <!-- Image 1 Upload and Preview -->
+        <div class="form-group">
+            <label for="image1">Image 1</label>
+            <input type="file" class="form-control image-input" id="image1" name="image1" accept="image/*">
+            <div id="preview1" class="preview mt-2"></div>
+            <input type="hidden" id="cropped-image1" name="cropped_image1">
+        </div>
+
+        <!-- Image 2 Upload and Preview -->
+        <div class="form-group">
+            <label for="image2">Image 2</label>
+            <input type="file" class="form-control image-input" id="image2" name="image2" accept="image/*">
+            <div id="preview2" class="preview mt-2"></div>
+            <input type="hidden" id="cropped-image2" name="cropped_image2">
+        </div>
+
+        <!-- Image 3 Upload and Preview -->
+        <div class="form-group">
+            <label for="image3">Image 3</label>
+            <input type="file" class="form-control image-input" id="image3" name="image3" accept="image/*">
+            <div id="preview3" class="preview mt-2"></div>
+            <input type="hidden" id="cropped-image3" name="cropped_image3">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Add Variant</button>
+    </form>
+</div>
+
+<!-- Include Cropper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('.image-input');
+
+        inputs.forEach(input => {
+            input.addEventListener('change', function (e) {
+                const previewId = "preview" + this.id.replace("image", ""); // Match ID with preview div
+                const preview = document.getElementById(previewId);
+
+                // Clear the previous preview
+                preview.innerHTML = '';
+
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        preview.appendChild(img);
+
+                        // Initialize Cropper.js with fixed crop size
+                        const cropper = new Cropper(img, {
+                            aspectRatio: 1, // Square crop
+                            viewMode: 1,
+                            autoCropArea: 1,
+                            cropBoxResizable: false,
+                            data: {
+                                width: 300,
+                                height: 300,
+                            },
+                        });
+
+                        // Add Crop Button
+                        const cropButton = document.createElement('button');
+                        cropButton.textContent = "Crop";
+                        cropButton.classList.add('btn', 'btn-secondary', 'mt-2');
+                        preview.appendChild(cropButton);
+
+                        cropButton.addEventListener('click', function () {
+                            const croppedCanvas = cropper.getCroppedCanvas({
+                                width: 300,
+                                height: 300,
+                            });
+                            const croppedImage = document.createElement('img');
+                            croppedImage.src = croppedCanvas.toDataURL();
+                            preview.innerHTML = '';
+                            preview.appendChild(croppedImage);
+
+                            // Update hidden input with cropped image data URL
+                            const hiddenInputId = 'cropped-image' + input.id.replace('image', '');
+                            const hiddenInput = document.getElementById(hiddenInputId);
+                            hiddenInput.value = croppedCanvas.toDataURL();
+
+                            // Add Remove Button After Cropping
+                            addRemoveButton(preview, input);
+                        });
+
+                        // Add Remove Button Before Cropping
+                        addRemoveButton(preview, input);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        function addRemoveButton(preview, input) {
+            const removeButton = document.createElement('button');
+            removeButton.textContent = "Remove";
+            removeButton.classList.add('remove-btn');
+            preview.appendChild(removeButton);
+
+            removeButton.addEventListener('click', function () {
+                preview.innerHTML = ''; 
+                input.value = ''; 
+            });
+        }
+    });
+</script>
+
+{% endblock %}
+

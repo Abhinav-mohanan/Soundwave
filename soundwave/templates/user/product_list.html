@@ -1,0 +1,62 @@
+{% extends 'user/navbar.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body{
+        background-color: gray !important;
+    }
+    section{
+        background-color: gray !important;
+    }
+</style>
+
+  <!-- Categories Section -->
+  <section class="categories-section py-5">
+    <div class="container">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="row text-center">
+            <div class="col-6 col-md-4">
+                <a href="#">
+                    <img src="https://cdn-icons-png.flaticon.com/128/937/937367.png" alt="Category 1" class="category-icon">
+                    <p>speakers</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="#">
+                    <img src="https://cdn-icons-png.flaticon.com/128/5224/5224289.png" alt="Category 2" class="category-icon">
+                    <p>Soundbar</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4">
+                <a href="#">
+                    <img src="https://cdn-icons-png.flaticon.com/128/10478/10478251.png" alt="Category 3" class="category-icon">
+                    <p>Headphone</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+<div class="row">
+   
+
+
+    <section class="new-arrivals py-5">
+        <div class="container">
+            <h2 class="section-title"> All products</h2>
+            <div class="row">
+                {% for product in products %}
+                {% for variant in product.variants.all %}
+                {% include 'user/product_block.html' %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+
+
+{% endblock %}
