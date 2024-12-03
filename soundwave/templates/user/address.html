@@ -1,0 +1,145 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+    <style>
+        /* Add your existing styles here */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .edit-link {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+            float: right;
+        }
+
+        .address-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .address-card p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .address-card .address-type {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .actions a {
+            margin-right: 20px;
+            padding: 8px 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions .edit {
+            background-color: #5bc0de;
+        }
+
+        .actions .edit:hover {
+            background-color: #31b0d5;
+        }
+
+        .actions .delete {
+            background-color: #d9534f;
+        }
+
+        .actions .delete:hover {
+            background-color: #c9302c;
+        }
+
+        /* Style for the Add button container */
+        .add-button-container {
+            text-align: right; /* Align button to the right */
+            margin-bottom: 20px; /* Add spacing below the button */
+        }
+
+        /* Style for the Add button */
+        .add-button {
+            background-color: #007bff; /* Bootstrap primary blue */
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .add-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add hover shadow */
+        }
+
+        /* Responsive design to ensure button adjusts on smaller screens */
+        @media (max-width: 768px) {
+            .add-button-container {
+                text-align: center; /* Center button on smaller screens */
+            }
+        }
+    </style>
+
+    <!-- Address List Section -->
+    <div class="section address-list">
+        <!-- Add Button -->
+        <div class="add-button-container">
+            <a href="{% url 'add_address' %}">
+                <button class="add-button" id="add-product-btn">
+                    <i class="mdi mdi-plus btn-icon-prepend"></i> Add Address
+                </button>
+            </a>
+        </div>
+
+        <!-- Address Heading -->
+        <h2>Addresses</h2>
+
+        {% if addresses %}
+            <!-- Loop through each address -->
+            {% for address in addresses %}
+                <div class="address-card">
+                    <p><strong>Address Type:</strong> <span class="address-type">{{ address.address_title }}</span></p>
+                    <p><strong>Name:</strong> {{ address.name }}</p>
+                    <p><strong>State:</strong> {{ address.state }}</p>
+                    <p><strong>City:</strong> {{ address.city }}</p>
+                    <p><strong>Pincode:</strong> {{ address.pin }}</p>
+                    <p><strong>Landmark:</strong> {{ address.landmark }}</p>
+                    <p><strong>Mobile:</strong> {{ address.phone_number }}</p>
+                    <br>
+
+                    <!-- Action Links -->
+                    <div class="actions">
+                        <a href="#" class="edit">Edit</a>
+                        <a href="#" class="delete">Delete</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <!-- If no addresses exist -->
+            <div class="address-card">
+                <p>You have no saved addresses.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+

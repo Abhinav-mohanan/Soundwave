@@ -1,0 +1,205 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .orders-container {
+            padding: 20px;
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .orders-header h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-dropdown {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-dropdown select {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Table Styles */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .orders-table thead th {
+            background-color: #f4f4f4;
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .orders-table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .orders-table tbody td {
+            padding: 12px 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .orders-table tbody td img {
+            height: 50px;
+            border-radius: 4px;
+        }
+
+        .orders-table tbody td .status {
+            font-weight: bold;
+        }
+
+        .orders-table tbody td .status.in-progress {
+            color: #ffc107; /* Yellow */
+        }
+
+        .orders-table tbody td .status.delivered {
+            color: #28a745; /* Green */
+        }
+
+        .orders-table tbody td .status.canceled {
+            color: #dc3545; /* Red */
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #007bff;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            margin: 0 2px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+
+    <div class="orders-container">
+        <!-- Header -->
+        <div class="orders-header">
+            <h2>Orders</h2>
+            <div class="filter-dropdown">
+                <select name="status-filter">
+                    <option value="all">Select status</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="canceled">Canceled</option>
+                </select>
+                <select name="date-filter">
+                    <option value="all-time">For all time</option>
+                    <option value="last-30-days">Last 30 days</option>
+                    <option value="this-year">This year</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Items</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example Row -->
+                <tr>
+                    <td>784631D409</td>
+                    <td>Feb 6, 2025</td>
+                    <td><span class="status in-progress">In progress</span></td>
+                    <td>$2,105.90</td>
+                    <td>
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                    </td>
+                </tr>
+                <tr>
+                    <td>47H76009F33</td>
+                    <td>Dec 12, 2024</td>
+                    <td><span class="status delivered">Delivered</span></td>
+                    <td>$360.75</td>
+                    <td>
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                    </td>
+                </tr>
+                <tr>
+                    <td>502T7827W2</td>
+                    <td>Nov 7, 2024</td>
+                    <td><span class="status delivered">Delivered</span></td>
+                    <td>$4,268.00</td>
+                    <td>
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                        <span>+3</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>34VB5540K83</td>
+                    <td>Sep 15, 2024</td>
+                    <td><span class="status canceled">Canceled</span></td>
+                    <td>$987.50</td>
+                    <td>
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                    </td>
+                </tr>
+                <tr>
+                    <td>288A67U0981</td>
+                    <td>Apr 20, 2024</td>
+                    <td><span class="status canceled">Canceled</span></td>
+                    <td>$1,029.50</td>
+                    <td>
+                        <img src="https://via.placeholder.com/50" alt="Product Image">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <a href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+        </div>
+    </div>
+{% endblock %}
+

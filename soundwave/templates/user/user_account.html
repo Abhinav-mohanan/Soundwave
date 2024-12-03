@@ -1,0 +1,165 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+    <style>
+        /* General Content Styles */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .edit-link {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+            float: right;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="radio"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        .form-group input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        /* FAQ Section */
+        .faqs ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .faqs li {
+            margin-bottom: 20px;
+        }
+
+        .faqs strong {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .faqs p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Action Links */
+        .actions a {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 12px 18px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions .deactivate {
+            background-color: #f0ad4e;
+        }
+
+        .actions .deactivate:hover {
+            background-color: #ec971f;
+        }
+
+        .actions .delete {
+            background-color: #d9534f;
+        }
+
+        .actions .delete:hover {
+            background-color: #c9302c;
+        }
+    </style>
+
+    <!-- Main content goes here -->
+    <div class="section personal-info">
+        <h2>Personal Information <a href="#" class="edit-link">edit</a></h2>
+    
+        <!-- Personal Info Fields -->
+        <div class="form-group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" value="{{ first_name }}" placeholder="Enter your first name">
+        </div>
+    
+        <div class="form-group">
+            <label for="full-name">Last Name</label>
+            <input type="text" id="last-name" value="{{ last_name }}" placeholder="Enter your last name">
+        </div>
+    </div>
+    
+    <!-- Contact Info Section -->
+    <div class="section contact-info">
+        <h3>Contacts</h3>
+    
+        <!-- Contact Info Fields -->
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" value="{{ email }}" placeholder="Enter your email">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <input type="tel" id="phone" value="{{ phone_number }}" placeholder="+1234567890">
+        </div>
+    </div>
+    
+
+    <!-- FAQs Section -->
+    <div class="section faqs">
+        <h2>FAQs</h2>
+        <ul>
+            <li>
+                <strong>What happens when I update my email address or mobile number?</strong>
+                <p>Your login email ID or mobile number will change. Therefore, you’ll receive all account-related communications on your updated email address or mobile number.</p>
+            </li>
+            <li>
+                <strong>What happens to my account when I update my email address or mobile number?</strong>
+                <p>Updating your email address or mobile number will update the login credentials but keep your account details intact.</p>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Action Links -->
+    <div class="section actions">
+        <a href="#" class="deactivate">Deactivate Account</a>
+        <a href="#" class="delete">Delete Account</a>
+    </div>
+{% endblock %}
+
+

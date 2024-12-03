@@ -215,7 +215,6 @@ def homepage(request):
 
 #======================Products_page session=====================# 
 @never_cache
-@login_required
 def product_page(request):
     products=Product.objects.filter(is_listed=True).prefetch_related('variants').all()
     return render(request,'user/product_list.html',{'products':products})
@@ -225,7 +224,6 @@ def product_page(request):
 
 #======================Product_details session=====================# 
 @never_cache
-@login_required
 def details_pro(request,product_id,variant_id):
     product=get_object_or_404(Product,id=product_id,is_listed=True)
     variants=get_object_or_404(Variant,id=variant_id,product=product)
