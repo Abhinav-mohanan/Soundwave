@@ -6,7 +6,7 @@ from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.core.mail import send_mail,BadHeaderError
 from django.conf import settings
-from products.models import Product,Variant
+from products.models import Product,Variant,Category
 import random
 from datetime import datetime,timedelta
 from django.utils.timezone import now
@@ -206,9 +206,13 @@ def user_logout(request):
 #======================Homepage session=====================# 
 @never_cache
 def homepage(request):
+    categories=Category.objects.all()
+    hero_product=Product.objects.filter(is_listed=True).order_by('-created_at').first()
     featured_products = Product.objects.filter(is_listed=True).prefetch_related('variants').order_by('-created_at')
-    new_arrivals=Product.objects.prefetch_related('variants').order_by('created_at')
-    return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals})
+    new_arrivals=Product.objects.prefetch_related('variants').order_by('created_at')[:5]    
+
+    return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals,
+                                               'categories':categories,'hero_product':hero_product})
 
 #======================Homepage session End=====================# 
 
@@ -216,8 +220,35 @@ def homepage(request):
 #======================Products_page session=====================# 
 @never_cache
 def product_page(request):
-    products=Product.objects.filter(is_listed=True).prefetch_related('variants').all()
-    return render(request,'user/product_list.html',{'products':products})
+    products = Product.objects.filter(is_listed=True).prefetch_related('variants')
+
+
+    category_id = request.GET.get('category')
+    if category_id:
+        products = products.filter(category_id=category_id)
+
+    search_query= request.GET.get('query')
+    if search_query:
+        products=products.filter(name__icontains=search_query)
+
+    price_filter = request.GET.get('price')
+    if price_filter:
+        if price_filter == "under_50000":
+            products = products.filter(price__gte=30000,price__lte=50000)
+        elif price_filter == "10000_30000":
+            products = products.filter(price__gte=10000, price__lte=30000)
+        elif price_filter == "above_50000":
+            products = products.filter(price__gt=50000)
+
+    color_filter = request.GET.get('color')
+    if color_filter:
+        products = products.filter(variants__color__iexact=color_filter, variants__is_listed=True, variants__stock__gt=0)
+    products = products.distinct()
+    selected_category = Category.objects.filter(id=category_id).first() if category_id else None
+
+    return render(request, 'user/product_list.html', {'products': products,'selected_category': selected_category,'search_query':search_query})
+
+
 
 #======================Product_page session End=====================# 
 
@@ -230,3 +261,11 @@ def details_pro(request,product_id,variant_id):
     return render(request,'user/product_info.html',{'variants':variants,'product':product})
 
 #======================Product_details session End=====================# 
+
+
+#====================== Product_Search=====================# 
+def search_view(request):
+    query = request.GET.get('query', '')
+    products = Product.objects.filter(name__icontains=query)  
+    
+    return render(request, 'user/products.html',{'products': products,'search_query': query})

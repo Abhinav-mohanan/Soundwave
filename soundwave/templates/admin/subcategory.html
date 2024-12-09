@@ -1,0 +1,48 @@
+<!-- admin/subcategory.html -->
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+  <h2>SubCategories</h2>
+
+  {% if subcategory %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>subcategory image</th>
+          <th>SubCategory Name</th>
+          <th>Category</th>
+          <th>Is Listed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in subcategory %}
+          <tr>
+            {%  if sub.image %}
+            <td><img class="product-img" src="{{ sub.image.url }}" alt="Image"></td>
+            {% else %}
+            <td>No image is available</td>
+            {% endif %}
+            <td>{{ sub.name }}</td>
+            <td>{{ sub.category.name }}</td>
+            <td>
+              {% if sub.is_listed %}
+                <span class="badge badge-success">Listed</span>
+              {% else %}
+                <span class="badge badge-danger">Unlisted</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'edit_subcategory' sub.id %}" class="btn btn-primary btn-sm">Edit</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No subcategories found.</p>
+  {% endif %}
+
+  <hr>
+  <a href="{% url 'add_subcategory' category.id %}" class="btn btn-success">Add New SubCategory</a>
+{% endblock %}

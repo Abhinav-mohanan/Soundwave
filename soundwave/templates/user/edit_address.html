@@ -1,0 +1,152 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+    <style>
+        /* General Content Styles */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group select,
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        .form-group input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .form-group select {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        .actions .save {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 12px 18px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #5bc0de;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions .save:hover {
+            background-color: #31b0d5;
+        }
+
+        .actions .cancel {
+            display: inline-block;
+            margin-left: 20px;
+            padding: 12px 18px;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #f0ad4e;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions .cancel:hover {
+            background-color: #ec971f;
+        }
+    </style>
+
+    <!-- Address Section -->
+    <div class="section address-info">
+        <h2>Edit Address</h2>
+
+        <!-- Address Form Fields -->
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Name -->
+            <div class="form-group">
+                <label for="id_name">Name</label>
+                {{ form.name }}
+            </div>
+
+            <!-- Pincode -->
+            <div class="form-group">
+                <label for="id_pin">Pincode</label>
+                {{ form.pin }}
+            </div>
+
+            <!-- Locality -->
+            <div class="form-group">
+                <label for="id_locality">Locality</label>
+                {{ form.detail_address }}
+            </div>
+
+            <!-- City -->
+            <div class="form-group">
+                <label for="id_city">City/District/Town</label>
+                {{ form.city }}
+            </div>
+
+            <!-- State -->
+            <div class="form-group">
+                <label for="id_state">State</label>
+                {{ form.state }}
+            </div>
+
+            <!-- Landmark -->
+            <div class="form-group">
+                <label for="id_landmark">Landmark (Optional)</label>
+                {{ form.landmark }}
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="form-group">
+                <label for="id_phone_number">Mobile Number</label>
+                {{ form.phone_number }}
+            </div>
+
+            <!-- Address Title -->
+            <div class="form-group">
+                <label for="id_address_title">Address Title</label>
+                {{ form.address_title }}
+            </div>
+
+            <!-- Form Actions (Save and Cancel) -->
+            <div class="actions">
+                <button type="submit" class="save">Save Address</button>
+                <a href="{% url 'view_address' %}" class="cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

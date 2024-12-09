@@ -1,129 +1,179 @@
 {% extends 'user/navbar.html' %}
 {% load static %}
 {% block content %}
- 
+
 <style>
-    body{
-        background-color: gray;
+    .container {
+        padding: 20px; 
     }
-    section{
-        background-color: gray !important;
-    }
-    .row{
-        margin: 1px;
-        background-color: gray !important;
-    }
+
+   
     .zoom-container {
         position: relative;
         overflow: hidden;
+        padding: 20px; 
     }
 
+   
     .product-image {
         width: 100%;
         height: auto;
         transition: transform 0.2s ease;
     }
 
+    
     .zoom-result {
         position: absolute;
         border: 1px solid #d4d4d4;
-        background-color: rgba(255, 255, 255, 0.4);
+        background-color: rgba(255, 255, 255, 0.6);
         display: none;
         z-index: 10;
         cursor: none;
-        width: 200px;  /* Size of the zoomed area */
-        height: 200px;
+        width: 120px; 
+        height: 120px; 
+        border-radius: 5px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); 
+    }
+
+ 
+    .product_details {
+        padding-left: 25px;
+        padding-right: 30px;
+        padding-bottom: 30px;
+    }
+
+   
+    .product-info {
+        padding-left: 25px;
+        padding-right: 30px;
+        padding-top: 20px; 
+        background-color: whitesmoke;
+    }
+
+   
+    .mtext-106 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .stext-102 {
+        margin-top: 10px;
+        font-size: 16px;
+        color: #555;
+    }
+
+
+
+    .btn-addcart-detail {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    
+    .zoom-result:hover {
+        background-color: rgba(255, 255, 255, 0.8); 
+    }
+
+    
+    .reviews-section {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+        margin-top: 30px; 
+    }
+
+    .reviews-section h4 {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .reviews-section p {
+        font-size: 16px;
+        color: #555;
+    }
+    .bg1{
+        background-color: black ;
+    }
+    .bg1:hover{
+        background-color: rgb(9, 71, 91);
+    }
+    a{
+        text-decoration: none;
     }
 </style>
+<div class="container-fluid">
 <div class="row">
-    <!-- Product Image Section -->
+
     <div class="col-md-6 col-lg-7 p-b-30 product_details">
-        <div class="p-l-25 p-r-30 p-lr-0-lg">
-            <div class="wrap-slick3 flex-sb flex-w">
-                <div class="wrap-slick3-dots"></div>
-                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-    
+        <div class="wrap-slick3 flex-sb flex-w">
+            <div class="wrap-slick3-dots mt-5"></div>
+            <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-                <div class="slick3 gallery-lb">
-                        <div class="item-slick3" data-thumb="{{ variants.image1.url }}">
-                            <div class="wrap-pic-w pos-relative zoom-container">
-                                <img src="{{ variants.image1.url }}" alt="{{ product.name }}" class="product-image">
-                            </div>
-                        </div>
-
-                        <div class="item-slick3" data-thumb="{{ variants.image2.url }}">
-                            <div class="wrap-pic-w pos-relative zoom-container">
-                                <img src="{{ variants.image2.url }}" alt="{{ product.name }}" class="product-image">
-                            </div>
-                        </div>
-
-                        <div class="item-slick3" data-thumb="{{ variants.image3.url }}">
-                            <div class="wrap-pic-w pos-relative zoom-container">
-                                <img src="{{ variants.image3.url }}" alt="{{ product.name }}" class="product-image">
-                            </div>
-                        </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Product Details Section -->
-    <div class="col-md-6 col-lg-5 p-b-30">
-        <div class="p-r-50 p-t-5 p-lr-0-lg">
-            <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                {{ product.name }} - {{ variants.color }}
-            </h4>
-
-            <span class="mtext-106 cl2">
-                {{ product.price }}
-            </span>
-
-            <p class="stext-102 cl3 p-t-23">
-                {{ product.description }}
-            </p>
-
-            <span style="font-size:large">
-                {{ product.feature }}
-            </span>
-            <br>
-
-            <span style="font-size:large">
-                {{ variants.color }}
-            </span>
-
-            
-
-            <div class="flex-w flex-r-m p-b-10">
-                <div class="size-204 flex-w flex-m respon6-next">
-                    <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                            <i class="fs-16 zmdi zmdi-minus"></i>
-                        </div>
-                        <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
-                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                            <i class="fs-16 zmdi zmdi-plus"></i>
-                        </div>
+            <div class="slick3 gallery-lb">
+                <div class="item-slick3" data-thumb="{{ variants.image1.url }}">
+                    <div class="wrap-pic-w pos-relative zoom-container">
+                        <img src="{{ variants.image1.url }}" alt="{{ product.name }}" class="product-image">
                     </div>
-                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                        Add to cart
-                    </button>
+                </div>
+
+                <div class="item-slick3" data-thumb="{{ variants.image2.url }}">
+                    <div class="wrap-pic-w pos-relative zoom-container">
+                        <img src="{{ variants.image2.url }}" alt="{{ product.name }}" class="product-image">
+                    </div>
+                </div>
+
+                <div class="item-slick3" data-thumb="{{ variants.image3.url }}">
+                    <div class="wrap-pic-w pos-relative zoom-container">
+                        <img src="{{ variants.image3.url }}" alt="{{ product.name }}" class="product-image">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <h3 style="margin-left: 20px;">
-        Reviews
-    </h3 style="margin-left: 20px;">
-    <p>No Revies available now</p>
-</div>
 
-
-<div>
     
+    <div class="col-md-6 col-lg-5 p-b-30 product-info">
+        <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+            {{ product.name }} - {{ variants.color }}
+        </h4>
+
+        <span class="mtext-106 cl2">
+            ₹{{ product.price }}
+        </span>
+
+        <p class="stext-102 cl3 p-t-23">
+            {{ product.description }}
+        </p>
+
+        <span style="font-size: large">{{ product.feature }}</span>
+        <br>
+
+        <span style="font-size: large">{{ variants.color }}</span>
+
+        <div class="flex-w flex-r-m p-b-10">
+            <div class="size-204 flex-w flex-m respon6-next">
+               
+                <a href="{% url 'add_to_cart' variants.id %}">
+                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                        Add to Cart
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
-<!-- CSS and JavaScript for Zoom Effect -->
-
+<!-- Reviews Section -->
+<div class="reviews-section">
+    <h4>Reviews</h4>
+    <p>No reviews available now.</p>
+</div>
 
 <script>
     document.querySelectorAll('.product-image').forEach(image => {
@@ -142,13 +192,13 @@
 
             // Set the zoom result background image and position
             zoomResult.style.backgroundImage = `url(${image.src})`;
-            zoomResult.style.backgroundSize = `${image.width * 2}px ${image.height * 2}px`;  // Adjust zoom level
+            zoomResult.style.backgroundSize = `${image.width * 1.5}px ${image.height * 1.5}px`;  // Adjusted zoom level
             zoomResult.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
             zoomResult.style.display = 'block';
 
-            // Position the zoom result next to the mouse
-            zoomResult.style.left = `${e.clientX + 10}px`;
-            zoomResult.style.top = `${e.clientY + 10}px`;
+            // Position the zoom result close to the mouse
+            zoomResult.style.left = `${e.clientX + 20}px`;  // Slight offset to right
+            zoomResult.style.top = `${e.clientY + 20}px`;   // Slight offset below
         });
 
         image.addEventListener('mouseleave', () => {

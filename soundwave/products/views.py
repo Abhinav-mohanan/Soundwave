@@ -2,8 +2,10 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages 
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.views.decorators.cache import never_cache
-from products.models import Category,Brand,Product,Variant
+from products.models import Category,Brand,Product,Variant,Subcategory
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
 
 
 # Create your views here.
@@ -17,8 +19,13 @@ def add_category(request):
     if request.method=='POST':
         name=request.POST.get('name')
         description=request.POST.get('description')
+        image=request.FILES.get('image')
         if name:
-            Category.objects.create(name=name,description=description)
+            Category.objects.create(
+                name=name,
+                description=description,
+                image=image
+            )
             messages.success(request,'category added successfully!.')
             return redirect('list_category')
         else:
@@ -33,12 +40,15 @@ def edit_category(request,id):
     if request.method=='POST': 
         name=request.POST['name']
         description=request.POST['description']
+        image=request.FILES.get('image')
         category_exists=Category.objects.filter(name__iexact=name).exclude(id=category.id).exists()
         if category_exists:
             messages.error(request,f'category{name} already exists')
         else:
             category.name=name
             category.description=description
+            if image:
+                category.image=image
             category.save()
             messages.success(request,'Category updated successfully')
             return redirect('list_category')
@@ -69,7 +79,70 @@ def unlist_category(request,id):
     category.save()
     return redirect('list_category')
 
-#======================Dashboard session End=====================# 
+#======================Category session End=====================# 
+
+
+#======================Sub_category session=====================# 
+@never_cache
+@user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
+def add_subcategory(request,id):
+    category=get_object_or_404(Category,id=id)
+    if request.method=='POST':
+        name=request.POST.get('name')
+        description=request.POST.get('description')
+        image=request.FILES.get('image')
+        
+        if name:
+            subcategory_exists=Subcategory.objects.filter(name__iexact=name,category=category).exclude(id=category.id).exists()
+            if subcategory_exists:
+                messages.error(request,f'subcategory {name} is already exists under this category ')
+            else:
+                Subcategory.objects.create(
+                    name=name,
+                    category=category,
+                    description=description,
+                    image=image,
+                )
+                messages.success(request,'Subcategory added successfully')
+                return redirect('view_subcategory',id=category.id)
+        else:
+            messages.error(request,'subcategory name is required!')
+            return redirect('view_subcategory.html',id=category.id)
+    return render(request,'admin/add_subcategory.html',{'category':category})
+
+
+@never_cache
+@user_passes_test(lambda u: u.is_superuser,login_url='/adminn/')
+def view_subcategory(request,id):
+    category=get_object_or_404(Category,id=id)
+    subcategory=Subcategory.objects.filter(category=category)
+    return render(request,'admin/subcategory.html',{'subcategory':subcategory,'category':category})
+
+
+@never_cache
+@user_passes_test(lambda u: u.is_superuser,login_url='/adminn/')
+def edit_subcategory(request,id):
+    subcategory=get_object_or_404(Subcategory,id=id)
+    category=subcategory.category
+    if request.method=='POST':
+        name=request.POST.get('name')
+        description=request.POST.get('description')
+        image=request.FILES.get('image')
+        subcategory_exists=Subcategory.objects.filter(name__iexact=name,category=category).exclude(id=subcategory.id).exists()
+        if subcategory_exists:
+            messages.error(request,f'The subcategory  {name} is already exists')
+        else:
+            subcategory.name=name
+            category=get_object_or_404(Category,id=category.id)
+            subcategory.description=description
+            if image:
+                subcategory.image=image
+            subcategory.save()
+            messages.success(request,'Subcategory update successfully')
+            return redirect('view_subcategory',id=category.id)
+    return render(request,'admin/edit_subcategory.html',{'subcategory':subcategory,'category':category})
+
+#======================Sub_category session End=====================# 
 
 
 #======================Brand session=====================# 
@@ -133,44 +206,55 @@ def unlist_brand(request,id):
 
 #======================Product session=====================# 
 @login_required
-@user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
+@user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def add_products(request):
-    categories=Category.objects.all()
-    brands=Brand.objects.all()
-    if request.method=='POST':
-        name=request.POST.get('name')
-        category=request.POST.get('category')
-        brand=request.POST.get('brand')
-        features=request.POST.get('features')
-        price=request.POST.get('price')
-        description=request.POST.get('description')
-        if all(field.strip() for field in [name, price, description, category, brand, features]):
-            if not name:
-                 messages.error(request, "Product name is required.")
-            elif not category:
-                messages.error(request, "Category is required.")
-            elif not brand:
-                messages.error(request, "Brand is required.")
-            elif not features:
-                messages.error(request, "Features are required.")
-            elif not price:
-                messages.error(request, "Price is required.")
-            elif not description:
-                messages.error(request, "Description is required.")
-            else:
-                category = get_object_or_404(Category, id=category)
-                brand = get_object_or_404(Brand, id=brand)
-                Product.objects.create(
-                name=name,
-                description=description,
-                category=category,
-                feature=features,
-                brand=brand,
-                price=price,
-                )
-                messages.success(request, "Product added successfully.")
-                return redirect('list_product')       
-    return render(request,'admin/addproducts.html',{'brands':brands,'categories':categories})
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
+    subcategories = Subcategory.objects.filter()
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        category_id = request.POST.get('category')
+        subcategory_id = request.POST.get('subcategory')
+        brand_id = request.POST.get('brand')
+        features = request.POST.get('features')
+
+        if not all([name, description, price, category_id, subcategory_id, brand_id]):
+            messages.error(request, "All fields are required!")
+        else:
+            try:
+                category = get_object_or_404(Category, id=int(category_id))
+                subcategory = get_object_or_404(Subcategory, id=int(subcategory_id))
+                brand = get_object_or_404(Brand, id=int(brand_id))
+                product_exists = Product.objects.filter(
+                    name__iexact=name,
+                    category=category,
+                    subcategory=subcategory,
+                    brand=brand
+                ).exists()
+
+                if product_exists:
+                    messages.error(request, f"The product '{name}' already exists.")
+                else:
+                    Product.objects.create(
+                        name=name,
+                        category=category,
+                        subcategory=subcategory,
+                        brand=brand,
+                        feature=features,
+                        price=price,
+                        description=description,
+                    )
+                    messages.success(request, "Product added successfully!")
+                    return redirect('list_product')
+
+            except (ValueError, ValidationError) as e:
+                messages.error(request, f"Error: {e}")
+
+    return render(request,'admin/addproducts.html',{'categories': categories, 'brands': brands, 'subcategories': subcategories})
+
 
 
 @never_cache
@@ -205,11 +289,13 @@ def edit_product(request,id):
     product=get_object_or_404(Product,id=id)
     categories=Category.objects.all()
     brands=Brand.objects.all()
+    subcategory=Subcategory.objects.all()
     if request.method=='POST':
         name=request.POST['name']
         description=request.POST['description']
         price=request.POST['price']
         category=request.POST['category']
+        subcategory=request.POST['subcategory']
         brand=request.POST['brand']
         features=request.POST['features']
         name_exist=Product.objects.filter(name__iexact=name).exclude(id=product.id).exists()
@@ -222,10 +308,11 @@ def edit_product(request,id):
             product.feature=features
             product.category=get_object_or_404(Category,id=category)
             product.brand=get_object_or_404(Brand,id=brand)
+            product.subcategory=get_object_or_404(Subcategory,id=subcategory)
             product.save()
             messages.success(request,'product update successfully')
             return redirect('list_product')  
-    return render(request,'admin/edit_product.html',{'product':product,'categories':categories,'brands':brands})
+    return render(request,'admin/edit_product.html',{'product':product,'categories':categories,'brands':brands,'subcategory':subcategory})
     
 #======================Product session End=====================# 
 
@@ -238,22 +325,35 @@ def add_variant(request,id):
     if request.method=='POST':
         color=request.POST.get('color')
         stock=request.POST.get('stock')
+        try:
+            stock=int(stock)
+            if stock <0:
+                messages.error(request,'Enter a valid quantity')
+                return redirect('add_variant',id=product.id)
+        except ValueError:
+            messages.error(request,'Stock quantity must be a valid number')
+            return redirect('add_variant',id=product.id)
+        
         image1=request.FILES.get('image1')
         image2=request.FILES.get('image2')
         image3=request.FILES.get('image3')
-        if color and stock and image1:  
-            Variant.objects.create(
-                product=product,
-                color=color,
-                stock=stock,
-                image1=image1,
-                image2=image2,
-                image3=image3,
-            )
-            messages.success(request,'variant added successfully')
-            return redirect('list_variant',id=product.id)
+        variant_exist = Variant.objects.filter(product=product, color__iexact=color).exists()
+        if variant_exist:
+            messages.error(request,f'variant {color} is already exists')
         else:
-            messages.error(request,'All fields are requried')
+            if color and stock and image1:  
+                Variant.objects.create(
+                    product=product,
+                    color=color,
+                    stock=stock,
+                    image1=image1,
+                    image2=image2,
+                    image3=image3,
+                )
+                messages.success(request,'variant added successfully')
+                return redirect('list_variant',id=product.id)
+            else:
+                messages.error(request,'All fields are requried')
     return render(request,'admin/add_variant.html')
 
 
@@ -263,6 +363,43 @@ def view_varient(request,id):
     product = Product.objects.get(id=id)
     variants = Variant.objects.filter(product=product).distinct()
     return render(request,'admin/variant.html',{'variants':variants,'product':product})
+
+
+@never_cache
+@user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
+def edit_variant(request,id):
+    variant=get_object_or_404(Variant,id=id)
+    product=variant.product
+    if request.method=='POST':
+        color=request.POST['color']
+        stock=request.POST['stock']
+        try:
+            stock=int(stock)
+            if  stock < 0 :
+                messages.error(request,'Enter a valid quantity')
+                return redirect('edit_variant',id=variant.id)
+        except ValueError:
+            messages.error(request,'Stock quantity must be a valid number')
+            return redirect('edit_variatn',id=variant.id)
+
+        image1=request.FILES.get('image1')
+        image2=request.FILES.get('image2')
+        image3=request.FILES.get('image3')
+
+        variant_exists=Variant.objects.filter(color__iexact=color).exclude(id=product.id).exists()
+        if variant_exists:
+            messages.error(request,f'The variant {color} is already exists')
+        else:
+            variant.color=color
+            variant.stock= stock
+            variant.image1=image1
+            variant.image2=image2
+            variant.image3=image3
+            variant.save()
+            messages.success(request,'The variant updated successfuly')
+            return redirect('list_variant',id=product.id)
+
+    return render(request,'admin/edit_variant.html',{'variant':variant})
 
 #======================Variant session End=====================# 
 

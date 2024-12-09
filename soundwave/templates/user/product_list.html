@@ -1,62 +1,164 @@
 {% extends 'user/navbar.html' %}
 {% load static %}
 {% block content %}
+
 <style>
-    body{
-        background-color: gray !important;
+    .filters {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
     }
-    section{
-        background-color: gray !important;
+
+    .filters h4 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .filters .filter-group {
+        margin-bottom: 20px; 
+    }
+
+    .filters .filter-title {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .filters .filter-title:hover {
+        color: #007bff;
+    }
+
+    .filters .filter-title i {
+        margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .filters .filter-options {
+        display: none;
+        list-style: none;
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+
+    .filters .filter-options li {
+        margin-bottom: 8px;
+    }
+
+    .filters .filter-options li a {
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .filters .filter-options li a:hover {
+        color: #007bff;
+    }
+
+    .product-section {
+        margin-top: 20px;
+    }
+
+    .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 768px) {
+        .product-grid {
+            justify-content: space-between;
+        }
     }
 </style>
 
-  <!-- Categories Section -->
-  <section class="categories-section py-5">
-    <div class="container">
-        <h2 class="section-title">Shop by Category</h2>
-        <div class="row text-center">
-            <div class="col-6 col-md-4">
-                <a href="#">
-                    <img src="https://cdn-icons-png.flaticon.com/128/937/937367.png" alt="Category 1" class="category-icon">
-                    <p>speakers</p>
-                </a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters Section -->
+        <div class="col-md-3">
+            <div class="filters">
+                <h4>Filters</h4>
+
+                <!-- Price Filter Group -->
+                <div class="filter-group">
+                    <div class="filter-title" onclick="toggleFilter(this)">
+                        Price
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="filter-options">
+                        <li><a href="?price=10000_30000">₹10000 - ₹30000</a></li>
+                        <li><a href="?price=under_50000">₹30000 - ₹50000</a></li>
+                        <li><a href="?price=above_50000">Above ₹50000</a></li>
+                    </ul>
+                </div>
+
+                <!-- Color Filter Group -->
+                <div class="filter-group">
+                    <div class="filter-title" onclick="toggleFilter(this)">
+                        Color
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="filter-options">
+                        <li><a href="?color=black">Black</a></li>
+                        <li><a href="?color=white">White</a></li>
+                        <li><a href="?color=blue">Blue</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-6 col-md-4">
-                <a href="#">
-                    <img src="https://cdn-icons-png.flaticon.com/128/5224/5224289.png" alt="Category 2" class="category-icon">
-                    <p>Soundbar</p>
-                </a>
-            </div>
-            <div class="col-6 col-md-4">
-                <a href="#">
-                    <img src="https://cdn-icons-png.flaticon.com/128/10478/10478251.png" alt="Category 3" class="category-icon">
-                    <p>Headphone</p>
-                </a>
+        </div>
+
+        <!-- Products Section -->
+        <div class="col-md-9">
+            <div class="product-section">
+                <h2>All Products</h2>
+                <a href="{% url 'products' %}" class="btn btn-secondary mb-3">Clear All Filters</a>
+                <div class="product-grid">
+                    {% for product in products %}
+                        {% for variant in product.variants.all %}
+                            {% include 'user/product_block.html' %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-</section>
-
-
-
-
-<div class="row">
-   
-
-
-    <section class="new-arrivals py-5">
-        <div class="container">
-            <h2 class="section-title"> All products</h2>
-            <div class="row">
-                {% for product in products %}
-                {% for variant in product.variants.all %}
-                {% include 'user/product_block.html' %}
-                {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
-    </section>
 </div>
 
+<script>
+    // Toggle filter visibility
+    function toggleFilter(element) {
+        const options = element.nextElementSibling;
+        if (options.style.display === "none" || !options.style.display) {
+            options.style.display = "block";
+            element.querySelector("i").classList.replace("fa-chevron-down", "fa-chevron-up");
+        } else {
+            options.style.display = "none";
+            element.querySelector("i").classList.replace("fa-chevron-up", "fa-chevron-down");
+        }
+    }
+
+    // Update URL dynamically for filter combinations
+    document.querySelectorAll('.filter-options a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+
+            // Add or update the filter parameter
+            const [filter, value] = this.href.split('?')[1].split('=');
+            params.set(filter, value);
+
+            // Redirect to the updated URL
+            window.location.href = `${url.pathname}?${params.toString()}`;
+        });
+    });
+</script>
 
 {% endblock %}

@@ -1,0 +1,29 @@
+<!-- admin/add_subcategory.html -->
+{% extends 'admin/navbar.html' %}
+
+{% block content %}
+  <h1>Edit SubCategory</h1>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="name">SubCategory Name</label>
+      <input type="text" class="form-control" value="{{ subcategory.name }}" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" name="description">{{ subcategory.description }}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="image">SubCategory Image</label>
+      <input type="file" class="form-control" id="image" name="image">
+      {% if subcategory.image %}
+        <p>Current Image:</p>
+        <img src="{{ subcategory.image.url }}" alt="Current Image" class="img-thumbnail" width="150">
+      {% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary">Edit SubCategory</button>
+  </form>
+
+  <hr>
+  <a href="{% url 'list_category' %}" class="btn btn-secondary">Back to Category</a>
+{% endblock %}

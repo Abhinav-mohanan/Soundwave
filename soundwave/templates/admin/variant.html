@@ -22,6 +22,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-dark">
+                        <h1>{{product.name}}</h1>
                         <thead>
                             <tr>
                                 <th>Image</th>
@@ -38,13 +39,17 @@
                                 <td><img class="product-img" src="{{ variant.image1.url }}" alt="Image"></td>
                                 <td>{{ variant.product.name }}</td>
                                 <td>{{ variant.product.category.name }}</td>
-                                <td>₹{{ variant.product.price }}</td>
+                                <td>{{ variant.product.price }}</td>
                                 <td>{{ variant.stock }}</td>
                                 <td>{{ variant.color }}</td>
+                                <td> <a href="{% url 'edit_variant' variant.id %}"><button class="btn btn-outline-info btn-sm">Edit</button></a></td>
                             </tr>
+                                {% empty %}
+                                <tr>
+                                <td colspan="6" class="text-center">NO variants of this product </td>
+                                </tr>
                             {% endfor %}
 
-                            <h1>{{product.name}}</h1>
                         </tbody>
                     </table>
                 </div>

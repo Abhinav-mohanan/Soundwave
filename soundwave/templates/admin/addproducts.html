@@ -18,7 +18,7 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="name">Product Name</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" required>
         </div>
         
         <div class="form-group">
@@ -26,6 +26,14 @@
             <select class="form-control" id="category" name="category">
                 {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="subcategoy">Subcategoy</label>
+            <select class="form-control" id="subcategory" name="subcategory">
+                {% for sub in subcategories %}
+                <option value="{{ sub.id }}">{{ sub.name }}</option>
                 {% endfor %}
             </select>
         </div>

@@ -1,0 +1,136 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+<style>
+    /* Form Styles */
+    .form-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .form-section h2,
+    .form-section h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        display: block;
+        color: #555;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .form-group .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-group .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+
+    .form-group .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .form-group .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: #fff;
+    }
+
+    .form-group .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    /* Error Message Styles */
+    .error-message {
+        color: #ff0000;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
+
+<!-- Edit User Information Form -->
+<div class="form-section user-info">
+    <h2>Edit Personal and Contact Information</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- First Name -->
+        <div class="form-group">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="first_name" value="{{ user.first_name }}" class="form-control">
+            {% if errors.first_name %}
+                <p class="error-message">{{ errors.first_name }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="last_name" value="{{ user.last_name }}" class="form-control">
+            {% if errors.last_name %}
+                <p class="error-message">{{ errors.last_name }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
+            {% if errors.email %}
+                <p class="error-message">{{ errors.email }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <input type="tel" id="phone" name="phone_number" value="{{ user.phone_number }}" class="form-control">
+            {% if errors.phone_number %}
+                <p class="error-message">{{ errors.phone_number }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group text-end">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+        <a href="{% url 'user_account' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

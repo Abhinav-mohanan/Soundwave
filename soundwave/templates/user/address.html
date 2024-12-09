@@ -129,8 +129,8 @@
 
                     <!-- Action Links -->
                     <div class="actions">
-                        <a href="#" class="edit">Edit</a>
-                        <a href="#" class="delete">Delete</a>
+                        <a href="{% url 'edit_address' address.id %}" class="edit">Edit</a>
+                        <!-- <a href="#" class="delete">Delete</a> -->
                     </div>
                 </div>
             {% endfor %}

@@ -1,0 +1,112 @@
+{% extends 'user/navbar.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+    }
+
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .media {
+        display: flex;
+        align-items: center;
+    }
+
+    .media-body {
+        margin-left: 15px;
+    }
+
+    .media img {
+        width: 60px;
+        height: 60px;
+        border-radius: 5px;
+    }
+
+    .fa-star {
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+</style>
+
+
+<div class="container my-5">
+    <div class="row">
+        
+        <!-- Left Section: Order Details -->
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <!-- <h4 class="card-title">Order #234000</h4> -->
+                </div>
+                <div class="card-body">
+                    <h5>Thank you for your order!</h5>
+                    <a href="#" class="btn btn-link">Track order</a>
+
+                    <!-- <h6 class="mt-4">Delivery</h6>
+                    <p>567 Cherry Sousa Lane, Sacramento, 96529</p>
+
+                    <h6>Time</h6>
+                    <p>Sunday, May 9, 12:00 - 14:00</p>
+
+                    <h6>Payment</h6>
+                    <p>Cash on delivery</p>
+
+                    <h6 class="mt-4">Congratulations! You have earned 256 bonuses</h6>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Right Section: You May Also Like -->
+        <!-- <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">You May Also Like</h4>
+                </div>
+                <div class="card-body">
+                    <div class="media mb-3">
+                        <img src="https://via.placeholder.com/60" class="mr-3" alt="Speaker 1">
+                        <div class="media-body">
+                            <h5 class="mt-0">Speaker</h5>
+                            <p><span class="text-muted"><del>₹1,450.00</del></span> ₹740.99</p>
+                            <p><span class="fa fa-star text-warning"></span> 4.8 (123 reviews)</p>
+                        </div>
+                    </div>
+                    <div class="media mb-3">
+                        <img src="https://via.placeholder.com/60" class="mr-3" alt="Speaker 2">
+                        <div class="media-body">
+                            <h5 class="mt-0">Speaker</h5>
+                            <p><span class="text-muted"><del>₹1,450.00</del></span> ₹740.99</p>
+                            <p><span class="fa fa-star text-warning"></span> 4.8 (82 reviews)</p>
+                        </div>
+                    </div> -->
+                    <a href="{% url 'products' %}" class="btn btn-primary btn-block">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

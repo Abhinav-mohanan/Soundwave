@@ -120,6 +120,7 @@
             overflow-y: auto; /* Ensure content is scrollable if too long */
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> 
 </head>
 <body>
     <!-- Navbar -->
@@ -148,6 +149,25 @@
                 </form>
             </div>
         </div>
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+            {% for message in messages %}
+            <div class="toast align-items-center 
+                {% if message.tags == 'error' %}
+                    text-bg-danger
+                {% else %}
+                    text-bg-success
+                {% endif %}
+                border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
     </header>
 
     <!-- Sidebar and Main Content Container -->
@@ -171,5 +191,15 @@
             {% endblock %}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            toastElList.map(function (toastEl) {
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            });
+        });
+    </script>
 </body>
 </html>

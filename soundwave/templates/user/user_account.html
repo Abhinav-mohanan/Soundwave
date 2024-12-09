@@ -37,8 +37,7 @@
 
         .form-group input[type="text"],
         .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group input[type="radio"] {
+        .form-group input[type="tel"] {
             width: 100%;
             padding: 12px;
             font-size: 16px;
@@ -47,12 +46,6 @@
             margin-top: 5px;
             color: #333;
         }
-
-        .form-group input[type="radio"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
         /* FAQ Section */
         .faqs ul {
             list-style-type: none;
@@ -90,14 +83,6 @@
             transition: background-color 0.3s ease;
         }
 
-        .actions .deactivate {
-            background-color: #f0ad4e;
-        }
-
-        .actions .deactivate:hover {
-            background-color: #ec971f;
-        }
-
         .actions .delete {
             background-color: #d9534f;
         }
@@ -105,11 +90,28 @@
         .actions .delete:hover {
             background-color: #c9302c;
         }
+        .change-password-link {
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .change-password-link:hover {
+            color: #0056b3;
+            padding-left: 5px;
+         }
+
+        .change-password-link i {
+            margin-left: 8px;
+            font-size: 18px;
+        }
     </style>
 
     <!-- Main content goes here -->
     <div class="section personal-info">
-        <h2>Personal Information <a href="#" class="edit-link">edit</a></h2>
+        <h2>Personal Information <a href="{% url 'edit_details' %}" class="edit-link">Edit</a></h2>
     
         <!-- Personal Info Fields -->
         <div class="form-group">
@@ -139,7 +141,14 @@
         </div>
     </div>
     
-
+    <!-- Password Section -->
+    <h2>Password</h2>
+<div class="section password-info">
+    <p>Do you want to change your password?</p>
+    <!-- <a href="#" class="change-password-link">
+        Change Password <i class="fas fa-arrow-right"></i>
+    </a> -->
+</div>
     <!-- FAQs Section -->
     <div class="section faqs">
         <h2>FAQs</h2>
@@ -156,10 +165,7 @@
     </div>
 
     <!-- Action Links -->
-    <div class="section actions">
-        <a href="#" class="deactivate">Deactivate Account</a>
+    <!-- <div class="section actions">
         <a href="#" class="delete">Delete Account</a>
-    </div>
+    </div> -->
 {% endblock %}
-
-

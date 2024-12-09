@@ -1,0 +1,126 @@
+{% extends 'admin/navbar.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .main-panel {
+    padding-top: 30px !important;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .table-responsive {
+    margin-top: 20px;
+  }
+
+  .table-dark {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .table th, .table td {
+    padding: 12px;
+    text-align: center;
+  }
+
+  .status-btn {
+    font-size: 0.875rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .status-btn.pending {
+    background-color: #ffc107;
+    color: white;
+  }
+
+  .status-btn.delivered {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .status-btn.rejected {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .status-btn.in-transit {
+    background-color: #17a2b8;
+    color: white;
+  }
+</style>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title text-white">Orders</h3>
+    </div>
+
+    <div class="card dark-theme">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-dark">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>Product</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order_items in orders %}
+              <tr>
+                <td>{{ order_items.order.tracking_number }}</td>
+                <td>{{ order_items.order.user.first_name }}</td>
+                <td>{{ order_items.order.shipping_address }}</td>
+                <td>{{ order_items.order.created_at|date:'d M Y ' }}</td>
+                <td>{{ order_items.variant.product.name }}</td>
+                <td>
+                  <button class="status-btn 
+                    {% if order_items.status == 'Order Pending' %} pending 
+                    {% elif order_items.status == 'Order Confirmed' %} delivered 
+                    {% elif order_items.status == 'Shipped' %} in-transit 
+                    {% elif order_items.status == 'Delivered' %} delivered 
+                    {% elif order_items.status == 'Cancelled' %} rejected 
+                    {% endif %}">
+                    {{ order_items.status }}
+                  </button>
+                </td>
+                <td>
+                  {% if order_items.status == "Order Pending" %}
+                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Order Confirmed' %}" class="status-btn delivered">Confirm</a>
+                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Cancelled' %}" class="status-btn rejected">Cancel</a>
+                  {% elif order_items.status == "Order Confirmed" %}
+                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Shipped' %}" class="status-btn in-transit">Ship</a>
+                  {% elif order_items.status == "Shipped" %}
+                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Delivered' %}" class="status-btn delivered">Deliver</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
