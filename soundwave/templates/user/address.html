@@ -2,7 +2,12 @@
 
 {% block content %}
     <style>
-        /* Add your existing styles here */
+       
+        body {
+            font-family: Arial, sans-serif; 
+            background-color: #f9f9f9; 
+        }
+
         .section {
             margin-bottom: 30px;
         }
@@ -13,28 +18,30 @@
             color: #333;
             margin-bottom: 20px;
             padding-bottom: 5px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid #e0e0e0; 
         }
 
+        /* Edit link styling */
         .edit-link {
             font-size: 14px;
             color: #007bff;
             text-decoration: none;
             float: right;
         }
+       
 
         .address-card {
             background-color: #fff;
-            padding: 15px;
-            border-radius: 4px;
+            padding: 20px;
+            border-radius: 5px;
             border: 1px solid #ddd;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
         }
 
         .address-card p {
             font-size: 16px;
-            margin: 5px 0;
+            margin: 8px 0;
         }
 
         .address-card .address-type {
@@ -43,79 +50,71 @@
         }
 
         .actions a {
-            margin-right: 20px;
+            margin-right: 15px;
             padding: 8px 12px;
             text-decoration: none;
             font-size: 14px;
             font-weight: bold;
             color: #fff;
             border-radius: 4px;
-            transition: background-color 0.3s ease;
+            background-color: #007bff;
         }
 
-        .actions .edit {
-            background-color: #5bc0de;
+        .actions a:hover {
+            background-color: #0056b3;
+            color: #fff;
         }
 
-        .actions .edit:hover {
-            background-color: #31b0d5;
-        }
-
-        .actions .delete {
-            background-color: #d9534f;
-        }
-
-        .actions .delete:hover {
-            background-color: #c9302c;
-        }
-
-        /* Style for the Add button container */
+       
         .add-button-container {
-            text-align: right; /* Align button to the right */
-            margin-bottom: 20px; /* Add spacing below the button */
+            text-align: right;
+            margin-bottom: 20px;
         }
 
-        /* Style for the Add button */
         .add-button {
-            background-color: #007bff; /* Bootstrap primary blue */
+            background-color: #007bff;
             color: #fff;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 18px;
             font-size: 14px;
             font-weight: bold;
             border-radius: 4px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            transition: background-color 0.3s ease;
         }
 
         .add-button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add hover shadow */
+            background-color: #0056b3;
         }
 
-        /* Responsive design to ensure button adjusts on smaller screens */
         @media (max-width: 768px) {
             .add-button-container {
-                text-align: center; /* Center button on smaller screens */
+                text-align: center;
             }
         }
+        #delete {
+            font-size: 13px;
+            background-color: red;
+            text-decoration: none;
+
+        }
+
+
     </style>
 
-    <!-- Address List Section -->
     <div class="section address-list">
-        <!-- Add Button -->
+  
         <div class="add-button-container">
             <a href="{% url 'add_address' %}">
                 <button class="add-button" id="add-product-btn">
-                    <i class="mdi mdi-plus btn-icon-prepend"></i> Add Address
+                    Add Address
                 </button>
             </a>
         </div>
 
-        <!-- Address Heading -->
         <h2>Addresses</h2>
 
         {% if addresses %}
-            <!-- Loop through each address -->
+         
             {% for address in addresses %}
                 <div class="address-card">
                     <p><strong>Address Type:</strong> <span class="address-type">{{ address.address_title }}</span></p>
@@ -127,15 +126,14 @@
                     <p><strong>Mobile:</strong> {{ address.phone_number }}</p>
                     <br>
 
-                    <!-- Action Links -->
                     <div class="actions">
                         <a href="{% url 'edit_address' address.id %}" class="edit">Edit</a>
-                        <!-- <a href="#" class="delete">Delete</a> -->
+                        <a href="{% url 'delete_address' address.id %}" id="delete">Delete</a>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <!-- If no addresses exist -->
+           
             <div class="address-card">
                 <p>You have no saved addresses.</p>
             </div>

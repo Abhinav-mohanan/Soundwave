@@ -11,9 +11,9 @@ class Address(models.Model):
     state=models.CharField(max_length=100)
     city=models.CharField(max_length=100)
     pin=models.CharField(max_length=6)
-    detail_address=models.TextField(null=True,blank=True)
     landmark=models.CharField(max_length=100,null=True,blank=True)
     phone_number=models.CharField(max_length=15, unique=False, null=True, blank=True)
+    is_active=models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name},{self.city},{self.state}"

@@ -71,7 +71,6 @@
         gap: 20px;
     }
 
-    /* Responsiveness */
     @media (max-width: 768px) {
         .product-grid {
             justify-content: space-between;
@@ -81,12 +80,10 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Filters Section -->
         <div class="col-md-3">
             <div class="filters">
                 <h4>Filters</h4>
 
-                <!-- Price Filter Group -->
                 <div class="filter-group">
                     <div class="filter-title" onclick="toggleFilter(this)">
                         Price
@@ -94,12 +91,11 @@
                     </div>
                     <ul class="filter-options">
                         <li><a href="?price=10000_30000">₹10000 - ₹30000</a></li>
-                        <li><a href="?price=under_50000">₹30000 - ₹50000</a></li>
+                        <li><a href="?price=under_50000">₹30000 - ₹5000</a></li>
                         <li><a href="?price=above_50000">Above ₹50000</a></li>
                     </ul>
                 </div>
 
-                <!-- Color Filter Group -->
                 <div class="filter-group">
                     <div class="filter-title" onclick="toggleFilter(this)">
                         Color
@@ -111,14 +107,31 @@
                         <li><a href="?color=blue">Blue</a></li>
                     </ul>
                 </div>
+
+                <div class="filter-group">
+                    <div class="filter-title" onclick="toggleFilter(this)">
+                        Sort by
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="filter-options">
+                        <li><a href="?sort=asc">Alphabetical (A-Z)</a></li>
+                        <li><a href="?sort=desc">Alphabetical (Z-A)</a></li>
+                    </ul>
+                    <br><br>
+                    <ul>
+                        {% if filter_applied %}
+                            <a href="{% url 'products' %}" class="btn btn-outline-secondary mb-3">Clear All Filters</a>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Products Section -->
-        <div class="col-md-9">
+        <div class="col-md-9" style="height: 100vh;">
             <div class="product-section">
                 <h2>All Products</h2>
-                <a href="{% url 'products' %}" class="btn btn-secondary mb-3">Clear All Filters</a>
+                
                 <div class="product-grid">
                     {% for product in products %}
                         {% for variant in product.variants.all %}
@@ -160,5 +173,4 @@
         });
     });
 </script>
-
 {% endblock %}

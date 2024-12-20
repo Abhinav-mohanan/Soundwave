@@ -2,6 +2,7 @@
 
 {% block content %}
 <style>
+    /* General Styles */
     .orders-container {
         padding: 20px;
         background-color: #f9f9f9;
@@ -11,43 +12,74 @@
 
     .orders-header {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
 
     .orders-header h2 {
-        font-size: 24px;
+        font-size: 26px;
         color: #333;
+        font-weight: bold;
     }
 
-    .orders-table {
-        width: 100%;
-        border-collapse: collapse;
+    /* Filter Section */
+    .filter-section {
+        text-align: center;
         margin-bottom: 20px;
     }
 
-    .orders-table th, .orders-table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .orders-table th {
-        background-color: #f4f4f4;
-        font-weight: bold;
-    }
-
-    .orders-table td img {
+    .filter-button {
+        padding: 10px 20px;
+        margin: 5px;
+        font-size: 14px;
         border-radius: 5px;
+        cursor: pointer;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease;
     }
 
-    .status {
-        padding: 5px 10px;
-        border-radius: 3px;
+    .filter-button:hover {
+        background-color: #2980b9;
+    }
+
+    /* Card Style */
+    .order-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .order-card-header h4 {
+        font-size: 20px;
+        color: #333;
+    }
+
+    .order-card-header .status {
+        padding: 5px 15px;
+        border-radius: 20px;
         font-weight: bold;
         text-transform: capitalize;
+        font-size: 14px;
     }
 
-    .status.pending {
+    /* Status Styling */
+    .status.Order+Pending {
         background-color: #f39c12;
         color: #fff;
     }
@@ -67,60 +99,121 @@
         color: #fff;
     }
 
+    /* Order Card Content */
+    .order-details {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .order-items {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+    }
+
+    .order-items img {
+        border-radius: 5px;
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+    }
+
+    .order-total {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
     .no-orders {
         text-align: center;
         font-size: 18px;
         color: #999;
         padding: 20px 0;
     }
+
+    /* Shipping Address Styles */
+    .shipping-address {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f4f4f4;
+        border-radius: 8px;
+    }
+
+    .shipping-address h4 {
+        margin-bottom: 10px;
+    }
+
+    .shipping-address p {
+        margin: 5px 0;
+    }
 </style>
 
 <div class="orders-container">
-    <!-- Header -->
     <div class="orders-header">
         <h2>Your Orders</h2>
     </div>
 
-    <!-- Orders Table -->
-    <table class="orders-table">
-        <thead>
-            <tr>
-                <th>Order #</th>
-                <th>Order Date</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Items</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-                <tr>
-                    <td>{{ order.tracking_number }}</td>
-                    <td>{{ order.created_at|date:"M d, Y" }}</td>
-                    <td>
-                        <span class="status 
-                            {% if order.order_items.first.status == 'Order Pending' %}pending
-                            {% elif order.order_items.first.status == 'Order Confirmed' %}completed
-                            {% elif order.order_items.first.status == 'Shipped' %}shipped
-                            {% elif order.order_items.first.status == 'Delivered' %}completed
-                            {% elif order.order_items.first.status == 'Cancelled' %}cancelled
-                            {% endif %}">
-                            {{ order.order_items.first.status }}
-                        </span>
-                    </td>
-                    <td>${{ order.total_price }}</td>
-                    <td>
-                        {% for item in order.order_items.all %}
-                            <img src="{{ item.variant.image1.url }}" alt="{{ item.variant.product.name }}" height="50">
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5" class="no-orders">No orders found.</td>
-                </tr>
+    <!-- Filter Buttons -->
+    <div class="filter-section">
+        <form method="GET" action="{% url 'list_order'%}">
+            <button class="filter-button" type="submit" name="status" value="Order Pending">Pending</button>
+            <button class="filter-button" type="submit" name="status" value="Shipped">Shipped</button>
+            <button class="filter-button" type="submit" name="status" value="Delivered">Delivered</button>
+            <button class="filter-button" type="submit" name="status" value="Cancelled">Cancelled</button>
+            <button type="submit" name="status" value="" class="btn btn-info">All Orders</button> 
+        </form>
+    </div>
+
+    {% for order in orders %}
+    <div class="order-card">
+
+        <div class="order-card-header">
+            <h4>Order ID: {{ order.tracking_number }}</h4>
+            <span class="status 
+                {% if order.order_items.first.status == 'Order Pending' %}pending
+                {% elif order.order_items.first.status == 'Shipped' %}shipped
+                {% elif order.order_items.first.status == 'Delivered' %}completed
+                {% elif order.order_items.first.status == 'Cancelled' %}cancelled
+                {% endif %}">
+                {{ order.order_items.first.status }}
+            </span>
+        </div>
+
+        <div class="order-details">
+            <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
+            <p><strong>Total:</strong> ${{ order.total_price }}</p>
+        </div>
+
+        <div class="order-items">
+            {% for item in order.order_items.all %}
+            <div class="order-item">
+                <img src="{{ item.variant.image1.url }}" alt="{{ item.variant.product.name }}">
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+
+        <div class="order-total">
+            <strong>Total: ${{ order.total_price }}</strong>
+        </div>
+
+        <!-- Shipping Address Section -->
+        <div class="shipping-address">
+            <h4>Shipping Address</h4>
+            <p><strong>Name:</strong> {{ order.shipping_address.name }}</p>
+            <p><strong>Address Title:</strong> {{ order.shipping_address.address_title }}</p>
+            <p><strong>Address:</strong> {{ order.shipping_address.detail_address }}</p>
+            <p><strong>City:</strong> {{ order.shipping_address.city }}</p>
+            <p><strong>State:</strong> {{ order.shipping_address.state }}</p>
+            <p><strong>Pin:</strong> {{ order.shipping_address.pin }}</p>
+            <p><strong>Landmark:</strong> {{ order.shipping_address.landmark }}</p>
+            <p><strong>Phone Number:</strong> {{ order.shipping_address.phone_number }}</p>
+        </div>
+
+    </div>
+    {% empty %}
+    <div class="no-orders">No orders found.</div>
+    {% endfor %}
 </div>
+
 {% endblock %}

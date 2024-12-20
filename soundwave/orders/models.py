@@ -47,8 +47,8 @@ class Order(models.Model):
 
 class Order_items(models.Model):
     STATUS_CHOICES= [
-        ('Order Pending','Order Pending'),
-        ('Order Confirmed','Order confirmed'),
+        ('Pending','Pending'),
+        ('Confirmed','Confirmed'),
         ('Shipped','Shipped'),
         ('Delivered','Delivered'),
         ('Cancelled','Cancelled'),

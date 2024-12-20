@@ -9,6 +9,9 @@
     flex-direction: column;
     height: 100%; 
 }
+.fe_head{
+    font-weight: bold ;
+}
 
 .category-card img {
     width: 100%;
@@ -40,7 +43,7 @@ a{
                     <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
                             <span class="ltext-101 cl2 respon2 text-white">
-                                new Collection 2018
+                                New Collection 2025
                             </span>
                         </div>
                             
@@ -58,6 +61,7 @@ a{
                     </div>
                 </div>
             </div>
+            
             <div class="item-slick1" style="background-image: url('/static/images/slide-02.jpeg');">
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
@@ -87,7 +91,7 @@ a{
 
  
 
-  <div class="container mt-4">
+  <div class="container-fluid  p-5" style="background: gainsboro;">
     <div class="categories mt-5">
         <h2 class="fw-bold mb-4">Explore by Category</h2>
         <div class="row g-3">
@@ -141,8 +145,8 @@ a{
                     {% if variant %}
                     <img src="{{ variant.image1.url }}" class="img-fluid rounded" alt="{{ hero_product.name }}">
                     <div class="text-overlay position-absolute top-50 start-50 translate-middle text-light text-center">
-                        <h1 class="fw-bold text-iight">{{ hero_product.name }}</h1>
-                        <p class="fs-5 text-iight">Be Pro Anywhere</p>
+                        <h1 class="fw-bold text-light">{{ hero_product.name }}</h1>
+                        <p class="fs-5 text-secondary">Be Pro Anywhere</p>
                         <a href="{% url 'product_details' hero_product.id variant.id %}" 
                         class="btn btn-light fw-bold px-4 py-2 text-dark">
                             From {{ hero_product.price }}
@@ -171,13 +175,13 @@ a{
                       <img src="{{ variant.image1.url }}" class="img-thumbnail me-2" alt="{{ product.name }}" style="width: 60px; height: 60px;">
                       <div>
                        
-                          <h6 class="mb-1 fw-semibold">{{ product.name }}</h6>
+                          <h6 class="mb-1 text-dark">{{ product.name }}</h6>
                           
 
                           <p class="text-warning mb-1 small">⭐⭐⭐⭐⭐</p>
                           
 
-                          <p class="fw-bold mb-0">{{ product.price }}</p>
+                          <p class="text-dark fe_head mb-0">{{ product.price }}</p>
                         </a>
                       </div>
             
@@ -197,7 +201,7 @@ a{
  
     <div class="text-start ps-4" style="flex: 2;">
         <h4 class="fw-bold text-dark mb-2">SEASONAL WEEKLY SALE 2024</h4>
-        <p class="mb-0 text-muted">Use code <strong class="text-primary">Sale2024</strong> to get the best offer</p>
+        <!-- <p class="mb-0 text-muted">Use code <strong class="text-primary">Sale2024</strong> to get the best offer</p> -->
     </div>
 
     <div class="ms-auto">
@@ -213,6 +217,7 @@ a{
       <div class="row">
           {% for product in featured_products %}
           {% for variant in product.variants.all %}
+         
           {% include 'user/product_block.html' %}
           {% endfor %}
           {% endfor %}

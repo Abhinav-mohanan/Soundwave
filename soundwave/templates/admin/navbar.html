@@ -4,12 +4,11 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Dashboard</title>
+    <title>SOUNDWAVE</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
     <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/custom-style.css' %}">
     <link rel="shortcut icon" href="{% static 'assets/images/favicon.png' %}" />
     <link rel="stylesheet" href="{% static 'css/add_products.css' %}">
 
@@ -31,7 +30,7 @@
       }
     
       .toast .btn-close {
-        color: #000; /* Close button color */
+        color: #000; 
       }
     </style>
   </head>
@@ -41,7 +40,8 @@
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-flex align-items-center justify-content-center">
           <a class="sidebar-brand brand-logo" href="#">
-            <img src="{% static 'assets/images/logo.svg' %}" alt="Logo">
+            <!-- <img src="{% static 'assets/images/logo.svg' %}" alt="Logo"> -->
+             <p class="text-white">SOUNDWAVE</p>
           </a>
           <a class="sidebar-brand brand-logo-mini" href="#">
             <img src="{% static 'assets/images/logo-mini.svg' %}" alt="Logo Mini">
@@ -52,10 +52,8 @@
           <li class="nav-item profile">
             <div class="profile-desc">
               <div class="profile-pic">
-                <img class="img-xs rounded-circle" src="{% static 'assets/images/faces/face15.jpg' %}" alt="Profile">
                 <div class="profile-name">
-                  <h5 class="mb-0">Henry Klein</h5>
-                  <span>Gold Member</span>
+                  <h5 class="mb-0">WELCOME Admin</h5>
                 </div>
               </div>
             </div>
@@ -95,6 +93,18 @@
             <a class="nav-link" href="{% url 'view_orders' %}">
               <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
               <span class="menu-title"> Orders</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="{% url 'view_offers' %}">
+              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+              <span class="menu-title"> Offers</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="{% url 'view_coupons' %}">
+              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+              <span class="menu-title"> Coupons</span>
             </a>
           </li>
           <li class="nav-item menu-items">

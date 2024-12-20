@@ -53,9 +53,10 @@
   
  
   <style>
-	 /* .container-fluid{
-        height: 100vh;
-    } */
+	 .container-fluid{
+        background: gainsboro;
+		padding: 15px;
+    }
 	.category-card {
 	  position: relative;
 	  overflow: hidden;
@@ -130,6 +131,7 @@
 	  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 	  padding: 8px;
 	  cursor: pointer;
+	  background-color: whitesmoke;
   	}
  
   	.product-card:hover {
@@ -203,6 +205,13 @@
 	.search-bar.show {
   		display: flex; 
 	}
+	.website-name {
+    	font-size: 24px; 
+    	font-weight: bold; 
+    	color: #faf8f8; 
+		font-family:"Brush Script MT", cursive;		
+    	
+	}
 
   
   </style>
@@ -212,8 +221,10 @@
   <!-- Header -->
   <header class="bg-dark text-light py-3">
     <div class="container d-flex justify-content-between align-items-center">
-      <a href="#" class="navbar-brand text-light"><img src="#" alt="Logo"></a>
-      <nav>
+		<span class="website-name">SOUNDWAVE</span>
+		
+
+		<nav>
         <ul class="nav">
           <li class="nav-item"><a class="nav-link text-light" href="{% url 'home' %}">Home</a></li>
           <li class="nav-item"><a class="nav-link text-light" href="{% url 'products' %}">Products</a></li>
@@ -244,7 +255,7 @@
 		</div>
 	  
 		<!-- Shopping Cart Icon -->
-		<!-- <i class="fa fa-shopping-cart me-3 text-light"></i> -->
+		<i class="fa fa-shopping-cart me-3 text-light"></i>
 		
 		<!-- User Icon Dropdown -->
 		<div class="dropdown">
@@ -267,34 +278,29 @@
 	  
 
 	<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
-		{% for message in messages %}
-		<div class="toast align-items-center 
-			{% if message.tags == 'error' %}
-				text-bg-danger
-			{% else %}
-				text-bg-success
-			{% endif %}
-			border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+		{% if messages %}
+		<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+		  {% for message in messages %}
+		  <div 
+		  class="toast align-items-center 
+		  {% if 'error' in message.tags %} text-bg-white text-danger {% else %} text-bg-white text-success {% endif %} border-0" 
+		  role="alert" 
+		  aria-live="assertive" 
+		  aria-atomic="true" 
+		  data-bs-autohide="true">
 			<div class="d-flex">
-				<div class="toast-body">
-					{{ message }}
-				</div>
-				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-			</div>
+			  <div class="toast-body">
+				{{ message }}
+			  </div>
+			<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+		  </div>
 		</div>
-		{% endfor %}
+	  {% endfor %}
 	</div>
-	
-	
-	
-	
-	
-	
+  {% endif %}
+	</div>
     </div>
   </header>
-
- 
-
   {% block content %}
   
   {% endblock %}
@@ -436,7 +442,7 @@
 
 				<p class="stext-107 cl6 txt-center">
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved  by <SPan>SOUNDWAVE</SPan></a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 
 				</p>

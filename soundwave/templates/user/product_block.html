@@ -1,4 +1,13 @@
 {% load static %}
+<style>
+    .wishlist-icon {
+        color: gray; 
+        transition: all 0.3s ease; 
+    }
+    .wishlist-icon:hover {
+        color: red; 
+    }
+</style>
 <div class="col-md-3">
     <div class="card border-0 shadow-sm position-relative" style="width: 100%; max-width: 300px;">
         <div class="position-relative overflow-hidden" style="height: 250px;">
@@ -12,9 +21,8 @@
 
            
             <div class="wishlist-icon position-absolute top-0 end-0 p-2">
-                <a href="#" class="btn-addwish-b2 pos-relative js-addwish-b2">
-                    <img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="Heart Icon">
-                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="Heart Icon Filled">
+                <a href="{% url 'add_to_wishlist' variant.id %}" class="wishlist-link">
+                    <i class="fa-heart far wishlist-icon" aria-hidden="true"></i>
                 </a>
             </div>
         </div>

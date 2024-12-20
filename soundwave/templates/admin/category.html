@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+<style>
+  .wrap-text {
+  white-space: normal !important; /* Allows wrapping */
+  word-wrap: break-word  !important; /* Breaks long words if needed */
+  max-width: 200px !important; /* Adjust width based on your layout */
+}
+
+</style>
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -35,7 +43,7 @@
                   <td> no image is available</td>
                   {% endif %}
                   <td>{{category.name}} </td>
-                  <td> {{category.description}} </td>
+                  <td class="wrap-text"> {{category.description}} </td>
                   <td>
                     
                     {% if category.is_listed %}

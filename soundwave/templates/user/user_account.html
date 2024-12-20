@@ -35,17 +35,6 @@
             color: #555;
         }
 
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"] {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-top: 5px;
-            color: #333;
-        }
         /* FAQ Section */
         .faqs ul {
             list-style-type: none;
@@ -116,12 +105,12 @@
         <!-- Personal Info Fields -->
         <div class="form-group">
             <label for="first-name">First Name</label>
-            <input type="text" id="first-name" value="{{ first_name }}" placeholder="Enter your first name">
+            <p id="first-name">{{ first_name }}</p>
         </div>
     
         <div class="form-group">
             <label for="full-name">Last Name</label>
-            <input type="text" id="last-name" value="{{ last_name }}" placeholder="Enter your last name">
+            <p id="last-name">{{ last_name }}</p>
         </div>
     </div>
     
@@ -132,23 +121,24 @@
         <!-- Contact Info Fields -->
         <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" value="{{ email }}" placeholder="Enter your email">
+            <p id="email">{{ email }}</p>
         </div>
         
         <div class="form-group">
             <label for="phone">Mobile Number</label>
-            <input type="tel" id="phone" value="{{ phone_number }}" placeholder="+1234567890">
+            <p id="phone">{{ phone_number }}</p>
         </div>
     </div>
     
     <!-- Password Section -->
     <h2>Password</h2>
-<div class="section password-info">
-    <p>Do you want to change your password?</p>
-    <!-- <a href="#" class="change-password-link">
-        Change Password <i class="fas fa-arrow-right"></i>
-    </a> -->
-</div>
+    <div class="section password-info">
+        <p>Do you want to change your password?</p>
+        <a href="{% url 'change_password' %}" class="change-password-link">
+            Change Password <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
     <!-- FAQs Section -->
     <div class="section faqs">
         <h2>FAQs</h2>
@@ -164,8 +154,5 @@
         </ul>
     </div>
 
-    <!-- Action Links -->
-    <!-- <div class="section actions">
-        <a href="#" class="delete">Delete Account</a>
-    </div> -->
 {% endblock %}
+

@@ -1,0 +1,119 @@
+{% extends 'admin/navbar.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .wrap-text {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    max-width: 200px !important;
+  }
+</style>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">Add Coupon</h3>
+      <a href="{% url 'view_coupons' %}">
+        <button class="btn btn-primary btn-icon-text" id="back-btn">
+          <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
+        </button>
+      </a>
+    </div>
+
+    <div class="card dark-theme">
+      <div class="card-body">
+        <form id="addCouponForm" method="post">
+          {% csrf_token %}
+          <!-- Coupon Code -->
+          <div class="form-group">
+            <label for="code">Coupon Code</label>
+            <input type="text" class="form-control" id="code" name="code" required placeholder="Enter Coupon Code">
+          </div>
+
+          <!-- Coupon Type -->
+          <div class="form-group">
+            <label for="coupon_type">Coupon Type</label>
+            <select class="form-control" id="coupon_type" name="coupon_type" required>
+              <option value="fixed">Fixed Amount</option>
+              <option value="percentage">Percentage</option>
+            </select>
+          </div>
+
+          <!-- Coupon Description -->
+          <div class="form-group">
+            <label for="description">Coupon Description</label>
+            <input type="text" class="form-control" id="description" name="description" required placeholder="Enter Coupon Description">
+          </div>
+
+          <!-- Discount Amount -->
+          <div class="form-group">
+            <label for="discount_amount">Discount Amount</label>
+            <input type="number" class="form-control" id="discount_amount" name="discount_amount" required step="0.01" placeholder="Enter Discount Amount">
+          </div>
+
+          <!-- Minimum Purchase Amount -->
+          <div class="form-group">
+            <label for="min_purchase_amount">Minimum Purchase Amount (₹)</label>
+            <input type="number" class="form-control" id="min_purchase_amount" name="min_purchase_amount" required step="0.01" placeholder="Enter Minimum Purchase Amount">
+          </div>
+
+          <!-- Validity Dates -->
+          <div class="form-group">
+            <label for="valid_from">Valid From</label>
+            <input type="date" class="form-control" id="valid_from" name="valid_from" required>
+          </div>
+          <div class="form-group">
+            <label for="valid_to">Valid To</label>
+            <input type="date" class="form-control" id="valid_to" name="valid_to" required>
+          </div>
+
+          <!-- Usage Limit -->
+          <div class="form-group">
+            <label for="usage_limit">Usage Limit</label>
+            <input type="number" class="form-control" id="usage_limit" name="usage_limit" required placeholder="Enter Usage Limit">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Add Coupon</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('addCouponForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent the form from submitting normally
+
+  // Create FormData object from the form
+  var formData = new FormData(this);
+
+  // Send the data to the server using fetch API
+  fetch("{% url 'add_coupons' %}", {
+    method: "POST",
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert("Coupon added successfully");
+      window.location.href = "{% url 'view_coupons' %}"; // Redirect to coupon list
+    } else {
+      var errorMessages = '';
+      if (data.errors && data.errors.length > 0) {
+        data.errors.forEach(error => {
+          errorMessages += error + '\n';
+        });
+      }
+      if (errorMessages) {
+        alert('The following errors occurred:\n\n' + errorMessages);
+      }
+    }
+  })
+  .catch(error => {
+    alert("Something went wrong, please try again.");
+  });
+});
+</script>
+
+{% endblock %}

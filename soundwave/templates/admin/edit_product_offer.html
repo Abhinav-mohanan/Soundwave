@@ -1,0 +1,83 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+
+<h2>Edit Product Offer</h2>
+<br>
+<a href="{% url 'view_offers' %}">
+    <button class="btn btn-primary btn-icon-text" id="back-btn">
+      <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
+    </button>
+</a>
+<br><br>
+
+<form id="edit-offer-form">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="offer_name">Offer Name:</label>
+        <input type="text" id="offer_name" name="offer_name" value="{{ product_offer.offer_name }}" class="form-control" placeholder="Enter offer name">
+    </div>
+
+    <div class="form-group">
+        <label for="offer_percentage">Offer Percentage:</label>
+        <input type="text" id="offer_price" name="offer_percentage" value="{{ product_offer.offer_percentage }}" class="form-control" placeholder="Enter offer Percentage">
+    </div>
+
+    <div class="form-group">
+        <label for="product">Select Product:</label>
+        <select id="product" name="product" class="form-control">
+            <option value="{{ product_offer.product.id }}">{{ product_offer.product.name }}</option>
+            {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="offer_description">Offer Details </label>
+        <input type="text" id="offer_description" name="offer_details" value="{{ product_offer.offer_details }}" class="form-control" placeholder="Enter offer Details">
+    </div>
+
+    <div class="form-group">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ product_offer.started_date|date:'Y-m-d' }}" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ product_offer.end_date|date:'Y-m-d' }}" class="form-control">
+    </div>
+
+    <button type="button" class="btn btn-primary" id="submit-btn">Save Changes</button>
+</form>
+
+<script>
+
+document.getElementById('submit-btn').addEventListener('click', function() {
+    const form = document.getElementById('edit-offer-form');
+    const formData = new FormData(form);
+    // Send data using fetch API
+    fetch("{% url 'edit_product_offer' product_offer.id %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);  // Show success message
+            window.location.href = "{% url 'view_offers' %}"; // Redirect to offer list
+        } else {
+            alert(data.errors.join('\n'));  // Show error messages
+        }
+    })
+    .catch(error => {
+        alert('An error occurred. Please try again.');
+        console.error('Error:', error);
+    });
+});
+</script>
+
+{% endblock %}

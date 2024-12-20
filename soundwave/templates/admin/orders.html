@@ -20,6 +20,17 @@
     color: #333;
   }
 
+  .filter-dropdown {
+    margin-left: auto;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 1rem;
+    color: #f2eeee;
+    cursor: pointer;
+  }
+
   .table-responsive {
     margin-top: 20px;
   }
@@ -67,6 +78,17 @@
   <div class="content-wrapper">
     <div class="page-header">
       <h3 class="page-title text-white">Orders</h3>
+    
+      <form method="get" class="filter-form">
+        <select name="status" class="form-control" onchange="this.form.submit()">
+          <option value="">All Statuses</option>
+          <option value="Order Pending" {% if request.GET.status == 'Order Pending' %}selected{% endif %}>Order Pending</option>
+          <option value="Order Confirmed" {% if request.GET.status == 'Order Confirmed' %}selected{% endif %}>Order Confirmed</option>
+          <option value="Shipped" {% if request.GET.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+          <option value="Delivered" {% if request.GET.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+          <option value="Cancelled" {% if request.GET.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+      </form>
     </div>
 
     <div class="card dark-theme">
@@ -113,6 +135,10 @@
                   <a href="{% url 'change_order_status' order_items.Orderitem_id 'Delivered' %}" class="status-btn delivered">Deliver</a>
                   {% endif %}
                 </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center">No order Available </td>
               </tr>
               {% endfor %}
             </tbody>

@@ -1,0 +1,80 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+
+<h2>Add Product Offer</h2>
+<br>
+<a href="{% url 'view_offers' %}">
+    <button class="btn btn-primary btn-icon-text" id="back-btn">
+      <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
+    </button>
+</a>
+<br><br>
+<form id="add-offer-form">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="offer_name">Offer Name:</label>
+        <input type="text" id="offer_name" name="offer_name" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="offer_percentage">Offer Percentage:</label>
+        <input type="text" id="offer_price" name="offer_percentage" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="product">Select Product:</label>
+        <select id="product" name="product" class="form-control">
+            <option value="">-- Select Product --</option>
+            {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="offer_description">Offer Details </label>
+        <input type="text" id="offer_description" name="offer_details" class="form-control" placeholder="Enter offer Details">
+    </div>
+
+    <div class="form-group">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" class="form-control">
+    </div>
+
+    <button type="button" class="btn btn-primary" id="submit-btn">Add Offer</button>
+</form>
+
+<script>
+document.getElementById('submit-btn').addEventListener('click', function() {
+    const form = document.getElementById('add-offer-form');
+    const formData = new FormData(form);
+
+    fetch("{% url 'add_product_offer' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'), // CSRF Token header
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);  // Show success message
+            window.location.reload();  // Reload or redirect to another page
+        } else {
+            alert(data.error.join('\n'));  // Fix typo from 'errors' to 'error' in the response
+        }
+    })
+    .catch(error => {
+        alert('An error occurred. Please try again.');
+        console.error(error);
+    });
+});
+
+</script>
+{% endblock %}

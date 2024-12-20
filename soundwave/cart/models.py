@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import CustomUser
-from products.models import Product,Variant
+from products.models import Variant
 
 # Create your models here.
 
@@ -35,3 +35,11 @@ class Cartitem(models.Model):
     def total_price(self):
         return self.quantity * self.variant.product.price
     
+
+class Wishlist(models.Model):
+    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    variant=models.ForeignKey(Variant,on_delete=models.CASCADE)
+    add_on=models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"user{self.user.username}'s wishlist items:{self.variant.product.name}"

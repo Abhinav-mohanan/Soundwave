@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 
 User=get_user_model
 
-#======================category session=====================# 
+#======================category  sectionn=====================# 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def add_category(request):
@@ -20,6 +20,10 @@ def add_category(request):
         name=request.POST.get('name')
         description=request.POST.get('description')
         image=request.FILES.get('image')
+        category_exists=Category.objects.filter(name__iexact=name).exists()
+        if category_exists:
+            messages.error(f'The category {name} is already exists')
+            return redirect('list_category')
         if name:
             Category.objects.create(
                 name=name,
@@ -79,10 +83,10 @@ def unlist_category(request,id):
     category.save()
     return redirect('list_category')
 
-#======================Category session End=====================# 
+#======================Category  section End=====================# 
 
 
-#======================Sub_category session=====================# 
+#======================Sub_category  section=====================# 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def add_subcategory(request,id):
@@ -142,15 +146,20 @@ def edit_subcategory(request,id):
             return redirect('view_subcategory',id=category.id)
     return render(request,'admin/edit_subcategory.html',{'subcategory':subcategory,'category':category})
 
-#======================Sub_category session End=====================# 
+#======================Sub_category section End=====================# 
 
 
-#======================Brand session=====================# 
+#======================Brand section=====================# 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def add_brand(request):
     if request.method=='POST':
         name=request.POST.get('name')
+        name_exists=Brand.objects.filter(name__iexact=name)
+        if name_exists:
+            messages.error(request,f'The brand {name} is already exists')
+            return redirect('list_brand')
+        
         if name:
             Brand.objects.create(name=name)
             messages.success(request,'Brand added successfully!')
@@ -380,13 +389,13 @@ def edit_variant(request,id):
                 return redirect('edit_variant',id=variant.id)
         except ValueError:
             messages.error(request,'Stock quantity must be a valid number')
-            return redirect('edit_variatn',id=variant.id)
+            return redirect('edit_variatnt',id=variant.id)
 
-        image1=request.FILES.get('image1')
-        image2=request.FILES.get('image2')
-        image3=request.FILES.get('image3')
+        image1=request.FILES.get('image1',variant.image1)
+        image2=request.FILES.get('image2',variant.image2)
+        image3=request.FILES.get('image3',variant.image3)
 
-        variant_exists=Variant.objects.filter(color__iexact=color).exclude(id=product.id).exists()
+        variant_exists=Variant.objects.filter(product=product,color__iexact=color).exclude(id=variant.id).exists()
         if variant_exists:
             messages.error(request,f'The variant {color} is already exists')
         else:
@@ -400,6 +409,24 @@ def edit_variant(request,id):
             return redirect('list_variant',id=product.id)
 
     return render(request,'admin/edit_variant.html',{'variant':variant})
+
+
+@never_cache
+@user_passes_test(lambda u:u.is_superuser)
+def activate_variant(request,variant_id):
+    variant=get_object_or_404(Variant,id=variant_id)
+    variant.is_listed=True
+    variant.save()
+    return redirect('list_variant',id=variant.product.id)
+
+@never_cache
+@user_passes_test(lambda u:u.is_superuser)
+def deactivate_variant(request,variant_id):
+    variant=get_object_or_404(Variant,id=variant_id)
+    variant.is_listed=False
+    variant.save()
+    return redirect('list_variant',id=variant.product.id)
+
 
 #======================Variant session End=====================# 
 

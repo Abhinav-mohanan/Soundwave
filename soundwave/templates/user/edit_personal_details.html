@@ -76,61 +76,54 @@
         background-color: #5a6268;
     }
 
-    /* Error Message Styles */
-    .error-message {
-        color: #ff0000;
-        font-size: 14px;
-        margin-top: 5px;
-    }
 </style>
+<form method="POST">
+    {% csrf_token %}
 
-<!-- Edit User Information Form -->
-<div class="form-section user-info">
-    <h2>Edit Personal and Contact Information</h2>
-    <form method="POST">
-        {% csrf_token %}
-        
-        <!-- First Name -->
-        <div class="form-group">
-            <label for="first-name">First Name</label>
-            <input type="text" id="first-name" name="first_name" value="{{ user.first_name }}" class="form-control">
-            {% if errors.first_name %}
-                <p class="error-message">{{ errors.first_name }}</p>
-            {% endif %}
-        </div>
+    <!-- First Name -->
+    <div class="form-group">
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" name="first_name" value="{{ first_name|default:user.first_name }}" class="form-control">
+        {% if errors.first_name %}
+            <p class="error-message" style="color: red;">{{ errors.first_name }}</p>
+        {% endif %}
+    </div>
 
-        <!-- Last Name -->
-        <div class="form-group">
-            <label for="last-name">Last Name</label>
-            <input type="text" id="last-name" name="last_name" value="{{ user.last_name }}" class="form-control">
-            {% if errors.last_name %}
-                <p class="error-message">{{ errors.last_name }}</p>
-            {% endif %}
-        </div>
+    <!-- Last Name -->
+    <div class="form-group">
+        <label for="last-name">Last Name</label>
+        <input type="text" id="last-name" name="last_name" value="{{ last_name|default:user.last_name }}" class="form-control">
+        {% if errors.last_name %}
+            <p class="error-message" style="color: red;">{{ errors.last_name }}</p>
+        {% endif %}
+    </div>
 
-        <!-- Email -->
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
-            {% if errors.email %}
-                <p class="error-message">{{ errors.email }}</p>
-            {% endif %}
-        </div>
+    <!-- Email -->
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" value="{{ email|default:user.email }}" class="form-control">
+        {% if errors.email %}
+            <p class="error-message" style="color: red;">{{ errors.email }}</p>
+        {% endif %}
+        {% if errors.email_exists %}
+            <p class="error-message" style="color: red;">{{ errors.email_exists }}</p>
+        {% endif %}
+    </div>
 
-        <!-- Mobile Number -->
-        <div class="form-group">
-            <label for="phone">Mobile Number</label>
-            <input type="tel" id="phone" name="phone_number" value="{{ user.phone_number }}" class="form-control">
-            {% if errors.phone_number %}
-                <p class="error-message">{{ errors.phone_number }}</p>
-            {% endif %}
-        </div>
+    <!-- Mobile Number -->
+    <div class="form-group">
+        <label for="phone">Mobile Number</label>
+        <input type="tel" id="phone" name="phone_number" value="{{ phone_number|default:user.phone_number }}" class="form-control">
+        {% if errors.phone_number %}
+            <p class="error-message" style="color: red;">{{ errors.phone_number }}</p>
+        {% endif %}
+    </div>
 
-        <!-- Submit Button -->
-        <div class="form-group text-end">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-        <a href="{% url 'user_account' %}" class="btn btn-secondary">Cancel</a>
-    </form>
-</div>
+    <!-- Submit Button -->
+    <div class="form-group text-end">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+    <a href="{% url 'user_account' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
 {% endblock %}

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages 
 from django.contrib.auth.models import User
 from user.models import CustomUser
-from django.contrib.auth.decorators import login_required,user_passes_test
+from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.cache import never_cache
 from products.models import Category,Brand,Product,Variant
 from django.contrib.auth import get_user_model

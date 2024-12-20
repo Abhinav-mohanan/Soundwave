@@ -1,0 +1,173 @@
+{% extends 'admin/navbar.html' %}
+{% block content %}
+<style>
+  .wrap-text {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    max-width: 200px !important;
+  }
+
+  /* Custom modal style */
+  .error-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    width: 400px;
+  }
+
+  .error-modal-content {
+    padding: 20px;
+    background: #222;
+    border-radius: 8px;
+    border: 2px solid #d9534f;
+  }
+
+  .error-modal h4 {
+    font-size: 18px;
+  }
+
+  .error-modal ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .error-modal li {
+    margin: 5px 0;
+  }
+
+  .error-modal button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .error-modal button:hover {
+    background-color: #c9302c;
+  }
+</style>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">Edit Coupon</h3>
+      <a href="{% url 'view_coupons' %}">
+        <button class="btn btn-primary btn-icon-text" id="back-btn">
+          <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
+        </button>
+      </a>
+    </div>
+
+    <div class="card dark-theme">
+      <div class="card-body">
+        <form id="editCouponForm" method="post" action="{% url 'edit_coupons' coupon.coupon_id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="code">Coupon Code</label>
+            <input type="text" class="form-control" id="code" name="code" required value="{{ coupon.code }}" placeholder="Enter Coupon Code">
+          </div>
+
+          <div class="form-group">
+            <label for="description">Coupon Description</label>
+            <input type="text" class="form-control" id="description" name="description" required value="{{ coupon.description }}" placeholder="Enter Coupon Description">
+          </div>
+
+          <div class="form-group">
+            <label for="coupon_type">Coupon Type</label>
+            <select class="form-control" id="coupon_type" name="coupon_type" required>
+              <option value="fixed" {% if coupon.coupon_type == "fixed" %}selected{% endif %}>Fixed Discount</option>
+              <option value="percentage" {% if coupon.coupon_type == "percentage" %}selected{% endif %}>Percentage Discount</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="discount_amount">Discount Amount</label>
+            <input type="number" class="form-control" id="discount_amount" name="discount_amount" required step="0.01" value="{{ coupon.discount_amount }}" placeholder="Enter Discount Amount">
+          </div>
+
+          <div class="form-group">
+            <label for="min_purchase_amount">Minimum Purchase Amount (₹)</label>
+            <input type="number" class="form-control" id="min_purchase_amount" name="min_purchase_amount" required step="0.01" value="{{ coupon.min_purchase_amount }}" placeholder="Enter Minimum Purchase Amount">
+          </div>
+
+          <div class="form-group">
+            <label for="valid_from">Valid From</label>
+            <input type="date" class="form-control" id="valid_from" name="valid_from" required value="{{ coupon.valid_from|date:'Y-m-d' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="valid_to">Valid To</label>
+            <input type="date" class="form-control" id="valid_to" name="valid_to" required value="{{ coupon.valid_to|date:'Y-m-d' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="usage_limit">Usage Limit</label>
+            <input type="number" class="form-control" id="usage_limit" name="usage_limit" required value="{{ coupon.usage_limit }}" placeholder="Enter Usage Limit">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div id="errorModal" class="error-modal">
+  <div class="error-modal-content">
+    <h4>The following errors occurred:</h4>
+    <ul id="errorList"></ul>
+    <button id="closeModal">OK</button>
+  </div>
+</div>
+
+<script>
+document.getElementById('editCouponForm').addEventListener('submit', function(event) {
+  event.preventDefault(); 
+
+  var formData = new FormData(this); 
+
+  fetch("{% url 'edit_coupons' coupon.coupon_id %}", {
+    method: "POST",
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert("Coupon updated successfully");
+      window.location.href = "{% url 'view_coupons' %}"; // Redirect to the list of coupons
+    } else {
+      var errorMessages = '';
+      if (data.errors && data.errors.length > 0) {
+        errorMessages = '';
+        data.errors.forEach(function(error) {
+          errorMessages += '<li>' + error + '</li>';
+        });
+
+        document.getElementById('errorList').innerHTML = errorMessages;
+        document.getElementById('errorModal').style.display = 'block';
+      }
+    }
+  })
+  .catch(error => {
+    alert("Something went wrong, please try again.");
+  });
+});
+
+// Close modal when clicking the OK button
+document.getElementById('closeModal').addEventListener('click', function() {
+  document.getElementById('errorModal').style.display = 'none';
+});
+</script>
+
+{% endblock %}

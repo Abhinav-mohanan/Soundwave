@@ -12,6 +12,7 @@ from datetime import datetime,timedelta
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from.validators import validate_first_name,validate_last_name,validate_email,validate_password,validate_username,validate_phone
+from offer.models import Brand_offer,Product_offer
 
 
 # Create your views here.
@@ -209,7 +210,7 @@ def homepage(request):
     categories=Category.objects.all()
     hero_product=Product.objects.filter(is_listed=True).order_by('-created_at').first()
     featured_products = Product.objects.filter(is_listed=True).prefetch_related('variants').order_by('-created_at')
-    new_arrivals=Product.objects.prefetch_related('variants').order_by('created_at')[:5]    
+    new_arrivals=Product.objects.filter(is_listed=True).prefetch_related('variants').order_by('created_at')[:5]    
 
     return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals,
                                                'categories':categories,'hero_product':hero_product})
@@ -220,8 +221,10 @@ def homepage(request):
 #======================Products_page session=====================# 
 @never_cache
 def product_page(request):
+
     products = Product.objects.filter(is_listed=True).prefetch_related('variants')
 
+    filter_applied=False
 
     category_id = request.GET.get('category')
     if category_id:
@@ -231,7 +234,7 @@ def product_page(request):
     if search_query:
         products=products.filter(name__icontains=search_query)
 
-    price_filter = request.GET.get('price')
+    price_filter = request.GET.get('price') 
     if price_filter:
         if price_filter == "under_50000":
             products = products.filter(price__gte=30000,price__lte=50000)
@@ -239,14 +242,26 @@ def product_page(request):
             products = products.filter(price__gte=10000, price__lte=30000)
         elif price_filter == "above_50000":
             products = products.filter(price__gt=50000)
+        filter_applied=True
 
     color_filter = request.GET.get('color')
     if color_filter:
         products = products.filter(variants__color__iexact=color_filter, variants__is_listed=True, variants__stock__gt=0)
+        filter_applied=True
+
+    sort_filter=request.GET.get('sort')
+    if sort_filter =='asc':
+        products=products.order_by('name')
+        filter_applied=True
+       
+    elif sort_filter=='desc':
+        products=products.order_by('-name')
+        filter_applied=True
+    
     products = products.distinct()
     selected_category = Category.objects.filter(id=category_id).first() if category_id else None
 
-    return render(request, 'user/product_list.html', {'products': products,'selected_category': selected_category,'search_query':search_query})
+    return render(request, 'user/product_list.html', {'products': products,'selected_category': selected_category,'search_query':search_query,'filter_applied':filter_applied})
 
 
 
@@ -255,10 +270,51 @@ def product_page(request):
 
 #======================Product_details session=====================# 
 @never_cache
-def details_pro(request,product_id,variant_id):
+def product_detail(request,product_id,variant_id):
     product=get_object_or_404(Product,id=product_id,is_listed=True)
-    variants=get_object_or_404(Variant,id=variant_id,product=product)
-    return render(request,'user/product_info.html',{'variants':variants,'product':product})
+    variants=get_object_or_404(Variant,id=variant_id,product=product,is_listed=True)
+    all_variant=Variant.objects.filter(product=product)
+    
+    current_date =now().date()
+    
+    product_offer =Product_offer.objects.filter(
+        product=product,
+        started_date__lte=current_date,
+        end_date__gte=current_date,
+        status=True
+    ).first()
+
+    brand_offer=Brand_offer.objects.filter(
+        brand=product.brand,
+        started_date__lte=current_date,
+        end_date__gte=current_date,
+        status=True
+    ).first()
+    product_discount_price=None
+    brand_discount_price=None
+
+    if product_offer:
+        product_discount_price=round(product.price * (1-(product_offer.offer_percentage/100)),0)
+    
+    if brand_offer:
+        brand_discount_price =round(product.price * (1- (brand_offer.offer_percentage/100)),0)
+
+    if product_discount_price is not None and brand_discount_price is not None:
+        final_discount_price=float(min(product_discount_price,brand_discount_price))
+        active_offer = product_offer if product_discount_price < brand_discount_price else brand_offer 
+    elif product_discount_price is not None:
+        final_discount_price=float(product_discount_price)
+        active_offer=product_offer
+    elif brand_discount_price is not None:
+        final_discount_price = float(brand_discount_price)
+        active_offer = brand_offer
+    else:
+        final_discount_price=product.price
+        active_offer =None
+
+    return render(request,'user/product_info.html',{'variants':variants,'product':product,
+                                                    'all_variant':all_variant,'final_discount_price':final_discount_price,
+                                                    'active_offer':active_offer})
 
 #======================Product_details session End=====================# 
 

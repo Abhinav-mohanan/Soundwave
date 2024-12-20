@@ -1,178 +1,199 @@
 {% extends 'user/navbar.html' %}
 {% load static %}
 {% block content %}
-
 <style>
-    .container {
-        padding: 20px; 
+    .container-fluid {
+        padding: 50px 20px;
+        background-color: #f4f4f4;
     }
 
-   
-    .zoom-container {
-        position: relative;
-        overflow: hidden;
-        padding: 20px; 
-    }
-
-   
-    .product-image {
-        width: 100%;
-        height: auto;
-        transition: transform 0.2s ease;
-    }
-
-    
-    .zoom-result {
-        position: absolute;
-        border: 1px solid #d4d4d4;
-        background-color: rgba(255, 255, 255, 0.6);
-        display: none;
-        z-index: 10;
-        cursor: none;
-        width: 120px; 
-        height: 120px; 
-        border-radius: 5px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); 
-    }
-
- 
-    .product_details {
-        padding-left: 25px;
-        padding-right: 30px;
-        padding-bottom: 30px;
-    }
-
-   
     .product-info {
-        padding-left: 25px;
-        padding-right: 30px;
-        padding-top: 20px; 
-        background-color: whitesmoke;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+        max-width: 100%;
+        margin: 0 auto;
     }
 
-   
-    .mtext-106 {
-        font-size: 24px;
-        font-weight: bold;
+    .product-info h4 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
     }
 
-    .stext-102 {
-        margin-top: 10px;
+    .product-info .mtext-106 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .product-info .stext-102 {
         font-size: 16px;
         color: #555;
+        line-height: 1.6;
+        margin-bottom: 20px;
     }
 
+    .product-info .available-variants {
+        margin-top: 20px;
+    }
 
+    .variant-thumb {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+        border-radius: 5px;
+        background-size: cover;
+        border: 2px solid transparent;
+        transition: border-color 0.3s ease;
+    }
+
+    .variant-thumb:hover {
+        border-color: #007bff;
+    }
 
     .btn-addcart-detail {
         background-color: #28a745;
         color: white;
-        padding: 12px 25px;
+        padding: 14px 30px;
         border-radius: 5px;
         font-size: 18px;
         cursor: pointer;
-    }
-
-    
-    .zoom-result:hover {
-        background-color: rgba(255, 255, 255, 0.8); 
-    }
-
-    
-    .reviews-section {
+        width: 100%;
         margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-addcart-detail:hover {
+        background-color: #218838;
+    }
+
+    .reviews-section {
+        margin-top: 30px;
         padding: 20px;
-        background-color: #f8f8f8;
-        border-radius: 5px;
-        margin-top: 30px; 
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .reviews-section h4 {
         font-size: 24px;
-        font-weight: bold;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
     }
 
     .reviews-section p {
         font-size: 16px;
         color: #555;
     }
-    .bg1{
-        background-color: black ;
-    }
-    .bg1:hover{
-        background-color: rgb(9, 71, 91);
-    }
     a{
         text-decoration: none;
     }
+
 </style>
+
 <div class="container-fluid">
-<div class="row">
+    <div class="row">
 
-    <div class="col-md-6 col-lg-7 p-b-30 product_details">
-        <div class="wrap-slick3 flex-sb flex-w">
-            <div class="wrap-slick3-dots mt-5"></div>
-            <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+        <!-- Product Info Section -->
+        <div class="col-md-6 col-lg-7 p-b-30 product-details">
+            <div class="wrap-slick3 flex-sb flex-w">
+                <div class="wrap-slick3-dots mt-5"></div>
+                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
-            <div class="slick3 gallery-lb">
-                <div class="item-slick3" data-thumb="{{ variants.image1.url }}">
-                    <div class="wrap-pic-w pos-relative zoom-container">
-                        <img src="{{ variants.image1.url }}" alt="{{ product.name }}" class="product-image">
+                <div class="slick3 gallery-lb">
+                    <div class="item-slick3" data-thumb="{{ variants.image1.url }}">
+                        <div class="wrap-pic-w pos-relative zoom-container">
+                            <img src="{{ variants.image1.url }}" alt="{{ product.name }}" class="product-image">
+                        </div>
                     </div>
-                </div>
 
-                <div class="item-slick3" data-thumb="{{ variants.image2.url }}">
-                    <div class="wrap-pic-w pos-relative zoom-container">
-                        <img src="{{ variants.image2.url }}" alt="{{ product.name }}" class="product-image">
+                    <div class="item-slick3" data-thumb="{{ variants.image2.url }}">
+                        <div class="wrap-pic-w pos-relative zoom-container">
+                            <img src="{{ variants.image2.url }}" alt="{{ product.name }}" class="product-image">
+                        </div>
                     </div>
-                </div>
 
-                <div class="item-slick3" data-thumb="{{ variants.image3.url }}">
-                    <div class="wrap-pic-w pos-relative zoom-container">
-                        <img src="{{ variants.image3.url }}" alt="{{ product.name }}" class="product-image">
+                    <div class="item-slick3" data-thumb="{{ variants.image3.url }}">
+                        <div class="wrap-pic-w pos-relative zoom-container">
+                            <img src="{{ variants.image3.url }}" alt="{{ product.name }}" class="product-image">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    
-    <div class="col-md-6 col-lg-5 p-b-30 product-info">
-        <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-            {{ product.name }} - {{ variants.color }}
-        </h4>
+        <!-- Product Detail Section -->
+        <div class="col-md-6 col-lg-5 p-b-30 product-info">
+            <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                {{ product.name }} - {{ variants.color }}
+            </h4>
 
-        <span class="mtext-106 cl2">
-            ₹{{ product.price }}
-        </span>
+            
+            <strong>Price:</strong>
+            {% if active_offer %}
+                <span style="text-decoration: line-through;">
+                    ₹{{ product.price }}
+                </span>
+                <span class="mtext-106 cl2" style="text-decoration:none;">
+                    ₹{{ final_discount_price }}
+                </span>
+                <small> (You save {{ active_offer.offer_percentage }}%) </small>
+                <br>
+                <small>{{ active_offer.offer_details }}</small>
+            {% else %}
+                <span class="mtext-106">₹{{ product.price }}</span>
+            {% endif %}
+            
 
-        <p class="stext-102 cl3 p-t-23">
-            {{ product.description }}
-        </p>
+            <p class="stext-102 cl3 p-t-23">
+                {{ product.description }}
+            </p>
 
-        <span style="font-size: large">{{ product.feature }}</span>
-        <br>
-
-        <span style="font-size: large">{{ variants.color }}</span>
-
-        <div class="flex-w flex-r-m p-b-10">
-            <div class="size-204 flex-w flex-m respon6-next">
-               
-                <a href="{% url 'add_to_cart' variants.id %}">
-                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                        Add to Cart
-                    </button>
-                </a>
+            <div class="product-features">
+                <span style="font-size: large">{{ product.feature }}</span>
+                <br>
+                <span style="font-size: large">{{ variants.color }}</span>
+                <br>
+                <span>Available quantity</span>
+                <br>
+                <span style="font-size: large">{{ variants.stock }}</span>
             </div>
+
+            <div class="available-variants">
+                <span style="font-size: 18px; color: #333;">Available variants:</span>
+                <br>
+                {% for variant in all_variant %}
+                        <a href="{% url 'product_details' variant.product.id variant.id %}">
+                            <span class="variant-thumb" style="display: inline-block; width: 50px; height: 50px; background-image: url('{{ variant.image1.url }}'); background-size: cover;">
+                            </span>
+                        </a>
+                    </a>
+                {% endfor %}
+            </div>
+           {% if variants.stock > 0 %}
+            <a href="{% url 'add_to_cart' variants.id %}">
+                <button class="btn-addcart-detail">
+                    Add to Cart
+                </button>
+            </a>
+            {% else %}
+            <button class="btn-addcart-detail" onclick="showOutofstockmessage()"> Out of stock </button>
+            {% endif %}
         </div>
+
     </div>
-</div>
 </div>
 
 <!-- Reviews Section -->
 <div class="reviews-section">
-    <h4>Reviews</h4>
-    <p>No reviews available now.</p>
+    <h4>Customer Reviews</h4>
+    <p>No reviews available at the moment.</p>
 </div>
 
 <script>
@@ -205,7 +226,9 @@
             zoomResult.style.display = 'none';
         });
     });
+    function showOutofstockmessage(){
+        alert("Sorry,this product is currently out of stock")
+    }
 </script>
 
 {% endblock %}
-
