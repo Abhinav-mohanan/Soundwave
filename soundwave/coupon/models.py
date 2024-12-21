@@ -24,23 +24,6 @@ class Coupon(models.Model):
     created_at = models.DateField(auto_now_add=True)
     usage_count = models.PositiveIntegerField(default=0)
 
-    def __str__(self):
-        return f'Coupon {self.code} ({self.get_coupon_type_display()} - {self.discount_amount})'
-
-    def is_valid(self):
-        now = timezone.now().date()
-        return self.is_active and self.valid_from <= now <= self.valid_to
-
-    def can_use(self):
-        return self.usage_count < self.usage_limit
-
-    def calculate_discount(self, total_amount):
-        if self.coupon_type == self.FIXED:
-            return min(self.discount_amount, total_amount)
-        
-        elif self.coupon_type == self.PERCENTAGE:
-            return (self.discount_amount / 100) * total_amount
-        return 0
 
 class Couponusage(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)

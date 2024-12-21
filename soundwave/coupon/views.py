@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import user_passes_test,login_required
 from django.views.decorators.cache import never_cache
 from django.utils.timezone import now
 from cart.models import Cart,Cartitem
+from offer.models import Brand_offer,Product_offer
+from django.utils.timezone import now
 
 # Create your views here.
 
@@ -86,62 +88,102 @@ def deactivate_coupon(request,coupon_id):
 
 
 #=================Coupon Managment End===================#
-
-
 @never_cache
 def apply_coupon(request):
     if request.user.is_authenticated:
         user = request.user
-        cart=get_object_or_404(Cart,user=user)
-        cart_items=Cartitem.objects.filter(cart=cart)
+        cart = get_object_or_404(Cart, user=user)
+        cart_items=Cartitem.objects.filter(cart=cart) 
+
         for cart_item in cart_items:
             variant=cart_item.variant
             product=variant.product
-            
-            discount_price=product.price
-            cart_item.variant.product.price =discount_price
+
+            product_offer=Product_offer.objects.filter(
+                product=product,
+                started_date__lte=now().date(),
+                end_date__gte=now().date(),
+                status=True
+            ).first()
+
+            brand_offer=Brand_offer.objects.filter(
+                brand=product.brand,
+                started_date__lte=now().date(),
+                end_date=now().date(),
+                status=True
+            ).first()
+
+            product_discount_price=None
+            brand_discount_price=None
+
+            if product_offer:
+                product_discount_price=(product.price * (1-(product_offer.offer_percentage)))
+            else:
+                brand_discount_price=(product.price * (1-(brand_offer.offer_percentage)))
+
+            if product_discount_price is not None and brand_discount_price is not None:
+                final_discount_price=min(product_discount_price,brand_discount_price)
+
+            elif product_offer is not None:
+                final_discount_price=product_discount_price
+
+            elif brand_offer is not None:
+                final_discount_price = brand_discount_price
+
+            else:
+                final_discount_price = product.price
+
+            final_discount_price=round(final_discount_price,0)
+
+            cart_item.variant.product.price=final_discount_price
+
         if request.method == 'POST':
-            code= request.POST.get('coupon_code','').strip()
+            code = request.POST.get('coupon_code', '').strip()
             try:
                 coupon = Coupon.objects.get(code__iexact=code)
-            
-                if not coupon.is_valid():
+                current_date = now().date()
+                if not (coupon.is_active and coupon.valid_from <= current_date <= coupon.valid_to):
                     return JsonResponse({'success': False, 'message': 'Coupon is not valid or expired.'})
-
+                
                 if Couponusage.objects.filter(user=user, coupon=coupon).exists():
                     return JsonResponse({'success': False, 'message': 'Coupon already used.'})
 
-                if not coupon.can_use():
+                if coupon.usage_count >= coupon.usage_limit:
                     return JsonResponse({'success': False, 'message': 'Coupon usage limit exceeded.'})
+                total_amount=sum(item.total_price for item in cart_items)
+                print(total_amount,'fghj')
 
-                total_amount = cart.total_price
                 if total_amount < coupon.min_purchase_amount:
                     return JsonResponse({'success': False, 'message': 'Total amount does not meet the minimum purchase requirement.'})
 
-                discount = coupon.calculate_discount(total_amount)
+               
+                if coupon.coupon_type == 'fixed':
+                    discount = min(coupon.discount_amount, total_amount)
+                elif coupon.coupon_type == 'percentage':
+                    discount = total_amount * (coupon.discount_amount / 100)
+                else:
+                    discount = 0
+
                 discount_total = total_amount - discount
 
                 Couponusage.objects.create(user=user, coupon=coupon)
                 coupon.usage_count += 1
                 coupon.save()
 
-                print(discount_total)
-
+                
                 return JsonResponse({
                     'success': True,
-                    'message': f'Coupon applied. You saved ₹{discount:.2f}',
+                    'message': f'Coupon applied. You saved ₹{discount:.2f}.',
                     'discount_total': f'{discount_total:.2f}'
                 })
 
             except Coupon.DoesNotExist:
-                print("Coupon not found.")
                 return JsonResponse({'success': False, 'message': 'Invalid coupon code.'})
 
             except Exception as e:
-                print("Error:", str(e))  
-                return JsonResponse({'success': False, 'message': 'An error occurred. Please try again.'})
+                return JsonResponse({'success': False, 'message': f'An error occurred: {str(e)}'})
 
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request or authentication required.'})
 
 
                                     

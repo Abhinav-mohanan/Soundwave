@@ -1,0 +1,156 @@
+{% extends 'user/user_accounts_base.html' %}
+
+{% block content %}
+
+<style>
+    .wallet-container {
+        background-color: #40414f; /* ChatGPT background color */
+        border-radius: 8px;
+        padding: 40px 20px;
+        color: #d9d9e3; /* Light text for contrast */
+    }
+
+    .wallet-container h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        color: #f0f0f0;
+    }
+
+    .wallet-summary {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .wallet-summary h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #f0f0f0;
+    }
+
+    .wallet-summary h3 {
+        font-size: 2.5rem;
+        color: #10a37f;
+        font-weight: bold;
+    }
+
+    .nav-tabs {
+        border-bottom: 2px solid #10a37f;
+        justify-content: center;
+    }
+
+    .nav-tabs .nav-link {
+        color: #d9d9e3;
+        font-size: 1rem;
+        margin-right: 10px;
+        padding: 10px 20px;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #10a37f;
+        background-color: #303339;
+        border: 2px solid #10a37f;
+    }
+
+    .transaction-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
+        background-color: #303339;
+        height: auto;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .transaction-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .transaction-card h5 {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #f0f0f0;
+    }
+
+    .transaction-card p {
+        font-size: 1rem;
+        color: #d9d9e3;
+    }
+
+    .transaction-card .transaction-amount {
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .wallet-container .nav-tabs {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<h1 class="mb-4">My Wallet</h1>
+<div class="wallet-container container py-5">
+    <!-- Wallet Summary -->
+    <div class="wallet-summary">
+        <h2>Total Balance</h2>
+        <h3>₹{{ wallet_balance }}</h3>
+    </div>
+
+    <!-- Tabs for Credit/Debit -->
+    <ul class="nav nav-tabs" id="walletTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="credit-tab" data-bs-toggle="tab" data-bs-target="#credit" type="button" role="tab" aria-controls="credit" aria-selected="true">Credit History</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="debit-tab" data-bs-toggle="tab" data-bs-target="#debit" type="button" role="tab" aria-controls="debit" aria-selected="false">Debit History</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4">
+        <!-- Credit History -->
+        <div class="tab-pane fade show active" id="credit" role="tabpanel" aria-labelledby="credit-tab">
+            {% if credit_transactions %}
+                <div class="row g-4">
+                    {% for transaction in credit_transactions %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="transaction-card">
+                                <h5>{{ transaction.date }}</h5>
+                                <p>Amount: ₹{{ transaction.amount }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h3 class="text-secondary">No credit transactions found.</h3>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Debit History -->
+        <div class="tab-pane fade" id="debit" role="tabpanel" aria-labelledby="debit-tab">
+            {% if debit_transactions %}
+                <div class="row g-4">
+                    {% for transaction in debit_transactions %}
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="transaction-card">
+                                <h5>12-2-2929</h5>
+                                <p>Amount: ₹22</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h3 class="text-secondary">No debit transactions found.</h3>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

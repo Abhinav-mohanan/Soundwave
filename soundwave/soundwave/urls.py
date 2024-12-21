@@ -30,6 +30,7 @@ urlpatterns = [
     path('',include('orders.urls')),
     path('',include('offer.urls'),),
     path('',include('coupon.urls')),
+    path('',include('wallet.urls')),
 
 ]
 

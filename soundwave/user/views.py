@@ -274,6 +274,8 @@ def product_detail(request,product_id,variant_id):
     product=get_object_or_404(Product,id=product_id,is_listed=True)
     variants=get_object_or_404(Variant,id=variant_id,product=product,is_listed=True)
     all_variant=Variant.objects.filter(product=product)
+    images = [variants.image1, variants.image2, variants.image3]
+
     
     current_date =now().date()
     
@@ -314,7 +316,7 @@ def product_detail(request,product_id,variant_id):
 
     return render(request,'user/product_info.html',{'variants':variants,'product':product,
                                                     'all_variant':all_variant,'final_discount_price':final_discount_price,
-                                                    'active_offer':active_offer})
+                                                    'active_offer':active_offer,'images':images})
 
 #======================Product_details session End=====================# 
 

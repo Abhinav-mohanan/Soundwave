@@ -9,8 +9,8 @@
     }
 </style>
 <div class="col-md-3">
-    <div class="card border-0 shadow-sm position-relative" style="width: 100%; max-width: 300px;">
-        <div class="position-relative overflow-hidden" style="height: 250px;">
+    <div class="card border-0 shadow-sm position-relative" style="width: 100%; max-width: 300px; color: white;background-color: #2E2E2E;">
+        <div class="position-relative overflow-hidden" style="height: 280px;">
 
            
             <img src="{{ variant.image1.url }}" class="card-img-top rounded product-image" alt="Product Image" style="object-fit: cover; height: 100%; width: 100%;">
@@ -29,7 +29,7 @@
 
         <div class="card-body" style="padding: 15px;">
           
-            <h6 class="card-title text-muted text-start" style="font-size: 16px; line-height: 1.3;">{{ product.name }}</h6>
+            <h6 class="card-title text-muted text-start" style="font-size: 16px; line-height: 1.3; ">{{ product.name }}</h6>
 
           
             <div class="rating text-start mb-2">
@@ -42,7 +42,7 @@
             <a href="{% url 'add_to_cart' variant.id %}">
             <div class="text-start">
                 <span class="cart-icon">
-                    <i class="fa fa-shopping-cart text-secondary" style="font-size: 24px; cursor: pointer;"></i>
+                    <i class="fa fa-shopping-cart text-light" style="font-size: 24px; cursor: pointer;"></i>
                 </span>
             </div>
             </a>

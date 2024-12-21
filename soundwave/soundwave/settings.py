@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'orders',
     'offer',
     'coupon',
+    'wallet',
 
 ]
 
@@ -190,4 +191,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'  # Require email verification
 ACCOUNT_EMAIL_REQUIRED = True               # Email is required for signup
 LOGIN_REDIRECT_URL = 'home'  
 LOGOUT_REDIRECT_URL = 'user_login'
+
+RAZORPAY_KEY_ID = "rzp_test_8degI8ZhQTI0jn"
+RAZORPAY_KEY_SECRET = "on9NKf4PcRtSUtgOmav08xJC"
+
 

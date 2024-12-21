@@ -1,0 +1,53 @@
+<!-- razorpay_payment.html -->
+<div class="container">
+    <h2>Razorpay Payment</h2>
+    <p>Total: ₹{{ total }}</p>
+
+    <form action="{% url 'verify_payment' %}" method="POST" id="razorpay-payment-form">
+        {% csrf_token %}
+        <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order_id }}">
+        <input type="hidden" name="total" value="{{ total }}">
+        <button type="submit" id="razorpay-button">Pay Now</button>
+    </form>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "{{ razorpay_key_id }}", // Your Razorpay Key ID
+        "amount": "{{ total|floatformat:2 }}", // Total amount in INR
+        "currency": "INR",
+        "order_id": "{{ razorpay_order_id }}", // Order ID
+        "handler": function (response) {
+            var form = document.getElementById('razorpay-payment-form');
+            var payment_id = response.razorpay_payment_id;
+            var order_id = response.razorpay_order_id;
+            var signature = response.razorpay_signature;
+
+            form.appendChild(createHiddenInput('razorpay_payment_id', payment_id));
+            form.appendChild(createHiddenInput('razorpay_order_id', order_id));
+            form.appendChild(createHiddenInput('razorpay_signature', signature));
+
+            form.submit();
+        },
+        "prefill": {
+            "name": "{{ user.username }}",
+            "email": "{{ user.email }}",
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+
+    document.getElementById('razorpay-button').onclick = function (e) {
+        e.preventDefault();
+        rzp1.open();
+    };
+
+    function createHiddenInput(name, value) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        return input;
+    }
+</script>

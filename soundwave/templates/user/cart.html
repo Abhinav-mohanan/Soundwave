@@ -185,9 +185,10 @@
     }
 </style>
 
-<div style="height: 100vh;">
-    <div class="container">
-        <h1>Shopping Cart</h1>
+
+    <div class="container-fluid" style="height: 100vh;">
+        <div class="row">
+        <h1 class="text-white">Shopping Cart</h1>
         <div class="cart-container">
             <div class="cart-items">
                 {% csrf_token %}
@@ -238,6 +239,7 @@
                 {% endif %}
             </div>
         </div>
+    </div>
     </div>
 </div>
 
