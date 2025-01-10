@@ -60,6 +60,8 @@ def update_cart_item(request, item_id):
 @never_cache
 @login_required(login_url='user_login')
 def cart_detail(request):
+    if 'applied_coupon_id' in request.session:
+        del request.session['applied_coupon_id']
     cart=get_object_or_404(Cart,user=request.user)
     cart_items=Cartitem.objects.filter(cart=cart)
 
@@ -120,6 +122,7 @@ def cart_detail(request):
 
 
 #=====================Wishlist managment=======================#
+@login_required(login_url='user_login')
 def add_wishlist(request,variant_id):
     variant=get_object_or_404(Variant,id=variant_id)
     wishlist,created=Wishlist.objects.get_or_create(user=request.user,variant=variant)

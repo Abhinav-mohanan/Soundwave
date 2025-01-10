@@ -5,114 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OTP Verification</title>
     <style>
-        /* General Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-image: url('headphone.jpg'); /* Replace with your headphone image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background: linear-gradient(135deg, #1e1e1e 0%, #292a2b 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
 
         .otp-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            backdrop-filter: blur(5px);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
         }
 
         .otp-box {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
 
-        .logo img {
-            height: 50px;
+        .logo h1 {
+            font-size: 42px;
+            color: #1e3c72;
+            font-family: 'Brush Script MT', cursive;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
         h1 {
-            font-size: 1.5rem;
-            color: #000;
-            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 500;
         }
 
         .otp-input-container {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .otp-input-container input {
             width: 100%;
-            height: 50px;
-            font-size: 1.5rem;
+            max-width: 200px;
+            height: 60px;
+            font-size: 24px;
+            letter-spacing: 8px;
             text-align: center;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.3s;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            margin: 0 auto;
         }
 
         .otp-input-container input:focus {
-            border-color: #d32f2f;
+            border-color: #1e3c72;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
         }
 
         .btn-verify {
-            background-color: #d32f2f;
+            width: 100%;
+            max-width: 200px;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 15px;
         }
 
         .btn-verify:hover {
-            background-color: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
         }
 
         .resend-otp {
-            display: block;
-            margin-top: 10px;
-            color: #d32f2f;
+            display: inline-block;
+            color: #1e3c72;
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: bold;
-            transition: color 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
         }
 
         .resend-otp:hover {
-            color: #b71c1c;
+            background: rgba(30, 60, 114, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .messages {
+            list-style: none;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .messages li {
+            color: #dc3545;
+            font-size: 14px;
         }
 
         footer {
-            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-align: center;
+            margin-top: 30px;
         }
 
         footer p {
-            font-size: 0.8rem;
-            color: #555;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
-        .error{
-            color: red;
-            font-size: 12px;
-            margin-top: 3px;
+
+        .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            text-align: center;
         }
-        .message{
-            color: red;
+
+        @media (max-width: 480px) {
+            .otp-box {
+                padding: 30px 20px;
+            }
+
+            .otp-input-container input {
+                font-size: 20px;
+                height: 50px;
+            }
         }
     </style>
 </head>
@@ -120,27 +159,28 @@
     <div class="otp-container">
         <div class="otp-box">
             <div class="logo">
-                <img src="logo.png" alt="Soundwave Logo"> <!-- Replace with your logo -->
+                <h1>SoundWave</h1>
             </div>
-            <h1>OTP Verification Code</h1>
+            <h1>OTP Verification</h1>
             <form method="post" action="{% url 'otp_validation' %}">
                 {% csrf_token %}
                 <div class="otp-input-container">
-                    <input type="text" name="otp" maxlength="4" required placeholder="Enter OTP">
+                    <input type="text" name="otp" maxlength="4" required placeholder="••••"
+                           pattern="\d{4}" title="Please enter a 4-digit code">
                 </div>
                 <button type="submit" class="btn-verify">Verify OTP</button>
             </form>
-            <a href="{% url 'resend_otp'%}" class="resend-otp">Resend OTP ?</a>
+            <a href="{% url 'resend_otp' %}" class="resend-otp">Resend OTP</a>
         </div>
         {% if messages %}
         <ul class="messages">
-          {% for message in messages %}
-          <li class="{{ message.tags }}">{{ message }}</li>
-          {% endfor %}
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
         </ul>
         {% endif %}
         <footer>
-            <p>© All rights reserved. Made by SOUNDWAVE</p>
+            <p>© 2024 SoundWave. All rights reserved.</p>
         </footer>
     </div>
 </body>

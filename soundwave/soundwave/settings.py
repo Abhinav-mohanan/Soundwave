@@ -100,11 +100,11 @@ WSGI_APPLICATION = 'soundwave.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'soundwave',
-        'USER': 'postgres',
-        'PASSWORD': '5202',
-        'HOST': 'localhost',
-        'PORT': '5433'
+        'NAME': os.getenv("NAME"),
+        'USER': os.getenv("USER"),
+        'PASSWORD': os.getenv("PASSWORD"),
+        'HOST': os.getenv("HOST"),
+        'PORT': os.getenv("PORT"),
     }
 }
 
@@ -133,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -148,8 +148,8 @@ STATICFILES_DIRS=[
     BASE_DIR/'static'
 ]
 
-MEDIA_URL='media/'
-MEDIA_ROOT=os.path.join(BASE_DIR/'media')
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -173,7 +173,7 @@ AUTHENTICATION_BACKENDS = (
 SOCICALACCOUNT_PROVIDES = {
     'google': {
         'APP': {
-            'client_id': os.getenv("client_id"),
+            'client_id':os.getenv("client_id"),
             'secret': os.getenv("secret"),
             'key':''
         }
@@ -182,17 +182,18 @@ SOCICALACCOUNT_PROVIDES = {
 
 
 
-# LOGIN_URL = 'login'
-# LOGOUT_URL = 'logout'
-# LOGIN_REDIRECT_URL = 'home'
-# ACCOUNT_LOGOUT_REDIRECT_URL = 'user_login'
 
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # Require email verification
-ACCOUNT_EMAIL_REQUIRED = True               # Email is required for signup
-LOGIN_REDIRECT_URL = 'home'  
-LOGOUT_REDIRECT_URL = 'user_login'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
-RAZORPAY_KEY_ID = "rzp_test_8degI8ZhQTI0jn"
-RAZORPAY_KEY_SECRET = "on9NKf4PcRtSUtgOmav08xJC"
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET = True
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+
 
 

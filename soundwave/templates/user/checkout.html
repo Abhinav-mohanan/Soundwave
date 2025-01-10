@@ -27,8 +27,8 @@
     }
 
     .card-header {
-        background-color: #007bff;
-        color: #fff;
+        background:transparent;
+        color: #0b0b0b;
         font-size: 20px;
         font-weight: bold;
         padding: 15px;
@@ -40,8 +40,8 @@
 
     /* Buttons */
     .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
+        background-color: #0b0b0b;
+        border-color: #0b0b0b;
         padding: 12px;
         font-size: 16px;
         font-weight: bold;
@@ -52,25 +52,20 @@
     }
 
     .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
+        background-color: #0d0d0e;
+        border-color: #050505;
     }
 
     .btn-add-address {
         background-color: transparent;
-        color: #007bff;
+        color: #030303;
         padding: 10px 20px;
         font-size: 16px;
         font-weight: bold;
-        border: 2px dashed #007bff;
+        border: 2px dashed #0a0a0a;
         border-radius: 8px;
         transition: all 0.3s ease;
         text-decoration: none;
-    }
-
-    .btn-add-address:hover {
-        background-color: #8ebaea;
-        color: #fff;
     }
 
     /* Address Styling */
@@ -149,7 +144,7 @@
     .coupons-section button {
         padding: 8px 16px;
         font-size: 14px;
-        background-color: #28a745;
+        background-color: #101010;
         color: white;
         border: none;
         border-radius: 5px;
@@ -168,42 +163,177 @@
             padding: 10px;
         }
     }
+    .form-check-input:checked{
+        background-color: #0b0b0b;
+        border-color: black;
+    }
+   
+    .coupon-card {
+        border: 1px solid #080808;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .coupon-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .coupon-card .card-body {
+        text-align: center;
+    }
+
+    .coupon-card .card-title {
+        font-size: 1.2rem;
+        color: #090909;
+        font-weight: bold;
+    }
+
+    .coupon-card .card-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .add-address-form {
+        background: #f9f9f9 !important;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-top: 20px;
+    }
+
+    .add-address-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .add-address-form label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .add-address-form input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .add-address-form input:focus {
+        border-color: #0b0b0b;
+        box-shadow: 0 0 0 2px rgba(11, 11, 11, 0.1);
+    }
+
+    /* Enhanced Address Selection Styling */
+    .addresses-container {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 20px;
+    }
+
+    .addresses-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .addresses-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .addresses-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .addresses-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .address-card {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .address-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .address-card.selected {
+        border: 2px solid #0b0b0b;
+        background-color: #f8f8f8;
+    }
+
+    .address-card h5 {
+        margin: 0 0 10px 0;
+        color: #0b0b0b;
+    }
+
+    .form-check-input:checked + .form-check-label .address-card {
+        border-color: #0b0b0b;
+        background-color: #f8f8f8;
+    }
+
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid " style="background-color: #f4f1f1;;">
     <div class="row">
-        <!-- Left Section -->
+        <h1 class="text-dark">Checkout</h1>
+
         <div class="col-md-7">
+            <br>
             <button type="button" class="btn-add-address" id="showAddAddressForm">+ Add New Address</button>
+            <br>
 
             <!-- Add Address Form -->
-            <div class="add-address-form mt-4" id="addAddressForm" style="display: none; background: gainsboro;">
-                <h5 class="mb-3">Add a New Address</h5>
+            <div class="add-address-form mt-4" id="addAddressForm" style="display: none;">
+                <h5 class="mb-4">Add a New Address</h5>
                 <form method="POST" action="{% url 'checkout_address' %}">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_name">Name</label>
-                        {{ form.name }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_name">Full Name</label>
+                                {{ form.name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_phone_number">Mobile Number</label>
+                                {{ form.phone_number }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="id_pin">Pincode</label>
-                        {{ form.pin }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_pin">Pincode</label>
+                                {{ form.pin }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_state">State</label>
+                                {{ form.state }}
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="id_city">City/District/Town</label>
                         {{ form.city }}
                     </div>
                     <div class="form-group">
-                        <label for="id_state">State</label>
-                        {{ form.state }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_landmark">Landmark (Optional)</label>
+                        <label for="id_landmark">Landmark</label>
                         {{ form.landmark }}
-                    </div>
-                    <div class="form-group">
-                        <label for="id_phone_number">Mobile Number</label>
-                        {{ form.phone_number }}
                     </div>
                     <div class="form-group">
                         <label for="id_address_title">Address Title</label>
@@ -214,6 +344,7 @@
             </div>
 
             <!-- Shipping Address Section -->
+             <br>
             <div class="card mb-4">
                 <div class="card-header">Shipping Address</div>
                 <div class="card-body">
@@ -244,7 +375,7 @@
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="payment_method" id="wallet" value="wallet">
-                                    <label class="form-check-label" for="wallet">Wallet</label>
+                                    <label class="form-check-label" for="wallet">Wallet (Balance:{{ wallet.balance|default:0 }})</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-3">Place Order</button>
                             </div>
@@ -256,7 +387,7 @@
         
 
 <!-- Right Section -->
-<div class="col-md-5">
+<div class="col-md-5 " style="margin-top: 93px;">
     <div class="card">
         <div class="card-header">Order Summary</div>
         <div class="card-body">
@@ -283,8 +414,27 @@
                 <button type="submit">Apply</button>
             </div>
         </form>
-        <div id="coupon-message"></div>
+        <div id="coupon-message" class="mt-2"></div>
+    
+        {% if coupons %}
+        <h5 class="mt-4">Available Coupons</h5>
+        <div class="row g-3 mt-2">
+            {% for coupon in coupons %}
+            <div class="col-md-6">
+                <div class="card coupon-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ coupon.code }}</h5>
+                        <p class="card-text">{{ coupon.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="mt-4 text-muted">No Available Coupons</p>
+        {% endif %}
     </div>
+    
 </div>
 </div>
 </div>

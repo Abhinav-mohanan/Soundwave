@@ -2,151 +2,257 @@
 
 {% block content %}
 <style>
-    /* General Styles */
+  /* Elegant Orders Page Styling */
+.orders-container {
+    padding: 2.5rem;
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+
+/* Header Styling */
+.orders-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.orders-header h2 {
+    font-family: 'Georgia', serif;
+    font-size: 2.2rem;
+    color: #2c3e50;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+.orders-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    border-radius: 2px;
+}
+
+/* Filter Section Styling */
+.filter-section {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.filter-button {
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem;
+    font-size: 0.95rem;
+    border-radius: 50px;
+    cursor: pointer;
+    background: #fff;
+    color: #2c3e50;
+    border: 2px solid #e0e6ed;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-button:hover {
+    background: #f8f9fa;
+    border-color: #3498db;
+    color: #3498db;
+    transform: translateY(-2px);
+}
+
+.filter-button:active {
+    transform: translateY(0);
+}
+
+.btn-info {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-info:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Order Card Styling */
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.order-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #3498db, #2ecc71);
+    border-radius: 4px 0 0 4px;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-card-header h4 {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    font-family: 'Georgia', serif;
+}
+
+.order-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    color: #596677;
+    font-size: 0.95rem;
+}
+
+.order-details p {
+    margin: 0.5rem 0;
+}
+
+.order-details strong {
+    color: #2c3e50;
+}
+
+/* Order Items Styling */
+.order-items {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: #3498db #f0f0f0;
+}
+
+.order-items::-webkit-scrollbar {
+    height: 6px;
+}
+
+.order-items::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.order-items::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 10px;
+}
+
+.order-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.order-item img:hover {
+    transform: scale(1.1);
+}
+
+.order-total {
+    text-align: right;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Payment Status Styling */
+.text-danger {
+    color: #e74c3c !important;
+    font-weight: 500;
+}
+
+.btn-warning {
+    background: #f1c40f;
+    color: #2c3e50 !important;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-warning:hover {
+    background: #f39c12;
+    transform: translateY(-2px);
+}
+
+/* Empty State Styling */
+.no-orders {
+    text-align: center;
+    padding: 3rem;
+    color: #7f8c8d;
+    font-size: 1.2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px dashed #e0e6ed;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
     .orders-container {
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin: 1rem;
     }
 
-    .orders-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .orders-header h2 {
-        font-size: 26px;
-        color: #333;
-        font-weight: bold;
-    }
-
-    /* Filter Section */
     .filter-section {
-        text-align: center;
-        margin-bottom: 20px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
     }
 
     .filter-button {
-        padding: 10px 20px;
-        margin: 5px;
-        font-size: 14px;
-        border-radius: 5px;
-        cursor: pointer;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        transition: background-color 0.3s ease;
+        margin: 0.25rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
     }
 
-    .filter-button:hover {
-        background-color: #2980b9;
-    }
-
-    /* Card Style */
-    .order-card {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-    }
-
-    .order-card:hover {
-        transform: scale(1.02);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .order-card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .order-card-header h4 {
-        font-size: 20px;
-        color: #333;
-    }
-
-    .order-card-header .status {
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        text-transform: capitalize;
-        font-size: 14px;
-    }
-
-    /* Status Styling */
-    .status.Order+Pending {
-        background-color: #f39c12;
-        color: #fff;
-    }
-
-    .status.completed {
-        background-color: #2ecc71;
-        color: #fff;
-    }
-
-    .status.shipped {
-        background-color: #3498db;
-        color: #fff;
-    }
-
-    .status.cancelled {
-        background-color: #e74c3c;
-        color: #fff;
-    }
-
-    /* Order Card Content */
     .order-details {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 15px;
+        grid-template-columns: 1fr;
     }
+}
 
-    .order-items {
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-    }
-
-    .order-items img {
-        border-radius: 5px;
-        height: 60px;
-        width: 60px;
-        object-fit: cover;
-    }
-
-    .order-total {
-        font-size: 16px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .no-orders {
-        text-align: center;
-        font-size: 18px;
-        color: #999;
-        padding: 20px 0;
-    }
-
-    /* Shipping Address Styles */
-    .shipping-address {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f4f4f4;
-        border-radius: 8px;
-    }
-
-    .shipping-address h4 {
-        margin-bottom: 10px;
-    }
-
-    .shipping-address p {
-        margin: 5px 0;
-    }
 </style>
 
 <div class="orders-container">
@@ -154,10 +260,10 @@
         <h2>Your Orders</h2>
     </div>
 
-    <!-- Filter Buttons -->
     <div class="filter-section">
         <form method="GET" action="{% url 'list_order'%}">
             <button class="filter-button" type="submit" name="status" value="Order Pending">Pending</button>
+            <button class="filter-button" type="submit" name="status" value="Order Confirmed">Confirmed</button>
             <button class="filter-button" type="submit" name="status" value="Shipped">Shipped</button>
             <button class="filter-button" type="submit" name="status" value="Delivered">Delivered</button>
             <button class="filter-button" type="submit" name="status" value="Cancelled">Cancelled</button>
@@ -170,21 +276,14 @@
 
         <div class="order-card-header">
             <h4>Order ID: {{ order.tracking_number }}</h4>
-            <span class="status 
-                {% if order.order_items.first.status == 'Order Pending' %}pending
-                {% elif order.order_items.first.status == 'Shipped' %}shipped
-                {% elif order.order_items.first.status == 'Delivered' %}completed
-                {% elif order.order_items.first.status == 'Cancelled' %}cancelled
-                {% endif %}">
-                {{ order.order_items.first.status }}
-            </span>
         </div>
 
         <div class="order-details">
             <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
-            <p><strong>Total:</strong> ${{ order.total_price }}</p>
+            <p><strong>Estimated <br> Delivery Date:</strong> {{ order.estimated_delivery_date|date:"M d , Y"}}</p>
+            <p><strong>Total:</strong> ₹{{ order.total_price }}</p>
         </div>
-
+        <a href="{% url 'manage_order' order.order_id %}">
         <div class="order-items">
             {% for item in order.order_items.all %}
             <div class="order-item">
@@ -192,23 +291,18 @@
             </div>
             {% endfor %}
         </div>
+        </a>
 
         <div class="order-total">
-            <strong>Total: ${{ order.total_price }}</strong>
+            <strong>Total: ₹{{ order.total_price }}</strong>
         </div>
-
-        <!-- Shipping Address Section -->
-        <div class="shipping-address">
-            <h4>Shipping Address</h4>
-            <p><strong>Name:</strong> {{ order.shipping_address.name }}</p>
-            <p><strong>Address Title:</strong> {{ order.shipping_address.address_title }}</p>
-            <p><strong>Address:</strong> {{ order.shipping_address.detail_address }}</p>
-            <p><strong>City:</strong> {{ order.shipping_address.city }}</p>
-            <p><strong>State:</strong> {{ order.shipping_address.state }}</p>
-            <p><strong>Pin:</strong> {{ order.shipping_address.pin }}</p>
-            <p><strong>Landmark:</strong> {{ order.shipping_address.landmark }}</p>
-            <p><strong>Phone Number:</strong> {{ order.shipping_address.phone_number }}</p>
-        </div>
+        <br>
+        {% if order.payment_status == 'Failure' %}
+            <p style="margin: 0;">You Payment is <span class="text-danger">Failed </span> Please retry the payment</p>
+            <a href="{% url 'retry_payment' order.order_id %}">
+        <button class="btn btn-warning" style="color: black;">Retry Payment</button>
+        </a>
+        {% endif %}
 
     </div>
     {% empty %}

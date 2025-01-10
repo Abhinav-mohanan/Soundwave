@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retry Payment</title>
+    <style>
+        body {
+            background-color: #2E2E2E;
+            color: #F0F0F0;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #3E3E3E;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #f2f2ef;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            padding: 15px 0;
+        }
+        .order-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+            border: 2px solid #FFD700;
+        }
+        .order-item-details {
+            flex-grow: 1;
+        }
+        .order-item-details h3 {
+            margin: 0;
+            color: #FFFFFF;
+        }
+        .order-item-details p {
+            margin: 5px 0;
+            color: #B0B0B0;
+        }
+        .order-summary {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .order-summary p {
+            color: #FFD700;
+        }
+        .pay-button {
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .pay-button:hover {
+            background-color: #0d0d0d;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #B0B0B0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Retry Payment</h1>
+        <p style="text-align: center;">Order #{{ order.tracking_number }}</p>
+        <p style="text-align: center;">Shipping Address: {{ order.shipping_address }}</p>
+        <hr style="border-color: #444;">
+
+        <h2>Order Items</h2>
+        {% for item in order_items %}
+        <div class="order-item">
+            <img src="{{ item.variant.image1.url }}" alt="{{ item.variant.product.name }}">
+            <div class="order-item-details">
+                <h3>{{ item.variant.product.name }}</h3>
+                <p>Quantity: {{ item.quantity }}</p>
+                <p>Price: ₹{{ item.price }}</p>
+                <p>Subtotal: ₹{{ item.subtotal_price }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        <hr style="border-color: #444;">
+
+        <div class="order-summary">
+            <p>Total Price: ₹{{ order.total_price }}</p>
+        </div>
+
+        <form action="{% url 'verify_retry_payment' %}" method="POST" id="razorpay-payment-form">
+            {% csrf_token %}
+            <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order_id }}">
+            <input type="hidden" name="order_id" value="{{ order.order_id }}">
+            <input type="hidden" name="payment_status" value="Failed">
+            <button type="button" id="pay-button" class="pay-button">Retry Payment</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; {{ current_year }} Your Store Name. All rights reserved.</p>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ razorpay_key_id }}", // Your Razorpay Key ID
+            "amount": "{{ total|floatformat:0 }}" * 100, 
+            "currency": "INR",
+            "order_id": "{{ razorpay_order_id }}", // Razorpay Order ID
+            "name": "{{ user.username }}",
+            "description": "Payment for your order",
+            "handler": function (response) {
+                // Append Razorpay response to form and submit
+                submitPaymentForm("Success", response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
+            },
+            "prefill": {
+                "name": "{{ user.username }}",
+                "email": "{{ user.email }}"
+            },
+            "theme": {
+                "color": "#040404"
+            },
+            "modal": {
+                "ondismiss": function () {
+                    // Handle modal dismissal as payment failure
+                    submitPaymentForm("Failed");
+                }
+            }
+        };
+
+        document.getElementById('pay-button').onclick = function () {
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        };
+
+        // Function to dynamically append hidden inputs and submit the form
+        function submitPaymentForm(status, payment_id = "", order_id = "", signature = "") {
+            var form = document.getElementById('razorpay-payment-form');
+            form.querySelector('input[name="payment_status"]').value = status;
+
+            if (payment_id) form.appendChild(createHiddenInput('razorpay_payment_id', payment_id));
+            if (order_id) form.appendChild(createHiddenInput('razorpay_order_id', order_id));
+            if (signature) form.appendChild(createHiddenInput('razorpay_signature', signature));
+
+            form.submit();
+        }
+
+        // Helper function to create hidden input fields dynamically
+        function createHiddenInput(name, value) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            return input;
+        }
+    </script>
+</body>
+</html>
+

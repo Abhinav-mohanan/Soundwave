@@ -4,7 +4,7 @@
 
 <style>
     .filters {
-        background-color: #f8f9fa;
+        background-color: #909294;
         padding: 20px;
         border-radius: 5px;
         margin-bottom: 20px;
@@ -32,7 +32,7 @@
     }
 
     .filters .filter-title:hover {
-        color: #007bff;
+        color: #070707;
     }
 
     .filters .filter-title i {
@@ -58,7 +58,7 @@
     }
 
     .filters .filter-options li a:hover {
-        color: #007bff;
+        color: #020202;
     }
 
     .product-section {
@@ -83,7 +83,6 @@
         <div class="col-md-3">
             <div class="filters">
                 <h4>Filters</h4>
-
                 <div class="filter-group">
                     <div class="filter-title" onclick="toggleFilter(this)">
                         Price
@@ -120,7 +119,7 @@
                     <br><br>
                     <ul>
                         {% if filter_applied %}
-                            <a href="{% url 'products' %}" class="btn btn-outline-secondary mb-3">Clear All Filters</a>
+                            <a href="{% url 'products' %}" class="btn btn-outline-secondary text-dark mb-3">Clear All Filters</a>
                         {% endif %}
                     </ul>
                 </div>
@@ -128,10 +127,10 @@
         </div>
 
         <!-- Products Section -->
-        <div class="col-md-9" style="height: 100vh;">
+        <div class="col-md-9">
             <div class="product-section" style="color: white;">
                 <h2>All Products</h2>
-                
+
                 <div class="product-grid">
                     {% for product in products %}
                         {% for variant in product.variants.all %}

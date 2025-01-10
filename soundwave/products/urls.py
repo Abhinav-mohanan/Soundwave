@@ -24,5 +24,7 @@ urlpatterns=[
     path('unlist_product/<int:id>,',views.unlist_product,name='unlist_product'),
     path('edit-vaiant/<int:id>',views.edit_variant,name='edit_variant'),
     path('activate-variant/<int:variant_id>/',views.activate_variant,name='activate_variant'),
-    path('deactivate-variant/<int:variant_id>/',views.deactivate_variant,name='deactivate_variant')
+    path('deactivate-variant/<int:variant_id>/',views.deactivate_variant,name='deactivate_variant'),
+    path('list-subcategory/<int:subcategory_id>/',views.list_subcategory,name='list_subcategory'),
+    path('unlist-subcategory/<int:subcategory_id>/',views.unlist_subcategory,name='unlist_subcategory')
 ]

@@ -56,7 +56,7 @@
         width: 100%;
         padding: 12px;
         font-size: 16px;
-        background-color: #007bff;
+        background-color: #080808;
         color: white;
         border: none;
         border-radius: 5px;
@@ -65,7 +65,7 @@
     }
 
     .cart-summary button:hover, .cart-items .remove-btn:hover {
-        background-color: #0056b3;
+        background-color: #0b0b0b;
     }
 
     .coupon-section {
@@ -143,23 +143,15 @@
         display: flex;
         align-items: center;
     }
-
     .cart-item-quantity button {
         width: 35px;
         height: 35px;
-        background-color: #ddd;
+        background-color:white;
         border: none;
-        border-radius: 50%;
         cursor: pointer;
         font-size: 18px;
         transition: background-color 0.3s;
     }
-
-    .cart-item-quantity button:hover {
-        background-color: #007bff;
-        color: white;
-    }
-
     .cart-item-quantity input {
         width: 50px;
         text-align: center;
@@ -169,7 +161,6 @@
         padding: 5px;
         font-size: 16px;
     }
-
     .remove-btn {
         background-color: #f44336;
         color: white;
@@ -179,16 +170,17 @@
         cursor: pointer;
         font-size: 14px;
     }
-
     .remove-btn:hover {
         background-color: #d32f2f;
     }
+    .cart-items{
+        background-color: #f4f1f1;
+        box-shadow: none;
+    }
 </style>
-
-
-    <div class="container-fluid" style="height: 100vh;">
+    <div class="container-fluid" style="height: 100vh; background-color: #f4f1f1;">
         <div class="row">
-        <h1 class="text-white">Shopping Cart</h1>
+        <h1 class="text-dark">YOUR BAG</h1>
         <div class="cart-container">
             <div class="cart-items">
                 {% csrf_token %}
@@ -198,6 +190,12 @@
                             <img src="{{ item.variant.image1.url }}" alt="{{ item.variant.color }}">
                             {% if item.variant.stock == 0 %}
                                 <div class="out-of-stock-overlay">This product is out of stock</div>
+                            {% endif %}
+                            {% if not item.variant.product.is_listed or not item.variant.product.category.is_listed or not item.variant.is_listed %}
+                                <div class="out-of-stock-overlay"> This product is Unavailable</div>
+                            {% endif %}
+                            {% if not item.variant.product.brand.is_listed or not item.variant.product.subcategory.is_listed %}
+                                <div class="out-of-stock-overlay"> This proudct is unavailable</div>
                             {% endif %}
                         </div>
 
@@ -223,13 +221,12 @@
                     <p>Your cart is empty.</p>
                 {% endfor %}
             </div>
-
             <div class="cart-summary">
                 {% if cart_items %}
                     <h2>Order Summary</h2>
                     <p>Subtotal ({{ cart_items|length }} items): ₹<span id="subtotal-cart-price">{{ total }}</span></p>
                     <h3>Estimated Total: ₹<span id="total-cart-price">{{ total }}</span></h3>
-                    <a href="{% url 'checkout' %}"><button type="button">Proceed to Checkout</button></a>
+                    <a href="{% url 'checkout' %}"><button type="button">CHECKOUT</button></a>
                 {% else %}
                     <div>
                         <h2>No items in your cart</h2>

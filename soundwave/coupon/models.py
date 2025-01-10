@@ -28,5 +28,6 @@ class Coupon(models.Model):
 class Couponusage(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE)
-    user_at=models.DateTimeField(auto_now_add=True)
+    is_used=models.BooleanField(default=False)
+    created_at=models.DateTimeField(auto_now_add=True)
 

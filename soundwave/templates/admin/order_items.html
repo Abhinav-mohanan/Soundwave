@@ -1,0 +1,80 @@
+{% extends 'admin/navbar.html' %}
+{% load static %}
+
+{% block content %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">Order Details</h3>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h4>Order ID: {{ order.order_id }}</h4>
+        <p>Tracking Number: {{ order.tracking_number }}</p>
+        <p>User: {{ order.user.username }}</p>
+        <p>Shipping Address: {{ order.shipping_address }}</p>
+        <p>Total Price: {{ order.total_price }}</p>
+        <p>Payment Type: {{ order.get_payment_type_display }}</p>
+        {% if order.payment_status == 'Failure'%}
+        <p>Payment Status: <span style="color: red;">{{ order.get_payment_status_display }}</span></p>
+        {% else%}
+        <p>Payment Status: {{ order.get_payment_status_display }}</p>
+        {% endif %}
+        <h5>Order Items:</h5>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Variant</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.order_items.all %}
+            <tr>
+              <td>{{ item.variant.product.name }}</td>
+              <td>{{ item.variant }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.get_status_display }}</td>
+              <td>
+                <!-- Show status update buttons based on current item status -->
+                {% if item.status == 'Order Pending' %}
+                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Order Confirmed' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-info">Confirm</button>
+                    </form>
+                {% elif item.status == 'Order Confirmed' %}
+                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Shipped' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Ship</button>
+                    </form>
+                {% elif item.status == 'Shipped' %}
+                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Delivered' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Deliver</button>
+                    </form>
+                {% elif item.status == 'Requested Return' %}
+                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Returned' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Approve Return</button>
+                    </form>
+                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Cancelled' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Reject Return</button>
+                    </form>
+                {% endif %}
+
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

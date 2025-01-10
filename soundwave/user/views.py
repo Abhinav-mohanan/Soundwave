@@ -6,14 +6,15 @@ from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from django.core.mail import send_mail,BadHeaderError
 from django.conf import settings
-from products.models import Product,Variant,Category
+from products.models import Product,Variant,Category,Brand
 import random
 from datetime import datetime,timedelta
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from.validators import validate_first_name,validate_last_name,validate_email,validate_password,validate_username,validate_phone
 from offer.models import Brand_offer,Product_offer
-
+from django.db.models import Sum,Count,Q
+from django.db.models import Prefetch
 
 # Create your views here.
 
@@ -47,7 +48,7 @@ def send_email_otp(email,otp):
 #======================Function to send otp and email End=====================# 
 
 
-#======================Signup session=====================# 
+#======================Signup section=====================# 
 @never_cache
 def signup(request):
     if request.method == 'POST':
@@ -101,10 +102,10 @@ def signup(request):
             return render(request, 'user/signup.html', {'error_message': error_message, 'input_data': request.POST})
     return render(request, 'user/signup.html')
 
-#======================Signup session End=====================# 
+#======================Signup section End=====================# 
 
 
-#======================OTP validation session=====================# 
+#======================OTP validation section=====================# 
 @never_cache
 def otp_generation(request):
     if request.method=='POST':
@@ -167,7 +168,7 @@ def resend_otp(request):
     messages.success(request,'A new OTP is has been send to your email')
     return redirect('otp_validation')
 
-#======================OTP validation session End=====================# 
+#======================OTP validation section End=====================# 
 
 
 #====================== User Login,Logout=====================# 
@@ -201,28 +202,110 @@ def user_logout(request):
         return redirect('user_login')
     return redirect('home')
  
-#======================User Login,Logout End=====================# 
+#==================User Login,Logout End===================# 
 
 
-#======================Homepage session=====================# 
+#======================Forgot_password=====================# 
+@never_cache
+def forgotpassword(request):
+    if request.method=='POST':
+        email=request.POST.get('email')
+        if User.objects.filter(email=email).exists():
+            otp=generateOtp()
+            request.session['otp'] = otp
+            request.session['email'] = email
+
+            subject='Your OTP for soundwave password reset'
+            message=f'Hello, /n Your OTP for resetting soundwave password is {otp} '
+            sender=settings.EMAIL_HOST_USER 
+            receiver=[email]
+            try:
+                send_mail(subject,message,sender,receiver)
+                return redirect('forgot_password_verify')
+            except Exception:
+                error_message='Error sending OTP please try again later'
+                return render(request,'user/forgot_password.html',{'error_message':error_message})
+        else:
+            error_message='The email not registered please Signup'
+            return render(request,'user/forgot_password.html',{'error_message':error_message})
+    return render(request,'user/forgot_password.html')
+
+
+def forgot_password_verify(request):
+    error_message=None
+    if request.method=='POST':
+        otp=request.POST.get('otp')
+        session_otp=request.session.get('otp')
+        if otp==session_otp:
+            del request.session['otp']
+            return redirect('reset_password')
+        else:
+            error_message='Invalid otp Please try again'
+            return render(request,'user/forgot_password_verify.html',{'error_message':error_message})
+    return render(request,'user/forgot_password_verify.html')
+
+
+
+def reset_password(request):
+    error_message=None
+    email=request.session.get('email')
+    if not email:
+        return redirect('forgot_password')
+    try:
+        user=User.objects.get(email=email)
+    except User.DoesNotExist:
+        error_message='User not found!'
+        return render(request,'user/forgot_password_reset.html',{'error_message':error_message})
+
+    if request.method=='POST':
+        new_password=request.POST.get('new-password')
+        confirm_password=request.POST.get('confirm-password')
+        if new_password!=confirm_password:
+            error_message='Passwords donot match '
+        else:
+            error_message=validate_password(new_password)
+        if error_message:
+            return render(request,'user/forgot_password_reset.html',{'error_message':error_message})
+        
+        user.set_password(new_password)
+        user.save()
+
+        if 'email' in request.session:
+            del request.session['email']
+        return redirect('user_login')
+    return render(request,'user/forgot_password_reset.html')
+
+
+#======================Forgot_password End=====================# 
+
+
+
+
+#======================Homepage section=====================# 
 @never_cache
 def homepage(request):
-    categories=Category.objects.all()
-    hero_product=Product.objects.filter(is_listed=True).order_by('-created_at').first()
-    featured_products = Product.objects.filter(is_listed=True).prefetch_related('variants').order_by('-created_at')
-    new_arrivals=Product.objects.filter(is_listed=True).prefetch_related('variants').order_by('created_at')[:5]    
+    listed_variants=Variant.objects.filter(is_listed=True,stock__gt=0)
+    categories=Category.objects.filter(is_listed=True)
+    hero_product=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('-created_at').first()
+    featured_products = Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants', queryset=listed_variants)).order_by('-created_at')[:4]
+    new_arrivals=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('name','-created_at').distinct('name')[:5]    
 
     return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals,
                                                'categories':categories,'hero_product':hero_product})
 
-#======================Homepage session End=====================# 
+#======================Homepage section End=====================# 
 
 
 #======================Products_page session=====================# 
 @never_cache
 def product_page(request):
 
-    products = Product.objects.filter(is_listed=True).prefetch_related('variants')
+    listed_variants = Variant.objects.filter(is_listed=True, stock__gt=0)
+    products = Product.objects.filter(
+        is_listed=True,
+        brand__is_listed=True,
+        category__is_listed=True
+    ).prefetch_related(Prefetch('variants', queryset=listed_variants))
 
     filter_applied=False
 
@@ -246,7 +329,7 @@ def product_page(request):
 
     color_filter = request.GET.get('color')
     if color_filter:
-        products = products.filter(variants__color__iexact=color_filter, variants__is_listed=True, variants__stock__gt=0)
+        products = products.filter(variants__color__iexact=color_filter, variants__stock__gt=0)
         filter_applied=True
 
     sort_filter=request.GET.get('sort')
@@ -271,8 +354,11 @@ def product_page(request):
 #======================Product_details session=====================# 
 @never_cache
 def product_detail(request,product_id,variant_id):
-    product=get_object_or_404(Product,id=product_id,is_listed=True)
-    variants=get_object_or_404(Variant,id=variant_id,product=product,is_listed=True)
+    product=get_object_or_404(Product,id=product_id)
+    try:
+        variants = Variant.objects.get(id=variant_id,product=product)
+    except Variant.DoesNotExist:
+        variants = None
     all_variant=Variant.objects.filter(product=product)
     images = [variants.image1, variants.image2, variants.image3]
 
@@ -325,5 +411,21 @@ def product_detail(request,product_id,variant_id):
 def search_view(request):
     query = request.GET.get('query', '')
     products = Product.objects.filter(name__icontains=query)  
-    
     return render(request, 'user/products.html',{'products': products,'search_query': query})
+
+#====================== Product_Search End=====================# 
+
+
+#=======================About us =====================# 
+def about_us(request):
+    total_brands=Brand.objects.aggregate(total=Count('id'))['total']
+    total_users=User.objects.exclude(is_superuser=True).aggregate(total_users=Count('id'))['total_users']
+    total_products=Variant.objects.aggregate(total_products=Count('id'))['total_products']
+    return render(request,'user/about_us.html',{'total_brands':total_brands,'total_users':total_users,'total_products':total_products})
+
+#=======================About us =====================# 
+
+
+#=======================Help page =====================# 
+def helppage(request):
+    return render(request,'user/help.html')

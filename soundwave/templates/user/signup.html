@@ -8,208 +8,221 @@
   <title>SoundWave Signup</title>
   <style>
     * {
-      margin: 7px;
+      margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      background-image: url(''); 
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      height: 100vh;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: gray;
+      padding: 20px;
+      color: #E2E8F0;
     }
 
     .signup-container {
-      background-color: rgb(248, 246, 246);
-      border-radius: 10px;
-      width: 490px;
-      padding: 20px;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      opacity: 75%;
+      background: rgba(30, 41, 59, 0.95);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-
-    .logo img {
-      width: 30px;
-      margin-right: 10px;
+      text-align: center;
+      margin-bottom: 30px;
     }
 
     .logo h1 {
-      font-size: 20px;
-      color: #d32f2f;
+      font-size: 42px;
+      color: #38BDF8;
+      font-family: 'Brush Script MT', cursive;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
     }
 
     .signup-container h2 {
-      margin-bottom: 20px;
-      font-size: 18px;
-      color: rgb(4, 4, 4);
+      text-align: center;
+      margin-bottom: 30px;
+      color: #E2E8F0;
+      font-size: 24px;
+      font-weight: 500;
     }
 
     .form-group {
-      margin-bottom: 15px;
-      text-align: left;
+      margin-bottom: 20px;
       position: relative;
     }
 
     .form-group input {
       width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 12px 15px;
+      font-size: 15px;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      background: #1E293B;
+      color: #E2E8F0;
     }
 
     .form-group input:focus {
-      border-color: #d32f2f;
+      border-color: #38BDF8;
       outline: none;
+      background: #1E293B;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #94A3B8;
     }
 
     .form-group .error {
-      color: #f44336;
-      font-size: 12px;
-      position: absolute;
-      top: 45px;
-      left: 10px;
+      color: #FB7185;
+      font-size: 13px;
+      margin-top: 5px;
+      display: block;
     }
 
     .signup-btn {
       width: 100%;
-      padding: 10px;
-      background-color: #d32f2f;
+      padding: 14px;
+      background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
       color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .signup-btn:hover {
-      background-color: #b71c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
     }
 
     .alt-signup {
-      display: flex;
-      justify-content: center;
-      margin: 15px 0;
+      margin: 25px 0;
     }
 
     .alt-signup button {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: #fff;
+      padding: 12px;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      background-color: #1E293B;
       cursor: pointer;
+      font-weight: 500;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
     }
 
     .alt-signup button:hover {
-      background-color: #f5f5f5;
+      background-color: #334155;
+      border-color: #38BDF8;
     }
 
     .login-link {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #000;
+      text-align: center;
+      margin-top: 20px;
+      color: #94A3B8;
+      font-size: 15px;
     }
 
     .login-link a {
-      color: #d32f2f;
+      color: #38BDF8;
       text-decoration: none;
+      font-weight: 600;
     }
 
     .login-link a:hover {
       text-decoration: underline;
     }
-    .error{
-      color: red;
-      font-size: 12px;
-      margin-top: 3px;
+
+    .messages {
+      list-style: none;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(251, 113, 133, 0.1);
+      color: #FB7185;
+      border: 1px solid rgba(251, 113, 133, 0.2);
     }
   </style>
-</head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SoundWave Signup</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
   <div class="signup-container">
     <div class="logo">
-      <img src="{% static 'images/hero_headphone.jpg' %}" alt="SoundWave Logo"> 
       <h1>SoundWave</h1>
     </div>
-    <h2>Welcome to SoundWave</h2>
-    
+    <h2>Create Your Account</h2>
 
     <form method="post" action="{% url 'signup' %}">
       {% csrf_token %}
       <div class="form-group">
         <input type="text" placeholder="First name" name="first_name" value="{{ input_data.first_name|default:'' }}">
-        
         <span class="error">{{ error_message.firstname_error }}</span>
-        
       </div>
       <div class="form-group">
         <input type="text" placeholder="Last name" name="last_name" value="{{ input_data.last_name|default:'' }}">
-       
         <span class="error">{{ error_message.lastname_error }}</span>
-       
       </div>
       <div class="form-group">
-        <input type="text" placeholder="Enter Username" name="username" value="{{ input_data.username|default:'' }}">
-        
+        <input type="text" placeholder="Username" name="username" value="{{ input_data.username|default:'' }}">
         <span class="error">{{ error_message.username_error }}</span>
-        
       </div>
       <div class="form-group">
-        <input type="email" placeholder="Enter Your Email" name="email" value="{{ input_data.email|default:'' }}">
+        <input type="email" placeholder="Email address" name="email" value="{{ input_data.email|default:'' }}">
         <span class="error">{{ error_message.email_error }}</span>
       </div>
       <div class="form-group">
-        <input type="tel" placeholder="Enter Your Mobile number" name="phone_number" value="{{ input_data.phone_number|default:'' }}">
+        <input type="tel" placeholder="Mobile number" name="phone_number" value="{{ input_data.phone_number|default:'' }}">
         <span class="error">{{ error_message.phone_number_error }}</span>
       </div>
       <div class="form-group">
-        <input type="password" placeholder="Enter Your Password" name="password">
+        <input type="password" placeholder="Password" name="password">
         <span class="error">{{ error_message.password_error }}</span>
       </div>
       <div class="form-group">
-        <input type="password" placeholder="Confirm Password" name="password2">
+        <input type="password" placeholder="Confirm password" name="password2">
         <span class="error">{{ error_message.password2_error }}</span>
       </div>
-      {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
 
-      <button type="submit" class="signup-btn">Sign Up</button>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <button type="submit" class="signup-btn">Create Account</button>
     </form>
+    
     <div class="alt-signup">
-      <a href="{% provider_login_url 'google' %}"><button>Google</button></a>
+      <a href="{% provider_login_url 'google' %}">
+        <button>
+          <svg width="20" height="20" viewBox="0 0 18 18">
+            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285f4"/>
+            <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34a853"/>
+            <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#fbbc05"/>
+            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#ea4335"/>
+          </svg>
+          Continue with Google
+        </button>
+      </a>
     </div>
-    <p class="login-link">If you already have an account? <a href="{% url 'user_login' %}">Login Here</a></p>
+
+    <p class="login-link">Already have an account? <a href="{% url 'user_login' %}">Sign In</a></p>
   </div>
 </body>
 </html>
-
-

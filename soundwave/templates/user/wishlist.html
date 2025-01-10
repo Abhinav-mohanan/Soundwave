@@ -118,7 +118,7 @@
 </style>
 
 <h1 class="mb-4 text-center text-dark">My Wishlist</h1>
-<div class="wishlist-container container py-5">
+<div class="wishlist-container container py-5" style="display: flex; justify-content: center; align-items: center;">
     {% if wishlist %}
         <div class="row g-4">
             {% for item in wishlist %}
@@ -130,13 +130,13 @@
                                 class="card-img-top rounded-top" 
                                 alt="{{ item.variant.product.name }}">
                             <div class="wishlist-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
-                                <a href="{% url 'product_details' item.variant.product.id item.variant.id %}" 
+                                <a href="{% url 'add_to_cart' item.variant.id %}" 
                                    class="btn btn-outline-light me-2">
-                                    <i class="fas fa-eye"></i> View Details
+                                    <i class="fas fa-eye">ADD TO BAG</i> 
                                 </a>
                                 <a href="{% url 'remove_from_wishlist' item.id %}" 
                                    class="btn btn-outline-danger">
-                                    <i class="fas fa-trash-alt"></i> Remove
+                                    <i class="fas fa-trash-alt">Remove</i> 
                                 </a>
                             </div>
                         </div>

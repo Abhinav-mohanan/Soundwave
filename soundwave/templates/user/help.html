@@ -1,0 +1,273 @@
+{% extends 'user/navbar.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    /* General Styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #f8f9fa;
+        background-color: #212529;
+    }
+
+    .container-fluid {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .hero {
+        background-color: #19191a;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-image: url("{% static 'images/help_hero_bg.webp' %}");
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+    }
+
+    .hero-text {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .hero-text h1 {
+        font-size: 36px;
+        color: #f7f7f7;
+        margin-bottom: 10px;
+    }
+
+    .hero-text p {
+        font-size: 16px;
+        color: #e7e9ea;
+        margin-bottom: 20px;
+    }
+
+    .hero input[type="text"] {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+    .faq-section {
+        margin-top: 60px;
+        padding: 40px 20px;
+        background-color: #212529;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .faq-item {
+        background-color: #343a40;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .faq-item button {
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #bdbfc1;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+    }
+
+    .faq-item .answer {
+        display: none;
+        margin-top: 10px;
+        font-size: 16px;
+        color: #f8f9fa;
+    }
+
+    /* Testimonial Section */
+    .testimonial-section {
+        margin-top: 60px;
+        padding: 40px 20px;
+        background-color: #212529;
+        border-radius: 5px;
+    }
+
+    .testimonial-section h3 {
+        font-size: 24px;
+        color: #e63946;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .testimonial-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #343a40;
+        border-radius: 5px;
+    }
+
+    .testimonial-item .testimonial-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+    }
+
+    .testimonial-item .testimonial-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .testimonial-item .testimonial-text {
+        flex: 1;
+    }
+
+    .testimonial-item .testimonial-text p {
+        font-size: 16px;
+        color: #f8f9fa;
+        line-height: 1.6;
+    }
+
+    .testimonial-item .testimonial-text h4 {
+        font-size: 18px;
+        color: #e63946;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            flex-direction: column;
+        }
+
+        .hero-text {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-item {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-text">
+            <h1>How can we help you?</h1>
+            <p>Search for your question or browse through the frequently asked questions below.</p>
+            <input type="text" id="faqSearch" placeholder="Search for help..." oninput="filterFAQs()">
+            <p id="noResults" style="color: #e63946; text-align: center; display: none;">No matching questions found.</p>
+
+        </div>
+        <div class="hero-image">
+            <img style="width: 350px; height: 350px; border-radius: 10px;" src="{% static 'images/help_center.webp' %}" alt="Help Center">
+        </div>
+    </div>
+
+    <!-- Popular FAQs Section -->
+    <div class="faq-section">
+        <h3 style="font-size: 24px; color: #f8f9fa; text-align: center;">Popular FAQs</h3>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">How long will delivery take?</button>
+            <p class="answer">Delivery typically takes 3-5 business days, depending on your location.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">Do you ship internationally?</button>
+            <p class="answer">Yes, we ship to select international destinations. Shipping rates apply.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">How do I track my order?</button>
+            <p class="answer">You can track your order using the tracking number provided in your email.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">What is your return policy?</button>
+            <p class="answer">We accept returns within 30 days of purchase. Please visit our Returns page for details.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">Can I change my shipping address?</button>
+            <p class="answer">Yes, you can change your shipping address before the order is dispatched. Contact our support team for assistance.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">What payment methods do you accept?</button>
+            <p class="answer">We accept Cash on delivery, Wallet, Razorpay, and several other payment methods. Visit our Payment Options page for more information.</p>
+        </div>
+        <div class="faq-item">
+            <button onclick="toggleAnswer(this)">Is my personal information secure?</button>
+            <p class="answer">Yes, we use advanced encryption to ensure your personal information is secure.</p>
+        </div>
+    </div>
+
+    <!-- Testimonial Section -->
+    <div class="testimonial-section">
+        <h3>What Our Customers Say</h3>
+        <div class="testimonial-item">
+            <div class="testimonial-image">
+                <img src="{% static 'images/testimonial_1.jpg' %}" alt="Customer 1">
+            </div>
+            <div class="testimonial-text">
+                <p>"I had an amazing experience shopping at Soundwave! The support team was very helpful, and my headphones arrived quickly. The quality is fantastic!"</p>
+                <h4>Mohanlal</h4>
+            </div>
+        </div>
+        <div class="testimonial-item">
+            <div class="testimonial-image">
+                <img src="{% static 'images/testimonial_2.jpg' %}" alt="Customer 2">
+            </div>
+            <div class="testimonial-text">
+                <p>"I love the variety of products available. The sound quality of my new headphones is exceptional, and I am  happier with my purchase!"</p>
+                <h4>Mammootty</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAnswer(button) {
+        const answer = button.nextElementSibling;
+        if (answer.style.display === "block") {
+            answer.style.display = "none";
+        } else {
+            answer.style.display = "block";
+        }
+    }
+
+    function filterFAQs() {
+        const searchInput = document.getElementById("faqSearch").value.toLowerCase();
+        const faqItems = document.querySelectorAll(".faq-item");
+        let hasMatch = false;
+
+        faqItems.forEach(item => {
+            const question = item.querySelector("button").textContent.toLowerCase();
+            if (question.includes(searchInput)) {
+                item.style.display = "block";
+                hasMatch = true;
+            } else {
+                item.style.display = "none";
+            }
+        });
+
+        const noResults = document.getElementById("noResults");
+        noResults.style.display = hasMatch ? "none" : "block";
+    }
+
+    function toggleAnswer(button) {
+        const answer = button.nextElementSibling;
+        answer.style.display = answer.style.display === "block" ? "none" : "block";
+    }
+
+</script>
+
+{% endblock %}

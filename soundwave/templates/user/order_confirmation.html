@@ -1,112 +1,264 @@
-{% extends 'user/navbar.html' %}
-{% load static %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-<style>
-    .card {
-        margin-bottom: 20px;
-    }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 3rem 4rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
 
-    .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-    }
+        .success-icon {
+            position: relative;
+            display: inline-block;
+        }
 
-    .card-title {
-        font-size: 1.25rem;
-    }
+        .success-icon i {
+            font-size: 5rem;
+            color: #2ecc71;
+            animation: scaleUp 0.5s ease-out;
+        }
 
-    .btn-link {
-        color: #007bff;
-        text-decoration: none;
-    }
+        .success-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 3px solid #2ecc71;
+            border-radius: 50%;
+            opacity: 0;
+            animation: ripple 1.5s ease-out infinite;
+        }
 
-    .btn-link:hover {
-        text-decoration: underline;
-    }
+        .message {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            font-family: 'Playfair Display', serif;
+            animation: slideUp 0.5s ease-out;
+        }
 
-    .media {
-        display: flex;
-        align-items: center;
-    }
+        .sub-message {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            animation: slideUp 0.5s ease-out 0.2s backwards;
+        }
 
-    .media-body {
-        margin-left: 15px;
-    }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .media img {
-        width: 60px;
-        height: 60px;
-        border-radius: 5px;
-    }
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
 
-    .fa-star {
-        font-size: 14px;
-    }
+        .btn-outline-primary {
+            background: transparent;
+            border: 2px solid #2ecc71;
+            color: #2ecc71;
+        }
 
-    .btn-primary {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-    }
-</style>
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.1);
+        }
 
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
 
-<div class="container-fluid my-5">
-    <div class="row">
-        
-        <!-- Left Section: Order Details -->
-        <div class="col-md-7">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <!-- <h4 class="card-title">Order #234000</h4> -->
-                </div>
-                <div class="card-body">
-                    <h5>Thank you for your order!</h5>
-                    <a href="#" class="btn btn-link">Track order</a>
+        .btn-outline-primary:hover {
+            background: rgba(46, 204, 113, 0.1);
+        }
 
-                    <!-- <h6 class="mt-4">Delivery</h6>
-                    <p>567 Cherry Sousa Lane, Sacramento, 96529</p>
+        /* Classic Celebration Elements */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-                    <h6>Time</h6>
-                    <p>Sunday, May 9, 12:00 - 14:00</p>
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #ffd700;
+            opacity: 0.8;
+        }
 
-                    <h6>Payment</h6>
-                    <p>Cash on delivery</p>
+        .ribbon {
+            position: absolute;
+            width: 15px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            transform-origin: 50% 0;
+        }
 
-                    <h6 class="mt-4">Congratulations! You have earned 256 bonuses</h6>
-                </div>
-            </div>
-        </div> -->
+        .stamp {
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            width: 100px;
+            height: 100px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            transform: rotate(15deg);
+            opacity: 0.9;
+            animation: stampIn 0.5s ease-out;
+        }
 
-        <!-- Right Section: You May Also Like -->
-        <!-- <div class="col-md-5">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">You May Also Like</h4>
-                </div>
-                <div class="card-body">
-                    <div class="media mb-3">
-                        <img src="https://via.placeholder.com/60" class="mr-3" alt="Speaker 1">
-                        <div class="media-body">
-                            <h5 class="mt-0">Speaker</h5>
-                            <p><span class="text-muted"><del>₹1,450.00</del></span> ₹740.99</p>
-                            <p><span class="fa fa-star text-warning"></span> 4.8 (123 reviews)</p>
-                        </div>
-                    </div>
-                    <div class="media mb-3">
-                        <img src="https://via.placeholder.com/60" class="mr-3" alt="Speaker 2">
-                        <div class="media-body">
-                            <h5 class="mt-0">Speaker</h5>
-                            <p><span class="text-muted"><del>₹1,450.00</del></span> ₹740.99</p>
-                            <p><span class="fa fa-star text-warning"></span> 4.8 (82 reviews)</p>
-                        </div>
-                    </div> -->
-                    <a href="{% url 'products' %}" class="btn btn-primary btn-block">Continue Shopping</a>
-                </div>
-            </div>
+        @keyframes scaleUp {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes stampIn {
+            0% { transform: rotate(15deg) scale(0); }
+            100% { transform: rotate(15deg) scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .message {
+                font-size: 2rem;
+            }
+            
+            .sub-message {
+                font-size: 1rem;
+            }
+
+            .btn {
+                display: block;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="celebration" id="celebration"></div>
+    <div class="container">
+        <div class="stamp">
+            CONFIRMED
         </div>
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+            <div class="success-ring"></div>
+        </div>
+        <div class="message">Order Confirmed!</div>
+        <div class="sub-message">Thank you for your purchase. Your order is being processed.</div>
+        <a href="{% url 'order_details' %}" class="btn btn-secondary">View Your Order</a>
+        <a href="{% url 'generate_invoice' order.order_id %}" class="btn btn-outline-primary">Download Invoice</a>
     </div>
-</div>
 
-{% endblock %}
+    <script>
+        // Prevent back navigation
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, null, window.location.href);
+        };
+
+        // Enhanced celebration animation
+        function createCelebrationElement(type) {
+            const element = document.createElement('div');
+            element.className = type;
+            element.style.left = Math.random() * 100 + 'vw';
+            element.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            element.style.animationDelay = Math.random() + 's';
+            
+            if (type === 'confetti') {
+                element.style.background = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                element.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            } else if (type === 'ribbon') {
+                element.style.animation = `fall ${Math.random() * 4 + 3}s ease-in-out forwards, spin ${Math.random() * 2 + 1}s linear infinite`;
+            }
+            
+            document.getElementById('celebration').appendChild(element);
+            setTimeout(() => element.remove(), 5000);
+        }
+
+        function startCelebration() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createCelebrationElement('confetti');
+                    if (i % 3 === 0) createCelebrationElement('ribbon');
+                }, i * 50);
+            }
+        }
+
+        // Start celebration on load
+        startCelebration();
+        // Repeat celebration every 5 seconds
+        setInterval(startCelebration, 5000);
+    </script>
+</body>
+</html> 

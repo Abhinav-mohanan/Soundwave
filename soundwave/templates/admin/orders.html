@@ -20,17 +20,6 @@
     color: #333;
   }
 
-  .filter-dropdown {
-    margin-left: auto;
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: white;
-    font-size: 1rem;
-    color: #f2eeee;
-    cursor: pointer;
-  }
-
   .table-responsive {
     margin-top: 20px;
   }
@@ -45,31 +34,13 @@
     text-align: center;
   }
 
-  .status-btn {
+  .view-btn {
     font-size: 0.875rem;
     padding: 5px 10px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
-  }
-
-  .status-btn.pending {
-    background-color: #ffc107;
-    color: white;
-  }
-
-  .status-btn.delivered {
-    background-color: #28a745;
-    color: white;
-  }
-
-  .status-btn.rejected {
-    background-color: #dc3545;
-    color: white;
-  }
-
-  .status-btn.in-transit {
-    background-color: #17a2b8;
+    background-color: #007bff;
     color: white;
   }
 </style>
@@ -78,17 +49,6 @@
   <div class="content-wrapper">
     <div class="page-header">
       <h3 class="page-title text-white">Orders</h3>
-    
-      <form method="get" class="filter-form">
-        <select name="status" class="form-control" onchange="this.form.submit()">
-          <option value="">All Statuses</option>
-          <option value="Order Pending" {% if request.GET.status == 'Order Pending' %}selected{% endif %}>Order Pending</option>
-          <option value="Order Confirmed" {% if request.GET.status == 'Order Confirmed' %}selected{% endif %}>Order Confirmed</option>
-          <option value="Shipped" {% if request.GET.status == 'Shipped' %}selected{% endif %}>Shipped</option>
-          <option value="Delivered" {% if request.GET.status == 'Delivered' %}selected{% endif %}>Delivered</option>
-          <option value="Cancelled" {% if request.GET.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-        </select>
-      </form>
     </div>
 
     <div class="card dark-theme">
@@ -97,48 +57,29 @@
           <table class="table table-dark">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Address</th>
+                <th>Tracking Number</th>
+                <th>User</th>
+                <th>Shipping Address</th>
+                <th>Total Price</th>
                 <th>Date</th>
-                <th>Product</th>
-                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {% for order_items in orders %}
+              {% for order in orders %}
               <tr>
-                <td>{{ order_items.order.tracking_number }}</td>
-                <td>{{ order_items.order.user.first_name }}</td>
-                <td>{{ order_items.order.shipping_address }}</td>
-                <td>{{ order_items.order.created_at|date:'d M Y ' }}</td>
-                <td>{{ order_items.variant.product.name }}</td>
+                <td>{{ order.tracking_number }}</td>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.shipping_address }}</td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.created_at|date:'d M Y' }}</td>
                 <td>
-                  <button class="status-btn 
-                    {% if order_items.status == 'Order Pending' %} pending 
-                    {% elif order_items.status == 'Order Confirmed' %} delivered 
-                    {% elif order_items.status == 'Shipped' %} in-transit 
-                    {% elif order_items.status == 'Delivered' %} delivered 
-                    {% elif order_items.status == 'Cancelled' %} rejected 
-                    {% endif %}">
-                    {{ order_items.status }}
-                  </button>
-                </td>
-                <td>
-                  {% if order_items.status == "Order Pending" %}
-                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Order Confirmed' %}" class="status-btn delivered">Confirm</a>
-                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Cancelled' %}" class="status-btn rejected">Cancel</a>
-                  {% elif order_items.status == "Order Confirmed" %}
-                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Shipped' %}" class="status-btn in-transit">Ship</a>
-                  {% elif order_items.status == "Shipped" %}
-                  <a href="{% url 'change_order_status' order_items.Orderitem_id 'Delivered' %}" class="status-btn delivered">Deliver</a>
-                  {% endif %}
+                  <a href="{% url 'orderitems_details' order.order_id %}" class="view-btn">View</a>
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="7" class="text-center">No order Available </td>
+                <td colspan="6" class="text-center">No orders available</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -150,3 +91,4 @@
 </div>
 
 {% endblock %}
+

@@ -9,6 +9,9 @@ from django.views.decorators.cache import never_cache
 from user.models import CustomUser
 from .validators import validate_first_name ,validate_last_name,validate_email,phone_validate
 from orders.models import Order_items,Order
+from offer.models import Brand_offer,Product_offer
+from django.utils.timezone import now
+from math import floor
 
 
 # Create your views here.
@@ -128,15 +131,6 @@ def view_address(request):
     return render(request,'user/address.html',{'addresses':addresses})
 
 
-def order_list(request):
-    status_filter = request.GET.get('status')
-    if status_filter:
-        orders = Order.objects.filter(order_items__status=status_filter, user=request.user)
-    else:
-        orders = Order.objects.filter(user=request.user)
-    return render(request, 'user/order_details.html', {'orders': orders})
-
-
 @never_cache
 @login_required
 def edit_address(request,address_id):
@@ -169,5 +163,72 @@ def deactivate_address(request,address_id):
 @never_cache
 @login_required(login_url='user_login')
 def user_orders(request):
-    orders = Order.objects.filter(user=request.user).select_related('shipping_address').prefetch_related('order_items__variant__product')
+    orders = Order.objects.filter(user=request.user).select_related('shipping_address').prefetch_related('order_items__variant__product').order_by('-created_at')
     return render(request, 'user/order_details.html', {'orders': orders})
+
+@never_cache
+@login_required(login_url='user_login')
+def order_list(request):
+    status_filter = request.GET.get('status')
+    if status_filter:
+        orders = Order.objects.filter(order_items__status=status_filter, user=request.user)
+    else:
+        orders = Order.objects.filter(user=request.user)
+    return render(request, 'user/order_details.html', {'orders': orders})
+
+
+
+@never_cache
+@login_required(login_url='user_login')
+def manage_order(request,order_id):
+    order=get_object_or_404(Order,order_id=order_id,user=request.user)
+    order_items=Order_items.objects.filter(order=order)
+
+    if order_items.exists():
+        first_order_item=order_items.first()
+        product=first_order_item.variant.product
+        brand=product.brand
+
+    current_date =now().date()
+    for order_item in order_items:
+        product=order_item.variant.product
+        brand=product.brand
+    
+        product_offer =Product_offer.objects.filter(
+            product=product,
+            started_date__lte=current_date,
+            end_date__gte=current_date,
+            status=True
+        ).first()
+
+        brand_offer=Brand_offer.objects.filter(
+            brand=product.brand,
+            started_date__lte=current_date,
+            end_date__gte=current_date,
+            status=True
+        ).first()
+
+        product_discount_price=None
+        brand_discount_price=None
+
+        if product_offer:
+            product_discount_price=round(product.price * (1-(product_offer.offer_percentage/100)),0)
+        
+        if brand_offer:
+            brand_discount_price =round(product.price * (1- (brand_offer.offer_percentage/100)),0)
+
+        if product_discount_price is not None and brand_discount_price is not None:
+            final_discount_price=float(min(product_discount_price,brand_discount_price))
+            active_offer = product_offer if product_discount_price < brand_discount_price else brand_offer 
+        elif product_discount_price is not None:
+            final_discount_price=float(product_discount_price)
+            active_offer=product_offer
+        elif brand_discount_price is not None:
+            final_discount_price = float(brand_discount_price)
+            active_offer = brand_offer
+        else:
+            final_discount_price=product.price
+            final_discount_price=floor(final_discount_price)
+            active_offer =None
+
+    return render(request,'user/manage_order.html',{'order':order,'order_items':order_items,'final_discount_price':final_discount_price,'active_offer':active_offer})

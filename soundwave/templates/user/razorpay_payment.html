@@ -1,53 +1,128 @@
-<!-- razorpay_payment.html -->
-<div class="container">
-    <h2>Razorpay Payment</h2>
-    <p>Total: ₹{{ total }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Payment</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f1f1;
+            font-family: Arial, sans-serif;
+        }
 
-    <form action="{% url 'verify_payment' %}" method="POST" id="razorpay-payment-form">
-        {% csrf_token %}
-        <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order_id }}">
-        <input type="hidden" name="total" value="{{ total }}">
-        <button type="submit" id="razorpay-button">Pay Now</button>
-    </form>
-</div>
+        .container {
+            text-align: center;
+            background-color: #555;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #fff;
+        }
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    var options = {
-        "key": "{{ razorpay_key_id }}", // Your Razorpay Key ID
-        "amount": "{{ total|floatformat:2 }}", // Total amount in INR
-        "currency": "INR",
-        "order_id": "{{ razorpay_order_id }}", // Order ID
-        "handler": function (response) {
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #razorpay-button {
+            background-color: #040404;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #razorpay-button:hover {
+            background-color: #131313;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Razorpay Payment</h2>
+        <p>Total: ₹{{ total }}</p>
+
+        <form action="{% url 'verify_payment' %}" method="POST" id="razorpay-payment-form">
+            {% csrf_token %}
+            <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order_id }}">
+            <input type="hidden" name="payment_status" value="Failed">
+        </form>
+
+        <button type="button" id="razorpay-button">Pay Now</button>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ razorpay_key_id }}", // Your Razorpay Key ID
+            "amount": "{{ total|floatformat:0 }}" * 100, // Convert to paise (e.g., ₹500 -> 50000)
+            "currency": "INR",
+            "order_id": "{{ razorpay_order_id }}", // Razorpay Order ID
+            "name": "{{ user.username }}",
+            "description": "Payment for your order",
+            "handler": function (response) {
+                // Append Razorpay response to form and submit
+                submitPaymentForm("Success", response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
+            },
+            "prefill": {
+                "name": "{{ user.username }}",
+                "email": "{{ user.email }}"
+            },
+            "theme": {
+                "color": "#040404"
+            },
+            "modal": {
+                "ondismiss": function () {
+                    // Handle modal dismissal as payment failure
+                    submitPaymentForm("Failed");
+                }
+            }
+        };
+
+        document.getElementById('razorpay-button').onclick = function () {
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        };
+
+        // Function to dynamically append hidden inputs and submit the form
+        function submitPaymentForm(status, payment_id = "", order_id = "", signature = "") {
             var form = document.getElementById('razorpay-payment-form');
-            var payment_id = response.razorpay_payment_id;
-            var order_id = response.razorpay_order_id;
-            var signature = response.razorpay_signature;
+            form.querySelector('input[name="payment_status"]').value = status;
 
-            form.appendChild(createHiddenInput('razorpay_payment_id', payment_id));
-            form.appendChild(createHiddenInput('razorpay_order_id', order_id));
-            form.appendChild(createHiddenInput('razorpay_signature', signature));
+            if (payment_id) form.appendChild(createHiddenInput('razorpay_payment_id', payment_id));
+            if (order_id) form.appendChild(createHiddenInput('razorpay_order_id', order_id));
+            if (signature) form.appendChild(createHiddenInput('razorpay_signature', signature));
 
             form.submit();
-        },
-        "prefill": {
-            "name": "{{ user.username }}",
-            "email": "{{ user.email }}",
         }
-    };
+          // Open Razorpay payment form
+        // Automatically open Razorpay payment form on page load
+        window.onload = function () {
+            console.log("Opening Razorpay payment form automatically"); // Debugging log
+            var rzp1 = new Razorpay(options);
+            rzp1.open(); // Automatically trigger Razorpay form
+        };
 
-    var rzp1 = new Razorpay(options);
-
-    document.getElementById('razorpay-button').onclick = function (e) {
-        e.preventDefault();
-        rzp1.open();
-    };
-
-    function createHiddenInput(name, value) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        return input;
-    }
-</script>
+        // Helper function to create hidden input fields dynamically
+        function createHiddenInput(name, value) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            return input;
+        }
+    </script>
+</body>
+</html>

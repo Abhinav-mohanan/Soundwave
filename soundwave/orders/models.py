@@ -29,9 +29,14 @@ class Order(models.Model):
     total_price=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
     payment_type=models.CharField(choices=PAYMENT_CHOICES)
     payment_status=models.CharField(choices=PAYMENT_STATUS_CHOICES)
+    offer_price=models.DecimalField(max_digits=10,decimal_places=2,null=True,default=0)
+    coupon_price=models.DecimalField(max_digits=10,decimal_places=2,null=True,default=0)
     estimated_delivery_date=models.DateTimeField(blank=True,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering=['-created_at']
     
 
     def __str__(self):
@@ -47,11 +52,13 @@ class Order(models.Model):
 
 class Order_items(models.Model):
     STATUS_CHOICES= [
-        ('Pending','Pending'),
-        ('Confirmed','Confirmed'),
+        ('Pending','Order Pending'),
+        ('Confirmed',' Order Confirmed'),
         ('Shipped','Shipped'),
         ('Delivered','Delivered'),
         ('Cancelled','Cancelled'),
+        ('Requested Return','Requested Return'),
+        ('Returned','Returned'),
 
     ] 
 

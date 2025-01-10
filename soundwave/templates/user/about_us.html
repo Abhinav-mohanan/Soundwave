@@ -1,0 +1,149 @@
+{% extends 'user/navbar.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .about-section {
+        margin-top: 20px;
+        padding: 20px;
+        color: white;
+    }
+
+    .about-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 20px;
+        background-color: #212529;
+        border-radius: 5px;
+    }
+
+    .about-hero .hero-text {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .about-hero .hero-text h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+        color: #e63946;
+    }
+
+    .about-hero .hero-text p {
+        font-size: 16px;
+        color: #f8f9fa;
+        line-height: 1.6;
+    }
+
+    .about-hero .hero-text .btn {
+        margin-top: 20px;
+        background-color: #e63946;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .about-hero .hero-image img {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+
+    .stats-section {
+        margin-top: 40px;
+        padding: 60px 20px;
+        background-image: url("{% static 'images/about_us1.webp' %}");
+        background-size: cover; 
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        color: #f8f9fa;
+        width: 100%;
+        height: 800px; 
+        opacity: 80%;
+    }
+
+    .stats-section .stat {
+        text-align: center;
+    }
+
+    .stats-section .stat h2 {
+        font-size: 36px;
+        color: #e63946;
+        margin-bottom: 10px;
+    }
+
+    .stats-section .stat p {
+        font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero {
+            flex-direction: column;
+        }
+
+        .about-hero .hero-text {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+
+        .stats-section {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="about-hero">
+        <div class="hero-text">
+            <h1>Welcome to Soundwave</h1>
+            <p>
+                We strive passionately at Soundwave to bring high-quality audio experiences to our customers. Founded with a mission to make top-notch audio accessible, we've carefully assembled a range of headphones to suit every need, from high-studio sound to audiophiles to fitness experts, offering solutions for every lifestyle.
+            </p>
+            <p>
+                At Soundwave, we believe in quality, innovation, and customer satisfaction. Each product we offer goes through rigorous testing to ensure it meets the highest standards. From cutting-edge noise-canceling headphones to ergonomic earbuds, our technology-driven solutions are designed to provide superior sound and out-of-the-box functionality.
+            </p>
+            <p>
+                What sets us apart is our commitment to creating a seamless shopping experience. With powerful filtering options, detailed product comparisons, and personaliHelpsed recommendations, you can easily find headphones that fit your unique style and needs. We’re also proud to incorporate sustainable practices, such as eco-friendly packaging, to reduce our environmental impact.
+            </p>
+            <p>
+                Our customers are at the heart of everything we do, and we’re here to support you every step of the way. Feel free to reach out through our support channels for product guidance, personaliHelpsed recommendations, or any questions you may have. As we grow, we look forward to expanding our range and integrating more advanced features to make your experience even better.
+                    Thank you for choosing Soundwave. Let’s make every moment sound extraordinary!
+            </p>
+            <a href="{% url 'products' %}">
+            <button class="btn">Shop Now</button>
+        </a>
+        </div>
+        <div class="hero-image">
+            <img style="width: 400px; height: 400px;" src="{% static 'images/about_us.webp' %}" alt="Audio Products">
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stat">
+            <h2>{{ total_users }}</h2>
+            <p>Happy Customers</p>
+        </div>
+        <div class="stat">
+            <h2>{{ total_brands }}</h2>
+            <p>Brands</p>
+        </div>
+        <div class="stat">
+            <h2>{{ total_products }}</h2>
+            <p>Products</p>
+        </div>
+        <div class="stat">
+            <h2>46</h2>
+            <p>Awards</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

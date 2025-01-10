@@ -219,6 +219,15 @@
 	.product-image{
 		border-color: #2E2E2E;
 	}
+	.img-thumbnail{
+		background-color: rgb(67, 67, 67);
+	}
+	.dropdown-menu{
+		--bs-dropdown-link-active-bg:transparent ;
+	}
+	.shop-now-overlay button{
+		background-color: #000;
+	}
 
   
   </style>
@@ -235,8 +244,8 @@
         <ul class="nav">
           <li class="nav-item"><a class="nav-link text-light" href="{% url 'home' %}">Home</a></li>
           <li class="nav-item"><a class="nav-link text-light" href="{% url 'products' %}">Products</a></li> 
-		  <li class="nav-item"><a class="nav-link text-light" href="#">Offers</a></li>
-          <li class="nav-item"><a class="nav-link text-light" href="#">Contact</a></li>
+		  <li class="nav-item"><a class="nav-link text-light" href="{% url 'about_us' %}">About Us</a></li>
+          <li class="nav-item"><a class="nav-link text-light" href="{% url 'help_page' %}">Help</a></li>
         </ul>
       </nav>
 	  <div class="header-icons d-flex align-items-center">
@@ -256,7 +265,13 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 		  </form>
 		</div>
-	  
+
+	  <!-- Wishlist Icon -->
+        {% if request.user.is_authenticated %}
+		<a class="nav-link text-light" href="{% url 'wishlist_details' %}">
+			<i class="fa fa-heart me-3 text-light"></i>
+		</a>
+		{% endif %}
 		<!-- Shopping Cart Icon -->
         {% if request.user.is_authenticated %}
 		<a class="nav-link text-light" href="{% url 'cart_detail' %}">
@@ -321,31 +336,13 @@
 			<div class="row">
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						Categories
+						Company Info
 					</h4>
 
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Women
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Men
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Shoes
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Watches
+							<a href="{% url 'about_us' %}" class="stext-107 cl7 hov-cl1 trans-04">
+								About us
 							</a>
 						</li>
 					</ul>
@@ -358,26 +355,8 @@
 
 					<ul>
 						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Track Order
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Returns 
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								Shipping
-							</a>
-						</li>
-
-						<li class="p-b-10">
-							<a href="#" class="stext-107 cl7 hov-cl1 trans-04">
-								FAQs
+							<a href="{% url 'help_page' %}" class="stext-107 cl7 hov-cl1 trans-04">
+								Help Center
 							</a>
 						</li>
 					</ul>
@@ -389,72 +368,45 @@
 					</h4>
 
 					<p class="stext-107 cl7 size-201">
-						Any questions? Let us know in store at 8th floor, 379 Hudson St, New York, NY 10018 or call us on (+1) 96 716 6879
+						Any questions? Let us know in store at 3th floor, Kinfra calicut, po: 676767 or call us on (+91) 9671668799
 					</p>
 
-					<div class="p-t-27">
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-facebook"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-instagram"></i>
-						</a>
-
-						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
-							<i class="fa fa-pinterest-p"></i>
-						</a>
-					</div>
+					
 				</div>
 
 				<div class="col-sm-6 col-lg-3 p-b-50">
 					<h4 class="stext-301 cl0 p-b-30">
-						Newsletter
+						Email
 					</h4>
-
-					<form>
 						<div class="wrap-input1 w-full p-b-4">
-							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="email@example.com">
+							<p style="color: #b2b2b2;">soundwaveofficial01@gmail.com</p>
 							<div class="focus-input1 trans-04"></div>
 						</div>
 
 						<div class="p-t-18">
 							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
-								Subscribe
+								Email
 							</button>
 						</div>
-					</form>
 				</div>
 			</div>
 
 			<div class="p-t-40">
 				<div class="flex-c-m flex-w p-b-18">
-					<a href="#" class="m-all-1">
+					
 						<img src="{% static 'images/icons/icon-pay-01.png'%}"alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
+					
 						<img src="{% static 'images/icons/icon-pay-02.png'%}"alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
+				
 						<img src="{% static 'images/icons/icon-pay-03.png'%}"alt="ICON-PAY">
-					</a>
-
-					<a href="#" class="m-all-1">
+					
 						<img src="{% static 'images/icons/icon-pay-04.png'%}"alt="ICON-PAY">
-					</a>
 
-					<a href="#" class="m-all-1">
 						<img src="{% static 'images/icons/icon-pay-05.png'%}"alt="ICON-PAY">
-					</a>
 				</div>
 
-				<p class="stext-107 cl6 txt-center">
-					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved  by <SPan>SOUNDWAVE</SPan></a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-
+				<p class="stext-107 cl6 txt-center">				
+					Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved  by <SPan>SOUNDWAVE</SPan></a>
 				</p>
 			</div>
 		</div>

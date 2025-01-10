@@ -88,12 +88,17 @@ def deactivate_coupon(request,coupon_id):
 
 
 #=================Coupon Managment End===================#
+
+
+#===================== Apply coupon======================#
 @never_cache
 def apply_coupon(request):
     if request.user.is_authenticated:
         user = request.user
         cart = get_object_or_404(Cart, user=user)
         cart_items=Cartitem.objects.filter(cart=cart) 
+
+        total_offer_price=0
 
         for cart_item in cart_items:
             variant=cart_item.variant
@@ -117,9 +122,9 @@ def apply_coupon(request):
             brand_discount_price=None
 
             if product_offer:
-                product_discount_price=(product.price * (1-(product_offer.offer_percentage)))
-            else:
-                brand_discount_price=(product.price * (1-(brand_offer.offer_percentage)))
+                product_discount_price=(product.price * (1-(product_offer.offer_percentage/100)))
+            if brand_offer:
+                brand_discount_price=(product.price * (1-(brand_offer.offer_percentage/100)))
 
             if product_discount_price is not None and brand_discount_price is not None:
                 final_discount_price=min(product_discount_price,brand_discount_price)
@@ -132,10 +137,7 @@ def apply_coupon(request):
 
             else:
                 final_discount_price = product.price
-
-            final_discount_price=round(final_discount_price,0)
-
-            cart_item.variant.product.price=final_discount_price
+            total_offer_price+=round(final_discount_price,0)*cart_item.quantity
 
         if request.method == 'POST':
             code = request.POST.get('coupon_code', '').strip()
@@ -158,23 +160,25 @@ def apply_coupon(request):
 
                
                 if coupon.coupon_type == 'fixed':
-                    discount = min(coupon.discount_amount, total_amount)
+                    discount = min(coupon.discount_amount, total_offer_price)
                 elif coupon.coupon_type == 'percentage':
-                    discount = total_amount * (coupon.discount_amount / 100)
+                    discount = total_offer_price * (coupon.discount_amount / 100)
                 else:
                     discount = 0
 
-                discount_total = total_amount - discount
+                discount = min(discount,total_offer_price)
+                request.session['applied_coupon_id']=coupon.coupon_id
+                # discount_total=total_offer_price-discount
 
-                Couponusage.objects.create(user=user, coupon=coupon)
-                coupon.usage_count += 1
-                coupon.save()
+                # Couponusage.objects.create(user=user, coupon=coupon,is_used=True)
+                # coupon.usage_count += 1
+                # coupon.save()
 
                 
                 return JsonResponse({
                     'success': True,
                     'message': f'Coupon applied. You saved ₹{discount:.2f}.',
-                    'discount_total': f'{discount_total:.2f}'
+                    'discount_total': f'{total_offer_price - discount:.2f}'
                 })
 
             except Coupon.DoesNotExist:

@@ -134,12 +134,16 @@ def edit_product_offer(request, product_offer_id):
     products = Product.objects.all()
     return render(request, 'admin/edit_product_offer.html', {'products': products, 'product_offer': product_offer})
 
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def activate_product_offer(request,product_offer_id):
     product_offer=get_object_or_404(Product_offer,id=product_offer_id)
     product_offer.status=True
     product_offer.save()
     return redirect(f"{reverse('view_offers')}?section=product")
 
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def deactivate_product_offer(request,product_offer_id):
     product_offer=get_object_or_404(Product_offer,id=product_offer_id)
     product_offer.status=False
@@ -295,6 +299,7 @@ def deactivate_brand_offer(request,brand_offer_id):
 
 
 #====================Offer View=======================#
+@user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def view_offer(request):
     product_offers=Product_offer.objects.all()
     brand_offers=Brand_offer.objects.all()

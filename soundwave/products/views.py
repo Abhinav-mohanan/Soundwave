@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 
 User=get_user_model
 
-#======================category  sectionn=====================# 
+#======================category  section=====================# 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def add_category(request):
@@ -145,6 +145,26 @@ def edit_subcategory(request,id):
             messages.success(request,'Subcategory update successfully')
             return redirect('view_subcategory',id=category.id)
     return render(request,'admin/edit_subcategory.html',{'subcategory':subcategory,'category':category})
+
+
+@never_cache
+@user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
+def list_subcategory(request,subcategory_id):
+    subcategory=get_object_or_404(Subcategory,id=subcategory_id)
+    category_id=subcategory.category.id
+    subcategory.is_listed=True
+    subcategory.save()
+    return redirect('view_subcategory',id=category_id)
+ 
+
+@never_cache
+@user_passes_test(lambda u:u.is_superuser, login_url='/adminn/')
+def unlist_subcategory(request,subcategory_id):
+    subcategory=get_object_or_404(Subcategory,id=subcategory_id)
+    category_id=subcategory.category.id
+    subcategory.is_listed=False
+    subcategory.save()
+    return redirect('view_subcategory',id=category_id)
 
 #======================Sub_category section End=====================# 
 

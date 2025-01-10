@@ -10,5 +10,6 @@ urlpatterns=[
     path('order_details/',views.user_orders,name='order_details'),
     path('change_password/',views.change_password,name='change_password'),
     path('list_orders/',views.order_list,name='list_order'),
-    path('delete_address/<int:address_id>',views.deactivate_address,name='delete_address')
+    path('delete_address/<int:address_id>/',views.deactivate_address,name='delete_address'),
+    path('manage_orders/<int:order_id>/',views.manage_order,name='manage_order')
 ]

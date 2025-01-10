@@ -11,7 +11,7 @@
           <th>subcategory image</th>
           <th>SubCategory Name</th>
           <th>Category</th>
-          <th>Is Listed</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -34,6 +34,11 @@
             </td>
             <td>
               <a href="{% url 'edit_subcategory' sub.id %}" class="btn btn-primary btn-sm">Edit</a>
+              {% if not sub.is_listed %}
+                <a href="{% url 'list_subcategory' sub.id %}"><button class="btn btn-outline-success btn-sm">List</button></a>
+              {% else %}
+                <a href="{% url 'unlist_subcategory' sub.id %}"><button class="btn btn-outline-danger btn-sm">Unlist</button></a>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}

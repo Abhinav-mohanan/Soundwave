@@ -3,6 +3,10 @@
 {% load static %}
 
 <style>
+.container-fluid{
+  background: linear-gradient(to top, #2E2E2E 30%, #1a1a1a  70%);
+  padding: 15px;
+  }
 .category-card {
     position: relative;
     display: flex;
@@ -33,23 +37,22 @@
 a{
     text-decoration: none;
 }
+.bg1 {
+  background-color: #453f3f;
+}
+
 </style>
 
   <section class="section-slide">
     <div class="wrap-slick1">
         <div class="slick1">
-            <div class="item-slick1" style="background-image: url('/static/images/slide-01.jpeg');">
+            <div class="item-slick1" style="background-image: url('/static/images/slide-03.png');">
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                        <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
-                            <span class="ltext-101 cl2 respon2 text-white">
-                                New Collection 2025
-                            </span>
-                        </div>
-                            
                         <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
                             <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1 text-white">
-                                NEW collections
+                              Feel the Sound, <br>
+                              Not Just Hear It
                             </h2>
                         </div>
                             
@@ -62,18 +65,17 @@ a{
                 </div>
             </div>
             
-            <div class="item-slick1" style="background-image: url('/static/images/slide-02.jpeg');">
+            <div class="item-slick1" style="background-image: url('/static/images/slide-01.jpeg');">
                 <div class="container h-full">
                     <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
-                        <div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
-                            <span class="ltext-101 cl2 respon2 text-white">
-                                Feel the bass
-                            </span>
-                        </div>
-                            
+                      <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                        <span class="ltext-101 cl2 respon2 text-white">
+                            New Collection 2025
+                        </span>
+                    </div>
                         <div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
                             <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1 text-white">
-                                Feel the sound
+                              Discover the Rhythm of <br>Excellence
                             </h2>
                         </div>
                             
@@ -159,7 +161,7 @@ a{
     </div>
 </div>
 {% else %}
-<p>No featured product available.</p>
+<p class="text-white">No featured product available.</p>
 {% endif %}
 
 
@@ -195,12 +197,12 @@ a{
 <div class="discount-banner mt-5 p-3 rounded d-flex align-items-center" style="background: linear-gradient(90deg, #b7b8ba, #453f3f); border: 1px solid #cce5ff;">
 
     <div class="text-center me-4" style="flex: 1; border-right: 1px dashed #a3c1ff;">
-        <h1 class="fw-bold text-primary" style="font-size: 3rem;">20<span style="font-size: 1.5rem;">%</span></h1>
-        <p class="fw-semibold text-primary">OFF</p>
+        <h1 class="fw-bold text-black" style="font-size: 3rem;">20<span style="font-size: 1.5rem;">%</span></h1>
+        <p class="fw-semibold text-black">OFF</p>
     </div>
  
     <div class="text-start ps-4" style="flex: 2;">
-        <h4 class="fw-bold text-dark mb-2">SEASONAL WEEKLY SALE 2024</h4>
+        <h4 class="fw-bold text-dark mb-2">SEASONAL WEEKLY SALE 2025</h4>
         <!-- <p class="mb-0 text-muted">Use code <strong class="text-primary">Sale2024</strong> to get the best offer</p> -->
     </div>
 

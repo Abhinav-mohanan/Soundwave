@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+        }
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f6f3f3;
+            color: rgb(11, 11, 11);
+            text-align: center;
+            padding: 15px 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 16px;
+        }
+        .company-info, .invoice-details {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .company-info h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+        .company-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .details {
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .details p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .details strong {
+            font-size: 14px;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+        }
+        table thead {
+            background-color: #f5f6f5;
+            color: rgb(6, 6, 6);
+        }
+        table thead th {
+            padding: 10px;
+            text-align: left;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        table tbody td {
+            padding: 10px;
+            text-align: left;
+            color: #555;
+        }
+        table tfoot td {
+            font-weight: bold;
+            background-color: #f1f1f1;
+            padding: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .footer .note {
+            font-style: italic;
+            color: #888;
+        }
+        @media (max-width: 768px) {
+            table tbody td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #333;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Invoice</h1>
+            <p>Order Number: <strong>{{ order.tracking_number }}</strong></p>
+        </div>
+
+        <div class="company-info">
+            <h2>Soundwave</h2>
+            <p>Email: <a href="mailto:soundwave01@gmail.com">soundwave01@gmail.com</a></p>
+            <p>Website: <a href="http://www.soundwaveofficial.com" target="_blank">www.soundwaveofficial.com</a></p>
+        </div>
+
+        <div class="details">
+            <p><strong>Customer:</strong> {{ order.user.username | capfirst }}</p>
+            <p><strong>Payment Method:</strong> {{ order.payment_type }}</p>
+            <p><strong>Shipping Address:</strong> {{ order.shipping_address | capfirst }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                    {% if item.status != 'Cancelled' %}
+                        <tr>
+                            <td data-label="Product Name">{{ item.variant.product.name | capfirst }}</td>
+                            <td data-label="Quantity">{{ item.quantity }}</td>
+                            <td data-label="Price">MRP {{ item.price }}</td>
+                            <td data-label="Subtotal">MRP {{ item.subtotal_price }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                {% if order.coupon_price != 0 %}
+                    <tr>
+                        <td colspan="3" style="text-align: right;">Coupon Discount</td>
+                        <td>MRP {{ order.coupon_price|floatformat:0 }}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align: right;">Grand Total</td>
+                    <td>MRP {{ order.total_price }}</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="footer">
+            <p><strong>Payment Method:</strong> {{ order.payment_type }}</p>
+            <p class="note">Thank you for choosing Soundwave!</p>
+        </div>
+    </div>
+</body>
+</html>
