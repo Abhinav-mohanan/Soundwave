@@ -296,47 +296,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const cartItemId = this.getAttribute('data-id');
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-            fetch(`/cart/remove/${cartItemId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken,
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the DOM
-                    document.querySelector(`#cart-item-${cartItemId}`).remove(); // Remove the item row
-                    document.getElementById('subtotal-cart-price').textContent = data.cart_subtotal;
-                    document.getElementById('total-cart-price').textContent = data.cart_total;
-
-                    if (data.cart_empty) {
-                        document.querySelector('.cart-summary').innerHTML = `
-                            <div>
-                                <h2>No items in your cart</h2>
-                                <p>Your cart is empty. Explore our products to add items.</p>
-                                <a href="{% url 'products' %}">
-                                    <button type="button">Explore Products</button>
-                                </a>
-                            </div>
-                        `;
-                    }
-                } else {
-                    alert('Failed to remove the item from the cart.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    });
-});
-
 </script>
 
 {% endblock %}
