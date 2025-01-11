@@ -672,13 +672,6 @@ def cancel_order_item(request, order_item_id):
         if order.coupon_price>0:
             coupon_discount = round((order_item.subtotal_price/order.total_price) * order.coupon_price,0)
             refund_amount=refund_amount - coupon_discount
-            print('refund_amount:',refund_amount)
-            print(f'coupon amount{order.coupon_price}')
-            print(f'final_price',{final_price})
-            print(f'order total',{order.total_price})
-            print(f'order_itemsubtotal',{order_item.subtotal_price})
-    
-
         if order.payment_status == 'Success':
             wallet, created = Wallet.objects.get_or_create(user=user)
             wallet.balance += refund_amount

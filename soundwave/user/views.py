@@ -288,7 +288,7 @@ def homepage(request):
     categories=Category.objects.filter(is_listed=True)
     hero_product=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('-created_at').first()
     featured_products = Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants', queryset=listed_variants)).order_by('-created_at')[:4]
-    new_arrivals=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('name','-created_at').distinct('name')[:5]    
+    new_arrivals=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('name','-created_at')[:5]    
 
     return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals,
                                                'categories':categories,'hero_product':hero_product})

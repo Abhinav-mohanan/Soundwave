@@ -122,18 +122,22 @@
                             <img src="{{ variants.image1.url }}" alt="{{ product.name }}" class="product-image">
                         </div>
                     </div>
-
+                    {% if variants.image2 %}
                     <div class="item-slick3" data-thumb="{{ variants.image2.url }}">
-                        <div class="wrap-pic-w pos-relative zoom-container">
+                        <div class="wrap-pic-w pos-relative zoom-container">        
                             <img src="{{ variants.image2.url }}" alt="{{ product.name }}" class="product-image">
+
                         </div>
                     </div>
+                    {% endif %}
 
+                    {% if variants.image3 %}
                     <div class="item-slick3" data-thumb="{{ variants.image3.url }}">
                         <div class="wrap-pic-w pos-relative zoom-container">
                             <img src="{{ variants.image3.url }}" alt="{{ product.name }}" class="product-image">
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
