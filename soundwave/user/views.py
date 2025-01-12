@@ -41,9 +41,9 @@ def send_email_otp(email,otp):
         )
         return True
     except BadHeaderError:
-        print('BadHeaderError: Invalid header found in email.')
+        pass
     except Exception as e:
-        print(f'Error sending OTP via email:{e}')
+        pass
 
 #======================Function to send otp and email End=====================# 
 

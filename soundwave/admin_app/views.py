@@ -209,7 +209,6 @@ def generate_excel(sales_data):
 @user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def admin_home(request):
     today = timezone.now().date()
-    print('Today',today)
 
     filter_type = request.GET.get('filter_type', 'all')   
     start_date = request.GET.get('start_date')
@@ -218,8 +217,6 @@ def admin_home(request):
     if filter_type == 'day':
         start_date = today
         end_date = today
-        print('startdate',start_date)
-        print('enddate',end_date)
     elif filter_type == 'month':
         start_date = today.replace(day=1)
         end_date =today
@@ -244,9 +241,6 @@ def admin_home(request):
                                       number_of_orders=Count('order_id'),
                                       total_items_sold=Sum('order_items__quantity')
                             ).order_by('date')
-    print('startdate',start_date)
-    print('enddate',end_date)
-    print('sales:',list(sales_data))
     
     total_revenue=Order.objects.filter(payment_status='Success').aggregate(total=Sum('total_price'))['total'] or 0.00
     total_orders=Order.objects.count()

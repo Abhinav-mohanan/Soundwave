@@ -89,134 +89,85 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('.image-input');
-    let croppers = {}; // Store cropper instances
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('.image-input');
 
-    inputs.forEach(input => {
-        input.addEventListener('change', function (e) {
-            const previewId = "preview" + this.id.replace("image", "");
-            const preview = document.getElementById(previewId);
-            const hiddenInputId = 'cropped-image' + this.id.replace('image', '');
+        inputs.forEach(input => {
+            input.addEventListener('change', function (e) {
+                const previewId = "preview" + this.id.replace("image", ""); // Match ID with preview div
+                const preview = document.getElementById(previewId);
 
-            // Clear the previous preview and destroy existing cropper
-            if (croppers[this.id]) {
-                croppers[this.id].destroy();
-                croppers[this.id] = null;
-            }
-            preview.innerHTML = '';
+                // Clear the previous preview
+                preview.innerHTML = '';
 
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    // Create container for better control
-                    const container = document.createElement('div');
-                    container.style.maxWidth = '100%';
-                    container.style.width = '100%';
-                    preview.appendChild(container);
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        preview.appendChild(img);
 
-                    // Create and setup image
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.style.maxWidth = '100%';
-                    container.appendChild(img);
-
-                    // Wait for image to load before initializing cropper
-                    img.onload = function() {
-                        // Initialize Cropper.js with improved options
-                        croppers[input.id] = new Cropper(img, {
-                            aspectRatio: 1,
-                            viewMode: 2, // Changed to viewMode 2 for better visibility
+                        // Initialize Cropper.js with fixed crop size
+                        const cropper = new Cropper(img, {
+                            aspectRatio: 1, // Square crop
+                            viewMode: 1,
                             autoCropArea: 1,
-                            cropBoxResizable: true,
-                            cropBoxMovable: true,
-                            dragMode: 'move',
-                            responsive: true,
-                            restore: false,
-                            ready: function() {
-                                // Set crop box after cropper is fully initialized
-                                this.cropper.setCropBoxData({
-                                    width: Math.min(300, preview.offsetWidth),
-                                    height: Math.min(300, preview.offsetWidth)
-                                });
-                            }
+                            cropBoxResizable: false,
+                            data: {
+                                width: 300,
+                                height: 300,
+                            },
                         });
-                    };
 
-                    // Add Crop Button
-                    const cropButton = document.createElement('button');
-                    cropButton.textContent = "Crop";
-                    cropButton.classList.add('btn', 'btn-secondary', 'mt-2');
-                    preview.appendChild(cropButton);
+                        // Add Crop Button
+                        const cropButton = document.createElement('button');
+                        cropButton.textContent = "Crop";
+                        cropButton.classList.add('btn', 'btn-secondary', 'mt-2');
+                        preview.appendChild(cropButton);
 
-                    cropButton.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const cropper = croppers[input.id];
-                        if (cropper) {
+                        cropButton.addEventListener('click', function () {
                             const croppedCanvas = cropper.getCroppedCanvas({
                                 width: 300,
                                 height: 300,
-                                imageSmoothingEnabled: true,
-                                imageSmoothingQuality: 'high'
                             });
-
-                            // Create a blob from the canvas
-                            croppedCanvas.toBlob(function(blob) {
-                                // Create a new File object
-                                const croppedFile = new File([blob], file.name, {
-                                    type: file.type,
-                                    lastModified: new Date().getTime()
-                                });
-
-                                // Update the file input with the cropped image
-                                const dataTransfer = new DataTransfer();
-                                dataTransfer.items.add(croppedFile);
-                                input.files = dataTransfer.files;
-                            }, file.type, 0.9);
-
-                            // Update preview
                             const croppedImage = document.createElement('img');
-                            croppedImage.src = croppedCanvas.toDataURL(file.type, 0.9);
-                            croppedImage.style.maxWidth = '100%';
+                            croppedImage.src = croppedCanvas.toDataURL();
                             preview.innerHTML = '';
                             preview.appendChild(croppedImage);
 
-                            // Add Remove Button
+                            // Update hidden input with cropped image data URL
+                            const hiddenInputId = 'cropped-image' + input.id.replace('image', '');
+                            const hiddenInput = document.getElementById(hiddenInputId);
+                            hiddenInput.value = croppedCanvas.toDataURL();
+
+                            // Add Remove Button After Cropping
                             addRemoveButton(preview, input);
+                        });
 
-                            // Destroy cropper after cropping
-                            cropper.destroy();
-                            croppers[input.id] = null;
-                        }
-                    });
-
-                    // Add Remove Button
-                    addRemoveButton(preview, input);
-                };
-                reader.readAsDataURL(file);
-            }
+                        // Add Remove Button Before Cropping
+                        addRemoveButton(preview, input);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         });
+
+        function addRemoveButton(preview, input) {
+            const removeButton = document.createElement('button');
+            removeButton.textContent = "Remove";
+            removeButton.classList.add('remove-btn');
+            preview.appendChild(removeButton);
+
+            removeButton.addEventListener('click', function () {
+                preview.innerHTML = ''; 
+                input.value = ''; 
+            });
+        }
     });
-
-    function addRemoveButton(preview, input) {
-        const removeButton = document.createElement('button');
-        removeButton.textContent = "Remove";
-        removeButton.classList.add('remove-btn');
-        preview.appendChild(removeButton);
-
-        removeButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            preview.innerHTML = '';
-            input.value = '';
-            if (croppers[input.id]) {
-                croppers[input.id].destroy();
-                croppers[input.id] = null;
-            }
-        });
-    }
-});
 </script>
 
 {% endblock %}
+
+
 

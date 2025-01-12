@@ -153,7 +153,7 @@ def apply_coupon(request):
                 if coupon.usage_count >= coupon.usage_limit:
                     return JsonResponse({'success': False, 'message': 'Coupon usage limit exceeded.'})
                 total_amount=sum(item.total_price for item in cart_items)
-                print(total_amount,'fghj')
+                
 
                 if total_amount < coupon.min_purchase_amount:
                     return JsonResponse({'success': False, 'message': 'Total amount does not meet the minimum purchase requirement.'})

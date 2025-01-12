@@ -125,7 +125,7 @@ def checkout_address(request):
             messages.success(request, 'Your address has been added successfully')
             return redirect('checkout')  
         else:
-            print(form.errors)
+            
             messages.error(request, 'Please correct the form and try again.')
             return redirect('checkout')
         
