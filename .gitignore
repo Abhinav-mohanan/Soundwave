@@ -1,2 +1,4 @@
 .env
-pro_env
+pro_env/
+__pycache__/
+*.pyc

@@ -674,7 +674,7 @@ def cancel_order_item(request, order_item_id):
             refund_amount=refund_amount - coupon_discount
         if order.payment_status == 'Success':
             wallet, created = Wallet.objects.get_or_create(user=user)
-            wallet.balance += refund_amount
+            wallet.balance = Decimal(wallet.balance)+ refund_amount
             wallet.save()
 
             Transaction.objects.create(
