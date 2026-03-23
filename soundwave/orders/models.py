@@ -27,8 +27,8 @@ class Order(models.Model):
     tracking_number=models.CharField(max_length=20,unique=True,editable=False)
     shipping_address=models.ForeignKey(Address,on_delete=models.CASCADE)
     total_price=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
-    payment_type=models.CharField(choices=PAYMENT_CHOICES)
-    payment_status=models.CharField(choices=PAYMENT_STATUS_CHOICES)
+    payment_type=models.CharField(max_length=20,choices=PAYMENT_CHOICES)
+    payment_status=models.CharField(max_length=20,choices=PAYMENT_STATUS_CHOICES)
     offer_price=models.DecimalField(max_digits=10,decimal_places=2,null=True,default=0)
     coupon_price=models.DecimalField(max_digits=10,decimal_places=2,null=True,default=0)
     estimated_delivery_date=models.DateTimeField(blank=True,null=True)
@@ -68,7 +68,7 @@ class Order_items(models.Model):
     variant=models.ForeignKey(Variant,on_delete=models.CASCADE)
     quantity=models.PositiveIntegerField(default=0)
     price=models.DecimalField(max_digits=10,decimal_places=2)
-    status=models.CharField(max_length=20,choices=STATUS_CHOICES,default='Order Pending')
+    status=models.CharField(max_length=20,choices=STATUS_CHOICES,default='Pending')
     subtotal_price= models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
 
     def __str__(self):

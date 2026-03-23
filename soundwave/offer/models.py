@@ -21,7 +21,7 @@ class Product_offer(models.Model):
 class Brand_offer(models.Model):
     brand=models.ForeignKey(Brand,on_delete=models.CASCADE)
     offer_percentage=models.DecimalField(max_digits=10,decimal_places=2)
-    offer_name=models.CharField(null=True,blank=True)
+    offer_name=models.CharField(max_length=100,null=True,blank=True)
     offer_details=models.TextField(null=True,blank=True)
     started_date=models.DateTimeField(blank=True,null=True)
     end_date=models.DateTimeField(blank=True,null=True)
