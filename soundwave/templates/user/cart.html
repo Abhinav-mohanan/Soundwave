@@ -143,15 +143,17 @@
         display: flex;
         align-items: center;
     }
+
     .cart-item-quantity button {
         width: 35px;
         height: 35px;
-        background-color:white;
+        background-color: white;
         border: none;
         cursor: pointer;
         font-size: 18px;
         transition: background-color 0.3s;
     }
+
     .cart-item-quantity input {
         width: 50px;
         text-align: center;
@@ -161,6 +163,7 @@
         padding: 5px;
         font-size: 16px;
     }
+
     .remove-btn {
         background-color: #f44336;
         color: white;
@@ -170,16 +173,19 @@
         cursor: pointer;
         font-size: 14px;
     }
+
     .remove-btn:hover {
         background-color: #d32f2f;
     }
-    .cart-items{
+
+    .cart-items {
         background-color: #f4f1f1;
         box-shadow: none;
     }
 </style>
-    <div class="container-fluid" style="height: 100vh; background-color: #f4f1f1;">
-        <div class="row">
+
+<div class="container-fluid" style="height: 100vh; background-color: #f4f1f1;">
+    <div class="row">
         <h1 class="text-dark">YOUR BAG</h1>
         <div class="cart-container">
             <div class="cart-items">
@@ -192,24 +198,37 @@
                                 <div class="out-of-stock-overlay">This product is out of stock</div>
                             {% endif %}
                             {% if not item.variant.product.is_listed or not item.variant.product.category.is_listed or not item.variant.is_listed %}
-                                <div class="out-of-stock-overlay"> This product is Unavailable</div>
+                                <div class="out-of-stock-overlay">This product is unavailable</div>
                             {% endif %}
                             {% if not item.variant.product.brand.is_listed or not item.variant.product.subcategory.is_listed %}
-                                <div class="out-of-stock-overlay"> This proudct is unavailable</div>
+                                <div class="out-of-stock-overlay">This product is unavailable</div>
                             {% endif %}
                         </div>
 
                         <div class="cart-item-details">
                             <h4>{{ item.variant.product.name }} ({{ item.variant.color }})</h4>
-                            
-                            <p>Price: ₹{{ item.variant.product.price }}</p>
-                            <p>Total: ₹<span id="item-total-{{ item.cartitem_id }}">{{ item.total_price }}</span></p>
+                            <p>Price: ₹<span id="item-price-{{ item.cartitem_id }}">{{ item.effective_price }}</span></p>
+                            <p>Total: ₹<span id="item-total-{{ item.cartitem_id }}">{{ item.line_total }}</span></p>
+                            <p>Available stock: {{ item.variant.stock }}</p>
                         </div>
 
                         <div class="cart-item-quantity">
                             <button class="decrement" data-id="{{ item.cartitem_id }}">-</button>
-                            <input type="text" value="{{ item.quantity }}" data-id="{{ item.cartitem_id }}" min="1">
-                            <button class="increment" data-id="{{ item.cartitem_id }}">+</button>
+                            <input
+                                type="text"
+                                value="{{ item.quantity }}"
+                                data-id="{{ item.cartitem_id }}"
+                                data-stock="{{ item.variant.stock }}"
+                                min="1"
+                                readonly
+                            >
+                            <button
+                                class="increment"
+                                data-id="{{ item.cartitem_id }}"
+                                data-stock="{{ item.variant.stock }}"
+                            >
+                                +
+                            </button>
                         </div>
 
                         <form method="POST" action="{% url 'remove_from_cart' item.cartitem_id %}">
@@ -221,6 +240,7 @@
                     <p>Your cart is empty.</p>
                 {% endfor %}
             </div>
+
             <div class="cart-summary">
                 {% if cart_items %}
                     <h2>Order Summary</h2>
@@ -237,7 +257,6 @@
             </div>
         </div>
     </div>
-    </div>
 </div>
 
 <script>
@@ -246,10 +265,11 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
             const itemId = this.getAttribute('data-id');
             const input = document.querySelector(`input[data-id="${itemId}"]`);
+            const stock = parseInt(input.getAttribute('data-stock'));
             let newQuantity = parseInt(input.value) + 1;
 
-            if (newQuantity > 3) {
-                alert('You can only add 3 items of this product.');
+            if (newQuantity > stock) {
+                alert(`Only ${stock} item(s) available in stock.`);
                 return;
             }
 
@@ -263,10 +283,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const itemId = this.getAttribute('data-id');
             const input = document.querySelector(`input[data-id="${itemId}"]`);
             let newQuantity = Math.max(1, parseInt(input.value) - 1);
-
-            if (newQuantity < 1) {
-                alert('Quantity must be at least 1.');
-            }
 
             input.value = newQuantity;
             updateQuantity(itemId, newQuantity);
@@ -288,14 +304,15 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.success) {
                 document.getElementById(`item-total-${itemId}`).textContent = data.new_total;
+                document.getElementById('subtotal-cart-price').textContent = data.cart_total;
                 document.getElementById('total-cart-price').textContent = data.cart_total;
+            } else {
+                alert(data.error || 'Failed to update cart item.');
             }
         })
         .catch(error => console.error('Error:', error));
     }
 });
-
-
 </script>
 
 {% endblock %}
