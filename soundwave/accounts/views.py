@@ -82,7 +82,7 @@ def edit_details(request):
     user = get_object_or_404(CustomUser, id=request.user.id)
     return render(request, 'user/edit_personal_details.html', {'user': user}) 
 
-login_required
+@login_required
 def change_password(request):
     user=request.user
     if request.method=='POST':
@@ -134,7 +134,7 @@ def view_address(request):
 @never_cache
 @login_required
 def edit_address(request,address_id):
-    address=get_object_or_404(Address,id=address_id)
+    address=get_object_or_404(Address,id=address_id, user=request.user)
     if request.method=='POST':
         form=Addressform(request.POST,instance=address)
         if form.is_valid():
@@ -149,7 +149,7 @@ def edit_address(request,address_id):
 
 @login_required(login_url='user_login')
 def deactivate_address(request,address_id):
-    address=get_object_or_404(Address,id=address_id)
+    address=get_object_or_404(Address,id=address_id,user=request.user)
     address.is_active=False
     address.save()
     return redirect('view_address')
