@@ -133,10 +133,11 @@
 
                 <div class="product-grid">
                     {% for product in products %}
-                        {% for variant in product.variants.all %}
+                        {% with variant=product.display_variant %}
                             {% include 'user/product_block.html' %}
-                        {% endfor %}
+                        {% endwith %}
                     {% endfor %}
+
                 </div>
             </div>
         </div>

@@ -287,14 +287,41 @@ def reset_password(request):
 #======================Homepage section=====================# 
 @never_cache
 def homepage(request):
-    listed_variants=Variant.objects.filter(is_listed=True,stock__gt=0)
-    categories=Category.objects.filter(is_listed=True)
-    hero_product=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('-created_at').first()
-    featured_products = Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants', queryset=listed_variants)).order_by('-created_at')[:4]
-    new_arrivals=Product.objects.filter(is_listed=True,brand__is_listed=True,category__is_listed=True).prefetch_related(Prefetch('variants',queryset=listed_variants)).order_by('name','-created_at')[:5]    
+    listed_variants = Variant.objects.filter(is_listed=True, stock__gt=0)
 
-    return render(request, 'user/index.html', {'featured_products': featured_products,'new_arrivals':new_arrivals,
-                                               'categories':categories,'hero_product':hero_product})
+    categories = Category.objects.filter(is_listed=True)
+
+    base_products = Product.objects.filter(
+        is_listed=True,
+        brand__is_listed=True,
+        category__is_listed=True,
+        variants__is_listed=True,
+        variants__stock__gt=0,
+    ).prefetch_related(
+        Prefetch('variants', queryset=listed_variants)
+    ).distinct()
+
+    hero_product = base_products.order_by('-created_at').first()
+    featured_products = base_products.order_by('-created_at')[:4]
+    new_arrivals = base_products.order_by('-created_at')[:5]
+
+    if hero_product:
+        hero_product.display_variant = next(iter(hero_product.variants.all()), None)
+
+    featured_products = list(featured_products)
+    for product in featured_products:
+        product.display_variant = next(iter(product.variants.all()), None)
+
+    new_arrivals = list(new_arrivals)
+    for product in new_arrivals:
+        product.display_variant = next(iter(product.variants.all()), None)
+
+    return render(request, 'user/index.html', {
+        'featured_products': featured_products,
+        'new_arrivals': new_arrivals,
+        'categories': categories,
+        'hero_product': hero_product
+    })
 
 #======================Homepage section End=====================# 
 
@@ -302,53 +329,78 @@ def homepage(request):
 #======================Products_page session=====================# 
 @never_cache
 def product_page(request):
+    filter_applied = False
+
+    category_id = request.GET.get('category')
+    search_query = request.GET.get('query')
+    price_filter = request.GET.get('price')
+    color_filter = request.GET.get('color')
+    sort_filter = request.GET.get('sort')
 
     listed_variants = Variant.objects.filter(is_listed=True, stock__gt=0)
+
+    if color_filter:
+        listed_variants = listed_variants.filter(color__iexact=color_filter)
+
     products = Product.objects.filter(
         is_listed=True,
         brand__is_listed=True,
-        category__is_listed=True
-    ).prefetch_related(Prefetch('variants', queryset=listed_variants))
+        category__is_listed=True,
+        variants__is_listed=True,
+        variants__stock__gt=0,
+    )
 
-    filter_applied=False
-
-    category_id = request.GET.get('category')
     if category_id:
         products = products.filter(category_id=category_id)
+        filter_applied = True
 
-    search_query= request.GET.get('query')
     if search_query:
-        products=products.filter(name__icontains=search_query)
+        products = products.filter(name__icontains=search_query)
+        filter_applied = True
 
-    price_filter = request.GET.get('price') 
     if price_filter:
         if price_filter == "under_50000":
-            products = products.filter(price__gte=30000,price__lte=50000)
+            products = products.filter(price__gte=30000, price__lte=50000)
         elif price_filter == "10000_30000":
             products = products.filter(price__gte=10000, price__lte=30000)
         elif price_filter == "above_50000":
             products = products.filter(price__gt=50000)
-        filter_applied=True
+        filter_applied = True
 
-    color_filter = request.GET.get('color')
     if color_filter:
-        products = products.filter(variants__color__iexact=color_filter, variants__stock__gt=0)
-        filter_applied=True
+        products = products.filter(
+            variants__color__iexact=color_filter,
+            variants__is_listed=True,
+            variants__stock__gt=0,
+        )
+        filter_applied = True
 
-    sort_filter=request.GET.get('sort')
-    if sort_filter =='asc':
-        products=products.order_by('name')
-        filter_applied=True
-       
-    elif sort_filter=='desc':
-        products=products.order_by('-name')
-        filter_applied=True
-    
-    products = products.distinct()
+    if sort_filter == 'asc':
+        products = products.order_by('name')
+        filter_applied = True
+    elif sort_filter == 'desc':
+        products = products.order_by('-name')
+        filter_applied = True
+
+    products = products.prefetch_related(
+        Prefetch('variants', queryset=listed_variants)
+    ).distinct()
+
+    display_products = []
+    for product in products:
+        first_variant = next(iter(product.variants.all()), None)
+        if first_variant:
+            product.display_variant = first_variant
+            display_products.append(product)
+
     selected_category = Category.objects.filter(id=category_id).first() if category_id else None
 
-    return render(request, 'user/product_list.html', {'products': products,'selected_category': selected_category,'search_query':search_query,'filter_applied':filter_applied})
-
+    return render(request, 'user/product_list.html', {
+        'products': display_products,
+        'selected_category': selected_category,
+        'search_query': search_query,
+        'filter_applied': filter_applied
+    })
 
 
 #======================Product_page session End=====================# 
