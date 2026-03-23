@@ -176,23 +176,26 @@ def resend_otp(request):
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('home')
-    if request.method=='POST':
+
+    if request.method == 'POST':
         username_or_email = request.POST.get('username_or_email')
-        password_check= request.POST.get('password')
+        password_check = request.POST.get('password')
         user = None
+
         try:
-            user_by_email=User.objects.get(email=username_or_email)
-            user=authenticate(request,username=user_by_email,password=password_check)
+            user_by_email = User.objects.get(email=username_or_email)
+            user = authenticate(request, username=user_by_email.username, password=password_check)
         except User.DoesNotExist:
-            user=authenticate(request,username=username_or_email,password=password_check)
-        
-        if user is not None and user is not False:
-            login(request,user)
+            user = authenticate(request, username=username_or_email, password=password_check)
+
+        if user is not None:
+            login(request, user)
             return redirect('home')
         else:
-            messages.error(request,'Invalid credentials')
+            messages.error(request, 'Invalid credentials')
 
-    return render(request,'user/login.html')
+    return render(request, 'user/login.html')
+
     
 @never_cache
 def user_logout(request):
