@@ -170,15 +170,17 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
-SOCICALACCOUNT_PROVIDES = {
-    'google': {
-        'APP': {
-            'client_id':os.getenv("client_id"),
-            'secret': os.getenv("secret"),
-            'key':''
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": os.getenv("client_id"),
+            "secret": os.getenv("secret"),
+            "key": "",
         }
     }
 }
+
 
 
 
