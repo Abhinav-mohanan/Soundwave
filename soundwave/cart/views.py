@@ -69,7 +69,7 @@ def update_cart_item(request, item_id):
             "success":False,
             "error": f"Only {cart_item.variant.stock} item(s) available in stock"
         },
-        staus=400)
+        status=400)
     cart_item.quantity = quantity
     cart_item.save()
 
@@ -78,7 +78,7 @@ def update_cart_item(request, item_id):
     total_cart_price = cart.total_price
 
     return JsonResponse({
-        "sucess": True,
+        "success": True,
         "new_total":new_total,
         "cart_total":total_cart_price
     })

@@ -1,143 +1,187 @@
 {% extends 'user/user_accounts_base.html' %}
 
 {% block content %}
-    <style>
-       
-        body {
-            font-family: Arial, sans-serif; 
-            background-color: #f9f9f9; 
-        }
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f6f7fb;
+}
 
-        .section {
-            margin-bottom: 30px;
-        }
+/* Header */
+.section h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 20px;
+}
 
-        .section h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #e0e0e0; 
-        }
+/* Add Button */
+.add-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
 
-        /* Edit link styling */
-        .edit-link {
-            font-size: 14px;
-            color: #007bff;
-            text-decoration: none;
-            float: right;
-        }
-       
+.add-button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        .address-card {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
-        }
+.add-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
 
-        .address-card p {
-            font-size: 16px;
-            margin: 8px 0;
-        }
+/* Grid Layout */
+.address-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
 
-        .address-card .address-type {
-            font-weight: bold;
-            color: #007bff;
-        }
+/* Card */
+.address-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    position: relative;
+}
 
-        .actions a {
-            margin-right: 15px;
-            padding: 8px 12px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            color: #fff;
-            border-radius: 4px;
-            background-color: #007bff;
-        }
+.address-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
 
-        .actions a:hover {
-            background-color: #0056b3;
-            color: #fff;
-        }
+/* Title */
+.address-type {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 15px;
+    margin-bottom: 8px;
+    display: inline-block;
+}
 
-       
-        .add-button-container {
-            text-align: right;
-            margin-bottom: 20px;
-        }
+/* Text */
+.address-card p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #444;
+}
 
-        .add-button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 12px 18px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
+/* Divider */
+.divider {
+    margin: 12px 0;
+    border-top: 1px solid #eee;
+}
 
-        .add-button:hover {
-            background-color: #0056b3;
-        }
+/* Actions */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
 
-        @media (max-width: 768px) {
-            .add-button-container {
-                text-align: center;
-            }
-        }
-        #delete {
-            font-size: 13px;
-            background-color: red;
-            text-decoration: none;
+.actions a {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
 
-        }
+/* Edit Button */
+.actions .edit {
+    background-color: #28a745;
+    color: white;
+    margin-right: 8px;
+}
 
+.actions .edit:hover {
+    background-color: #218838;
+}
 
-    </style>
+/* Delete Button */
+.actions .delete {
+    background-color: #dc3545;
+    color: white;
+}
 
-    <div class="section address-list">
-  
-        <div class="add-button-container">
-            <a href="{% url 'add_address' %}">
-                <button class="add-button" id="add-product-btn">
-                    Add Address
-                </button>
-            </a>
-        </div>
+.actions .delete:hover {
+    background-color: #c82333;
+}
 
-        <h2>Addresses</h2>
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    border: 1px dashed #ddd;
+}
 
-        {% if addresses %}
-         
+.empty-state p {
+    color: #777;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .add-button-container {
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="section">
+
+    <div class="add-button-container">
+        <a href="{% url 'add_address' %}">
+            <button class="add-button">+ Add Address</button>
+        </a>
+    </div>
+
+    <h2>Your Addresses</h2>
+
+    {% if addresses %}
+        <div class="address-list">
             {% for address in addresses %}
                 <div class="address-card">
-                    <p><strong>Address Type:</strong> <span class="address-type">{{ address.address_title }}</span></p>
-                    <p><strong>Name:</strong> {{ address.name }}</p>
-                    <p><strong>State:</strong> {{ address.state }}</p>
-                    <p><strong>City:</strong> {{ address.city }}</p>
-                    <p><strong>Pincode:</strong> {{ address.pin }}</p>
-                    <p><strong>Landmark:</strong> {{ address.landmark }}</p>
-                    <p><strong>Mobile:</strong> {{ address.phone_number }}</p>
-                    <br>
+                    
+                    <span class="address-type">{{ address.address_title }}</span>
+
+                    <p><strong>{{ address.name }}</strong></p>
+                    <p>{{ address.city }}, {{ address.state }}</p>
+                    <p>Pincode: {{ address.pin }}</p>
+                    <p>{{ address.landmark }}</p>
+                    <p>📞 {{ address.phone_number }}</p>
+
+                    <div class="divider"></div>
 
                     <div class="actions">
                         <a href="{% url 'edit_address' address.id %}" class="edit">Edit</a>
-                        <a href="{% url 'delete_address' address.id %}" id="delete">Delete</a>
+                        <a href="{% url 'delete_address' address.id %}" class="delete">Delete</a>
                     </div>
+
                 </div>
             {% endfor %}
-        {% else %}
-           
-            <div class="address-card">
-                <p>You have no saved addresses.</p>
-            </div>
-        {% endif %}
-    </div>
-{% endblock %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No addresses found</h3>
+            <p>Add your first address to continue</p>
+        </div>
+    {% endif %}
 
+</div>
+{% endblock %}

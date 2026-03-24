@@ -182,9 +182,55 @@
         background-color: #f4f1f1;
         box-shadow: none;
     }
+
+    .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-box {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 250px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-box p {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.modal-box button {
+    padding: 8px 16px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
 </style>
 
 <div class="container-fluid" style="height: 100vh; background-color: #f4f1f1;">
+    <!-- Custom Modal -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-box">
+            <p id="modalMessage"></p>
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
     <div class="row">
         <h1 class="text-dark">YOUR BAG</h1>
         <div class="cart-container">
@@ -269,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let newQuantity = parseInt(input.value) + 1;
 
             if (newQuantity > stock) {
-                alert(`Only ${stock} item(s) available in stock.`);
+                showModal(`Only ${stock} item(s) available in stock.`);
                 return;
             }
 
@@ -307,10 +353,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('subtotal-cart-price').textContent = data.cart_total;
                 document.getElementById('total-cart-price').textContent = data.cart_total;
             } else {
-                alert(data.error || 'Failed to update cart item.');
+                showModal(data.error || 'Failed to update cart item.');
             }
         })
         .catch(error => console.error('Error:', error));
+    }
+});
+
+function showModal(message) {
+    document.getElementById('modalMessage').textContent = message;
+    document.getElementById('customModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('customModal').style.display = 'none';
+}
+
+document.getElementById('customModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
     }
 });
 </script>
