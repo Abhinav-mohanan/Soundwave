@@ -2,79 +2,286 @@
 {% load static %}
 
 {% block content %}
-<div class="main-panel">
-  <div class="content-wrapper">
-    <div class="page-header">
-      <h3 class="page-title">Order Details</h3>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <h4>Order ID: {{ order.order_id }}</h4>
-        <p>Tracking Number: {{ order.tracking_number }}</p>
-        <p>User: {{ order.user.username }}</p>
-        <p>Shipping Address: {{ order.shipping_address }}</p>
-        <p>Total Price: {{ order.total_price }}</p>
-        <p>Payment Type: {{ order.get_payment_type_display }}</p>
-        {% if order.payment_status == 'Failure'%}
-        <p>Payment Status: <span style="color: red;">{{ order.get_payment_status_display }}</span></p>
-        {% else%}
-        <p>Payment Status: {{ order.get_payment_status_display }}</p>
-        {% endif %}
-        <h5>Order Items:</h5>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Variant</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in order.order_items.all %}
-            <tr>
-              <td>{{ item.variant.product.name }}</td>
-              <td>{{ item.variant }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>{{ item.price }}</td>
-              <td>{{ item.get_status_display }}</td>
-              <td>
-                <!-- Show status update buttons based on current item status -->
-                {% if item.status == 'Order Pending' %}
-                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Order Confirmed' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-info">Confirm</button>
-                    </form>
-                {% elif item.status == 'Order Confirmed' %}
-                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Shipped' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-warning">Ship</button>
-                    </form>
-                {% elif item.status == 'Shipped' %}
-                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Delivered' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Deliver</button>
-                    </form>
-                {% elif item.status == 'Requested Return' %}
-                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Returned' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Approve Return</button>
-                    </form>
-                    <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Cancelled' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Reject Return</button>
-                    </form>
-                {% endif %}
 
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+
+  .summary-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .summary-label {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .summary-value {
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .tracking-text {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: #38bdf8;
+  }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive { overflow-x: auto; }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr { transition: background 0.2s; }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .badge-success { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .badge-danger { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+  .badge-warning { background: rgba(250, 204, 21, 0.1); color: #facc15; }
+  .badge-info { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+
+  .action-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .action-group form { margin: 0; }
+
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.2s;
+    background: transparent;
+  }
+
+  .btn-confirm { color: #38bdf8; border-color: #38bdf8; }
+  .btn-confirm:hover { background: #38bdf8; color: #fff; }
+
+  .btn-ship { color: #f59e0b; border-color: #f59e0b; }
+  .btn-ship:hover { background: #f59e0b; color: #fff; }
+
+  .btn-deliver { color: #4ade80; border-color: #4ade80; }
+  .btn-deliver:hover { background: #4ade80; color: #14532d; }
+
+  .btn-reject { color: #f87171; border-color: #f87171; }
+  .btn-reject:hover { background: #f87171; color: #fff; }
+
+</style>
+
+<div class="page-header">
+  <h3 class="page-title">Order Details</h3>
+  <a href="{% url 'view_orders' %}" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Orders
+  </a>
+</div>
+
+<div class="summary-card">
+  <div class="summary-grid">
+    
+    <div class="summary-item">
+      <span class="summary-label">Order ID</span>
+      <span class="summary-value">{{ order.order_id }}</span>
     </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Tracking Number</span>
+      <span class="summary-value tracking-text">{{ order.tracking_number }}</span>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Customer</span>
+      <span class="summary-value">{{ order.user.username }}</span>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Payment Type</span>
+      <span class="summary-value">{{ order.get_payment_type_display }}</span>
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Payment Status</span>
+      {% if order.payment_status == 'Failure' %}
+        <span class="status-badge badge-danger" style="width: fit-content;">{{ order.get_payment_status_display }}</span>
+      {% elif order.payment_status == 'Success' or order.payment_status == 'Paid' %}
+        <span class="status-badge badge-success" style="width: fit-content;">{{ order.get_payment_status_display }}</span>
+      {% else %}
+        <span class="status-badge badge-warning" style="width: fit-content;">{{ order.get_payment_status_display }}</span>
+      {% endif %}
+    </div>
+
+    <div class="summary-item">
+      <span class="summary-label">Total Amount</span>
+      <span class="summary-value" style="color: #4ade80; font-weight: 700;">₹{{ order.total_price }}</span>
+    </div>
+
+    <div class="summary-item" style="grid-column: 1 / -1;">
+      <span class="summary-label">Shipping Address</span>
+      <span class="summary-value" style="color: #94a3b8; font-size: 14px;">{{ order.shipping_address }}</span>
+    </div>
+
   </div>
 </div>
+
+<h4 style="color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 16px;">Order Items</h4>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Variant</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in order.order_items.all %}
+        <tr>
+          <td style="font-weight: 500;">{{ item.variant.product.name }}</td>
+          <td style="color: #94a3b8;">{{ item.variant }}</td>
+          <td>{{ item.quantity }}</td>
+          <td style="color: #38bdf8; font-weight: 600;">₹{{ item.price }}</td>
+          
+          <td>
+            {% if item.status == 'Delivered' %}
+              <span class="status-badge badge-success">{{ item.get_status_display }}</span>
+            {% elif item.status == 'Cancelled' or item.status == 'Returned' %}
+              <span class="status-badge badge-danger">{{ item.get_status_display }}</span>
+            {% elif item.status == 'Shipped' %}
+              <span class="status-badge badge-info">{{ item.get_status_display }}</span>
+            {% else %}
+              <span class="status-badge badge-warning">{{ item.get_status_display }}</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-group">
+              
+              {% if item.status == 'Order Pending' or item.status == 'pending' %}
+                {% if order.payment_status != 'Failure' %}
+                  <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Order Confirmed' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-action btn-confirm">Confirm</button>
+                  </form>
+                {% endif %}
+                
+              {% elif item.status == 'Order Confirmed' %}
+                <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Shipped' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-ship">Ship</button>
+                </form>
+                
+              {% elif item.status == 'Shipped' %}
+                <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Delivered' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-deliver">Deliver</button>
+                </form>
+                
+              {% elif item.status == 'Requested Return' %}
+                <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Returned' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-deliver">Approve</button>
+                </form>
+                <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Cancelled' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-reject">Reject</button>
+                </form>
+              {% endif %}
+              
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 {% endblock %}

@@ -2,93 +2,254 @@
 {% load static %}
 
 {% block content %}
+
 <style>
-  .wrap-text {
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    max-width: 200px !important;
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+
+  .form-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .full-width { grid-column: 1 / -1; }
+
+  .form-group { margin-bottom: 0; }
+  
+  .form-group label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-control {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 14px;
+    transition: 0.2s;
+    color-scheme: dark; 
+  }
+  .dark-control:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  .dark-control::placeholder { color: #475569; }
+  
+  select.dark-control option { background: #1e2433; color: #fff; }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .btn-submit:hover { background: #2563eb; transform: translateY(-1px); }
+
+  .error-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .error-modal.open { display: flex; }
+
+  .error-modal-content {
+    background: #1e2433;
+    border: 1px solid #f87171;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+
+  .error-modal h4 {
+    color: #f87171;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 0;
+  }
+
+  .error-modal ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+    color: #e2e8f0;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .error-modal li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .error-modal li::before {
+    content: '•';
+    color: #f87171;
+    position: absolute;
+    left: 4px;
+    font-size: 18px;
+    line-height: 14px;
+  }
+
+  .btn-modal-close {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border: 1px solid #f87171;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+  }
+  .btn-modal-close:hover { background: #f87171; color: #fff; }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
   }
 </style>
 
-<div class="main-panel">
-  <div class="content-wrapper">
-    <div class="page-header">
-      <h3 class="page-title">Add Coupon</h3>
-      <a href="{% url 'view_coupons' %}">
-        <button class="btn btn-primary btn-icon-text" id="back-btn">
-          <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
-        </button>
-      </a>
-    </div>
+<div class="page-header" style="max-width: 800px; margin: 0 auto 24px auto;">
+  <h3 class="page-title">Add New Coupon</h3>
+  <a href="{% url 'view_coupons' %}" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Coupons
+  </a>
+</div>
 
-    <div class="card dark-theme">
-      <div class="card-body">
-        <form id="addCouponForm" method="post">
-          {% csrf_token %}
-          <!-- Coupon Code -->
-          <div class="form-group">
-            <label for="code">Coupon Code</label>
-            <input type="text" class="form-control" id="code" name="code" required placeholder="Enter Coupon Code">
-          </div>
-
-          <!-- Coupon Type -->
-          <div class="form-group">
-            <label for="coupon_type">Coupon Type</label>
-            <select class="form-control" id="coupon_type" name="coupon_type" required>
-              <option value="fixed">Fixed Amount</option>
-              <option value="percentage">Percentage</option>
-            </select>
-          </div>
-
-          <!-- Coupon Description -->
-          <div class="form-group">
-            <label for="description">Coupon Description</label>
-            <input type="text" class="form-control" id="description" name="description" required placeholder="Enter Coupon Description">
-          </div>
-
-          <!-- Discount Amount -->
-          <div class="form-group">
-            <label for="discount_amount">Discount Amount</label>
-            <input type="number" class="form-control" id="discount_amount" name="discount_amount" required step="0.01" placeholder="Enter Discount Amount">
-          </div>
-
-          <!-- Minimum Purchase Amount -->
-          <div class="form-group">
-            <label for="min_purchase_amount">Minimum Purchase Amount (₹)</label>
-            <input type="number" class="form-control" id="min_purchase_amount" name="min_purchase_amount" required step="0.01" placeholder="Enter Minimum Purchase Amount">
-          </div>
-
-          <!-- Validity Dates -->
-          <div class="form-group">
-            <label for="valid_from">Valid From</label>
-            <input type="date" class="form-control" id="valid_from" name="valid_from" required>
-          </div>
-          <div class="form-group">
-            <label for="valid_to">Valid To</label>
-            <input type="date" class="form-control" id="valid_to" name="valid_to" required>
-          </div>
-
-          <!-- Usage Limit -->
-          <div class="form-group">
-            <label for="usage_limit">Usage Limit</label>
-            <input type="number" class="form-control" id="usage_limit" name="usage_limit" required placeholder="Enter Usage Limit">
-          </div>
-
-          <button type="submit" class="btn btn-primary">Add Coupon</button>
-        </form>
+<div class="form-card">
+  <form id="addCouponForm">
+    {% csrf_token %}
+    
+    <div class="form-grid">
+      
+      <div class="form-group full-width">
+        <label for="code">Coupon Code</label>
+        <input type="text" class="dark-control" id="code" name="code" required placeholder="e.g., WELCOME20">
       </div>
+
+      <div class="form-group full-width">
+        <label for="description">Coupon Description</label>
+        <input type="text" class="dark-control" id="description" name="description" required placeholder="Brief description of the coupon">
+      </div>
+
+      <div class="form-group">
+        <label for="coupon_type">Coupon Type</label>
+        <select class="dark-control" id="coupon_type" name="coupon_type" required>
+          <option value="" disabled selected>Select Type</option>
+          <option value="fixed">Fixed Amount</option>
+          <option value="percentage">Percentage (%)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="discount_amount">Discount Value</label>
+        <input type="number" step="0.01" class="dark-control" id="discount_amount" name="discount_amount" required placeholder="0.00">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="min_purchase_amount">Minimum Purchase Amount (₹)</label>
+        <input type="number" step="0.01" class="dark-control" id="min_purchase_amount" name="min_purchase_amount" required placeholder="0.00">
+      </div>
+
+      <div class="form-group">
+        <label for="valid_from">Valid From</label>
+        <input type="date" class="dark-control" id="valid_from" name="valid_from" required>
+      </div>
+
+      <div class="form-group">
+        <label for="valid_to">Valid To</label>
+        <input type="date" class="dark-control" id="valid_to" name="valid_to" required>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="usage_limit">Usage Limit (Total redemptions allowed)</label>
+        <input type="number" class="dark-control" id="usage_limit" name="usage_limit" required placeholder="e.g., 100">
+      </div>
+
     </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">Add Coupon</button>
+  </form>
+</div>
+
+<div id="errorModal" class="error-modal">
+  <div class="error-modal-content">
+    <h4>Please fix the following errors:</h4>
+    <ul id="errorList"></ul>
+    <button class="btn-modal-close" id="closeModal">Understood</button>
   </div>
 </div>
 
 <script>
 document.getElementById('addCouponForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent the form from submitting normally
+  event.preventDefault(); 
+  
+  const form = this;
+  const btn = document.getElementById('submitBtn');
+  const originalText = btn.textContent;
+  
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
 
-  // Create FormData object from the form
-  var formData = new FormData(this);
+  var formData = new FormData(form); 
 
-  // Send the data to the server using fetch API
   fetch("{% url 'add_coupons' %}", {
     method: "POST",
     body: formData,
@@ -96,23 +257,44 @@ document.getElementById('addCouponForm').addEventListener('submit', function(eve
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert("Coupon added successfully");
-      window.location.href = "{% url 'view_coupons' %}"; // Redirect to coupon list
+      showGlobalModal("Coupon added successfully!");
+      window.location.href = "{% url 'view_coupons' %}";
     } else {
       var errorMessages = '';
       if (data.errors && data.errors.length > 0) {
-        data.errors.forEach(error => {
-          errorMessages += error + '\n';
+        data.errors.forEach(function(error) {
+          errorMessages += '<li>' + error + '</li>';
         });
+
+        document.getElementById('errorList').innerHTML = errorMessages;
+        document.getElementById('errorModal').classList.add('open');
       }
-      if (errorMessages) {
-        alert('The following errors occurred:\n\n' + errorMessages);
-      }
+      
+      btn.textContent = originalText;
+      btn.disabled = false;
     }
   })
   .catch(error => {
-    alert("Something went wrong, please try again.");
+    showGlobalModal("Something went wrong, please try again.");
+    console.error(error);
+    btn.textContent = originalText;
+    btn.disabled = false;
   });
+});
+
+const modal = document.getElementById('errorModal');
+const closeBtn = document.getElementById('closeModal');
+
+function closeModal() {
+  modal.classList.remove('open');
+}
+
+closeBtn.addEventListener('click', closeModal);
+
+modal.addEventListener('click', function(e) {
+  if (e.target === modal) {
+    closeModal();
+  }
 });
 </script>
 

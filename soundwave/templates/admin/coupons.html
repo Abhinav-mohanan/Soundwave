@@ -2,76 +2,197 @@
 {% load static %}
 
 {% block content %}
+
 <style>
-  .wrap-text {
-    white-space: normal !important; /* Allows wrapping */
-    word-wrap: break-word  !important; /* Breaks long words if needed */
-    max-width: 200px !important; /* Adjust width based on your layout */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
   }
+  
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-add {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-add:hover { background: #2563eb; color: #fff; text-decoration: none; }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr {
+    transition: background 0.2s;
+  }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .coupon-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    display: inline-block;
+  }
+
+  .money-val {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .status-badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.inactive { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .action-group { 
+    display: flex; 
+    gap: 8px; 
+  }
+  
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.2s;
+    display: inline-block;
+  }
+  
+  .btn-edit { color: #38bdf8; border-color: #38bdf8; background: transparent; }
+  .btn-edit:hover { background: #38bdf8; color: #fff; }
+
+  .btn-toggle-activate { color: #4ade80; border-color: #4ade80; background: transparent; }
+  .btn-toggle-activate:hover { background: #4ade80; color: #14532d; }
+
+  .btn-toggle-deactivate { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-toggle-deactivate:hover { background: #f87171; color: #fff; }
+
+  .empty-state { text-align: center; padding: 48px; color: #64748b; font-size: 14px; }
 </style>
 
-<div class="main-panel">
-  <div class="content-wrapper">
-    <div class="page-header">
-      <h3 class="page-title">Coupon List</h3>
-      <a href="{% url 'add_coupons' %}">
-        <button class="btn btn-primary btn-icon-text" id="add-coupon-btn">
-          <i class="mdi mdi-plus btn-icon-prepend"></i> Add New Coupon
-        </button>
-      </a>
-    </div>
+<div class="page-header">
+  <h3 class="page-title">Coupons</h3>
+  <a href="{% url 'add_coupons' %}" class="btn-add">
+    <i class="mdi mdi-plus"></i> Add New Coupon
+  </a>
+</div>
 
-    <div class="card dark-theme">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-dark">
-            <thead>
-              <tr>
-                <th>Coupon Code</th>
-                <th>Discount Amount </th>
-                <th>Min Purchase Amount</th>
-                <th>Valid From</th>
-                <th>Valid To</th>
-                <th>Usage limit</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for coupon in coupons %}
-                <tr>
-                  <td>{{ coupon.code }}</td>
-                  <td>{{ coupon.discount_amount }}</td>
-                  <td>{{ coupon.min_purchase_amount }}</td>
-                  <td>{{ coupon.valid_from }}</td>
-                  <td>{{ coupon.valid_to }}</td>
-                  <td>{{ coupon.usage_limit }}</td>
-                  <td>
-                    {% if coupon.is_active %}
-                      <span class="badge badge-success">Active</span>
-                    {% else %}
-                      <span class="badge badge-danger">Inactive</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    <a href="{% url 'edit_coupons' coupon.coupon_id %}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
-                    {% if coupon.is_active %}
-                      <a href="{% url 'deactivae_coupon' coupon.coupon_id %}"><button class="btn btn-outline-danger btn-sm">Deactivate</button></a>
-                    {% else %}
-                      <a href="{% url 'activate_coupon' coupon.coupon_id %}"><button class="btn btn-outline-success btn-sm">Activate</button></a>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="7" class="text-center">No coupons available.</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Coupon Code</th>
+          <th>Discount Amount</th>
+          <th>Min Purchase</th>
+          <th>Valid From</th>
+          <th>Valid To</th>
+          <th>Usage Limit</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for coupon in coupons %}
+        <tr>
+          <td>
+            <span class="coupon-code">{{ coupon.code }}</span>
+          </td>
+          
+          <td class="money-val">₹{{ coupon.discount_amount }}</td>
+          <td style="color: #94a3b8;">₹{{ coupon.min_purchase_amount }}</td>
+          
+          <td>{{ coupon.valid_from|date:'d M Y' }}</td>
+          <td>{{ coupon.valid_to|date:'d M Y' }}</td>
+          
+          <td>{{ coupon.usage_limit }}</td>
+          
+          <td>
+            {% if coupon.is_active %}
+              <span class="status-badge active">Active</span>
+            {% else %}
+              <span class="status-badge inactive">Inactive</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-group">
+              <a href="{% url 'edit_coupons' coupon.coupon_id %}" class="btn-action btn-edit">Edit</a>
+              
+              {% if coupon.is_active %}
+                <a href="{% url 'deactivae_coupon' coupon.coupon_id %}" class="btn-action btn-toggle-deactivate">Deactivate</a>
+              {% else %}
+                <a href="{% url 'activate_coupon' coupon.coupon_id %}" class="btn-action btn-toggle-activate">Activate</a>
+              {% endif %}
+            </div>
+          </td>
+          
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">No coupons available right now.</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 

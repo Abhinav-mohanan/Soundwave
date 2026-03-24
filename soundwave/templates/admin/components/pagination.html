@@ -1,0 +1,124 @@
+={% if page_obj.has_other_pages %}
+<div class="pagination-container">
+
+  <span class="pagination-info">
+    Showing <span style="color: #e2e8f0; font-weight: 600;">{{ page_obj.start_index }}–{{ page_obj.end_index }}</span> of {{ page_obj.paginator.count }}
+  </span>
+
+  <nav class="pagination-nav">
+
+    {% if page_obj.has_previous %}
+      <a class="pag-btn nav-btn" href="?page=1" title="First">&#171;</a>
+      <a class="pag-btn nav-btn" href="?page={{ page_obj.previous_page_number }}" title="Previous">&#8249;</a>
+    {% else %}
+      <span class="pag-btn nav-btn disabled">&#171;</span>
+      <span class="pag-btn nav-btn disabled">&#8249;</span>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="pag-btn active">{{ num }}</span>
+      {% elif num == 1 or num == page_obj.paginator.num_pages or num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+        <a class="pag-btn" href="?page={{ num }}">{{ num }}</a>
+      {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+        <span class="pag-ellipsis">···</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <a class="pag-btn nav-btn" href="?page={{ page_obj.next_page_number }}" title="Next">&#8250;</a>
+      <a class="pag-btn nav-btn" href="?page={{ page_obj.paginator.num_pages }}" title="Last">&#187;</a>
+    {% else %}
+      <span class="pag-btn nav-btn disabled">&#8250;</span>
+      <span class="pag-btn nav-btn disabled">&#187;</span>
+    {% endif %}
+
+  </nav>
+</div>
+{% endif %}
+
+<style>
+/* ── Pagination Layout ── */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Pagination Buttons ── */
+.pag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #2a3045;
+  background: #1e2433;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Hover State */
+.pag-btn:hover:not(.disabled):not(.active) {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+/* Active Page State */
+.pag-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+  cursor: default;
+}
+
+/* Next/Prev Arrow Buttons */
+.pag-btn.nav-btn {
+  font-size: 16px;
+  color: #64748b;
+  background: transparent;
+}
+
+/* Disabled State */
+.pag-btn.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* Ellipsis '...' */
+.pag-ellipsis {
+  color: #64748b;
+  padding: 0 4px;
+  font-size: 14px;
+  user-select: none;
+  letter-spacing: 1px;
+}
+</style>

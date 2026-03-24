@@ -2,73 +2,213 @@
 {% load static %}
 
 {% block content %}
-<style>
-  .wrap-text {
-  white-space: normal !important; /* Allows wrapping */
-  word-wrap: break-word  !important; /* Breaks long words if needed */
-  max-width: 200px !important; /* Adjust width based on your layout */
-}
 
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-add {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-add:hover { background: #2563eb; color: #fff; text-decoration: none; }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr {
+    transition: background 0.2s;
+  }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .category-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #2a3045;
+  }
+  
+  .no-img {
+    background: #2a3045;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .desc-text {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 250px;
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .status-badge.listed { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.unlisted { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .action-group { 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap;
+  }
+  
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.2s;
+    display: inline-block;
+  }
+  
+  .btn-sub { color: #f59e0b; border-color: #f59e0b; background: transparent; }
+  .btn-sub:hover { background: #f59e0b; color: #fff; }
+
+  .btn-edit { color: #38bdf8; border-color: #38bdf8; background: transparent; }
+  .btn-edit:hover { background: #38bdf8; color: #fff; }
+
+  .btn-toggle-list { color: #4ade80; border-color: #4ade80; background: transparent; }
+  .btn-toggle-list:hover { background: #4ade80; color: #14532d; }
+
+  .btn-toggle-unlist { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-toggle-unlist:hover { background: #f87171; color: #fff; }
+
+  .empty-state { text-align: center; padding: 48px; color: #64748b; font-size: 14px; }
 </style>
 
-<div class="main-panel">
-    <div class="content-wrapper">
-      <div class="page-header">
-        <h3 class="page-title"> Category </h3>
-        <a href="{% url 'add_category' %}">
-        <button class="btn btn-primary btn-icon-text" id="add-category-btn">
-          <i class="mdi mdi-plus btn-icon-prepend"></i> Add
-        </button>
-        </a>
-      </div>
-  
-      <div class="card dark-theme">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-dark">
-              <thead>
-                <tr>
-                  <th>Category image</th>
-                  <th> Category Name </th>
-                  <th> Description </th>
-                  <th> Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for category in categories %}
-                <tr>
-                  {% if category.image %}
-                  <td><img class="product-img" src="{{ category.image.url }}" alt="Image"></td>
-                  {% else %}
-                  <td> no image is available</td>
-                  {% endif %}
-                  <td>{{category.name}} </td>
-                  <td class="wrap-text"> {{category.description}} </td>
-                  <td>
-                    
-                    {% if category.is_listed %}
-                    <a href="{% url 'unlist_category' category.id %}">
-                    <button class="btn btn-outline-danger btn-sm">Unlist</button>
-                    </a>
-                    {% else %}
-                    <a href="{% url 'list_category' category.id %}">
-                    <button class="btn btn-outline-success btn-sm">Listt</button>
-                  </a>
-                  {% endif %}
-                  </td>
-                  <td>
-                    <a href="{% url 'view_subcategory' category.id %}"><button class="btn btn-outline-warning btn-sm"> Subcategory</button></a>
-                    <a href="{% url 'edit_category' category.id %}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="page-header">
+  <h3 class="page-title">Category Management</h3>
+  <a href="{% url 'add_category' %}" class="btn-add">
+    <i class="mdi mdi-plus"></i> Add Category
+  </a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Category Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+        <tr>
+          
+          <td>
+            {% if category.image %}
+              <img class="category-thumb" src="{{ category.image.url }}" alt="Image">
+            {% else %}
+              <div class="category-thumb no-img">No Img</div>
+            {% endif %}
+          </td>
+          
+          <td style="font-weight: 500;">{{ category.name }}</td>
+          <td>
+            <div class="desc-text">{{ category.description|default:"No description provided." }}</div>
+          </td>
+          
+          <td>
+            {% if category.is_listed %}
+              <span class="status-badge listed">Listed</span>
+            {% else %}
+              <span class="status-badge unlisted">Unlisted</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-group">
+              <a href="{% url 'view_subcategory' category.id %}" class="btn-action btn-sub">Subcategory</a>
+              <a href="{% url 'edit_category' category.id %}" class="btn-action btn-edit">Edit</a>
+              
+              {% if category.is_listed %}
+                <a href="{% url 'unlist_category' category.id %}" class="btn-action btn-toggle-unlist">Unlist</a>
+              {% else %}
+                <a href="{% url 'list_category' category.id %}" class="btn-action btn-toggle-list">List</a>
+              {% endif %}
+            </div>
+          </td>
+          
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">No categories found. Click 'Add Category' to get started.</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  
+</div>
 
 {% endblock %}

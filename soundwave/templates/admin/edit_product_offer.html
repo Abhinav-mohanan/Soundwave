@@ -1,83 +1,193 @@
 {% extends 'admin/navbar.html' %}
+{% load static %}
+
 {% block content %}
 
-<h2>Edit Product Offer</h2>
-<br>
-<a href="{% url 'view_offers' %}">
-    <button class="btn btn-primary btn-icon-text" id="back-btn">
-      <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
-    </button>
-</a>
-<br><br>
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
 
-<form id="edit-offer-form">
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+
+  .form-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .full-width { grid-column: 1 / -1; }
+
+  .form-group { margin-bottom: 0; }
+  
+  .form-group label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-control {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 14px;
+    transition: 0.2s;
+    color-scheme: dark; 
+  }
+  .dark-control:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  .dark-control::placeholder { color: #475569; }
+  
+  select.dark-control option { background: #1e2433; color: #fff; }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .btn-submit:hover { background: #2563eb; transform: translateY(-1px); }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="page-header" style="max-width: 800px; margin: 0 auto 24px auto;">
+  <h3 class="page-title">Edit Product Offer</h3>
+  <a href="{% url 'view_offers' %}?section=product" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Offers
+  </a>
+</div>
+
+<div class="form-card">
+  <form id="edit-offer-form">
     {% csrf_token %}
+    
+    <div class="form-grid">
+      
+      <div class="form-group full-width">
+        <label for="offer_name">Offer Name</label>
+        <input type="text" id="offer_name" name="offer_name" value="{{ product_offer.offer_name }}" class="dark-control" placeholder="e.g., Summer Special">
+      </div>
 
-    <div class="form-group">
-        <label for="offer_name">Offer Name:</label>
-        <input type="text" id="offer_name" name="offer_name" value="{{ product_offer.offer_name }}" class="form-control" placeholder="Enter offer name">
-    </div>
-
-    <div class="form-group">
-        <label for="offer_percentage">Offer Percentage:</label>
-        <input type="text" id="offer_price" name="offer_percentage" value="{{ product_offer.offer_percentage }}" class="form-control" placeholder="Enter offer Percentage">
-    </div>
-
-    <div class="form-group">
-        <label for="product">Select Product:</label>
-        <select id="product" name="product" class="form-control">
-            <option value="{{ product_offer.product.id }}">{{ product_offer.product.name }}</option>
-            {% for product in products %}
-                <option value="{{ product.id }}">{{ product.name }}</option>
-            {% endfor %}
+      <div class="form-group">
+        <label for="product">Select Product</label>
+        <select id="product" name="product" class="dark-control">
+          {% for product in products %}
+            <option value="{{ product.id }}" {% if product.id == product_offer.product.id %}selected{% endif %}>
+              {{ product.name }}
+            </option>
+          {% endfor %}
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="offer_percentage">Discount Percentage (%)</label>
+        <input type="number" id="offer_percentage" name="offer_percentage" value="{{ product_offer.offer_percentage }}" class="dark-control" min="0" max="100" placeholder="e.g., 20">
+      </div>
+
+      <div class="form-group">
+        <label for="start_date">Start Date</label>
+        <input type="date" id="start_date" name="start_date" value="{{ product_offer.started_date|date:'Y-m-d' }}" class="dark-control">
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">End Date</label>
+        <input type="date" id="end_date" name="end_date" value="{{ product_offer.end_date|date:'Y-m-d' }}" class="dark-control">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="offer_details">Offer Details</label>
+        <input type="text" id="offer_details" name="offer_details" value="{{ product_offer.offer_details }}" class="dark-control" placeholder="Enter brief terms or details">
+      </div>
+
     </div>
 
-    <div class="form-group">
-        <label for="offer_description">Offer Details </label>
-        <input type="text" id="offer_description" name="offer_details" value="{{ product_offer.offer_details }}" class="form-control" placeholder="Enter offer Details">
-    </div>
-
-    <div class="form-group">
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ product_offer.started_date|date:'Y-m-d' }}" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ product_offer.end_date|date:'Y-m-d' }}" class="form-control">
-    </div>
-
-    <button type="button" class="btn btn-primary" id="submit-btn">Save Changes</button>
-</form>
+    <button type="button" class="btn-submit" id="submit-btn">Save Changes</button>
+  </form>
+</div>
 
 <script>
-
-document.getElementById('submit-btn').addEventListener('click', function() {
+  document.getElementById('submit-btn').addEventListener('click', function() {
     const form = document.getElementById('edit-offer-form');
     const formData = new FormData(form);
-    // Send data using fetch API
+    
+    const btn = this;
+    const originalText = btn.textContent;
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
     fetch("{% url 'edit_product_offer' product_offer.id %}", {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-        },
-        body: formData
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+      body: formData
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            alert(data.message);  // Show success message
-            window.location.href = "{% url 'view_offers' %}"; // Redirect to offer list
-        } else {
-            alert(data.errors.join('\n'));  // Show error messages
-        }
+      if (data.success) {
+        showGlobalModal(data.message);  
+        window.location.href = "{% url 'view_offers' %}?section=product"; 
+      } else {
+        showGlobalModal(data.errors.join('\n'));  
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     })
     .catch(error => {
-        alert('An error occurred. Please try again.');
-        console.error('Error:', error);
+      showGlobalModal('An error occurred. Please try again.');
+      console.error('Error:', error);
+      btn.textContent = originalText;
+      btn.disabled = false;
     });
-});
+  });
 </script>
 
 {% endblock %}

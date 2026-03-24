@@ -2,14 +2,12 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from cart.models import Cart,Cartitem
-from user.models import CustomUser
 from accounts.models import Address
 from .models import Order,Order_items
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from . models import Order_items
 from accounts.form import Addressform
-from products.models import Product,Variant
 from offer.models import Product_offer,Brand_offer
 from django.utils.timezone import now
 import razorpay
@@ -24,6 +22,7 @@ from django.db.models import F
 from django.db import transaction
 from wallet.models import Wallet,Transaction
 
+from django.core.paginator import Paginator
 # Create your views here. 
 
 #======================Checkout page=====================# 
@@ -136,8 +135,14 @@ def checkout_address(request):
 @never_cache
 @user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')
 def view_orders(request):
-    orders=Order.objects.all()
-    return render(request,'admin/orders.html',{'orders':orders})
+    orders = Order.objects.select_related('user').prefetch_related('order_items__variant__product'
+                                                                   ).order_by('-order_id')
+
+    paginator = Paginator(orders, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'admin/orders.html', {'page_obj': page_obj})
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/adminn/')

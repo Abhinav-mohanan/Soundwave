@@ -2,80 +2,313 @@
 {% load static %}
 
 {% block content %}
-<style>
-  .wrap-text {
-  white-space: normal !important; /* Allows wrapping */
-  word-wrap: break-word  !important; /* Breaks long words if needed */
-  max-width: 200px !important; /* Adjust width based on your layout */
-}
 
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-add {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-add:hover { background: #2563eb; color: #fff; text-decoration: none; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .product-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    border-color: #3b82f6;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .card-brand {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-title {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-category {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0 0 16px 0;
+  }
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+  .card-price {
+    color: #38bdf8;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .status-badge.listed { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.unlisted { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .view-btn {
+    background: transparent;
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .product-card:hover .view-btn { background: #3b82f6; color: #ffffff; }
+
+  .custom-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .custom-modal-overlay.open { display: flex; }
+
+  .custom-modal {
+    background: #1a1f2e;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .custom-modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .custom-modal-close:hover { color: #fff; }
+
+  .c-modal-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .c-modal-brand { font-size: 12.5px; color: #64748b; margin-bottom: 20px; }
+
+  .c-modal-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+  }
+  .c-modal-label { color: #64748b; min-width: 100px; flex-shrink: 0; }
+  .c-modal-value { color: #fff; }
+
+  .c-modal-divider { border: none; border-top: 1px solid #2a3045; margin: 18px 0; }
+  .c-modal-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .c-btn-sm {
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .c-btn-sm:hover { opacity: 0.8; text-decoration: none; }
+  .c-btn-outline-info    { color: #38bdf8; border-color: #38bdf8; }
+  .c-btn-outline-warning { color: #f59e0b; border-color: #f59e0b; }
+  .c-btn-outline-danger  { color: #f87171; border-color: #f87171; }
+  .c-btn-outline-success { color: #4ade80; border-color: #4ade80; }
+
+  .empty { text-align: center; padding: 48px; color: #475569; font-size: 14px; }
 </style>
 
-<div class="main-panel">
-  <div class="content-wrapper">
-    <div class="page-header">
-      <h3 class="page-title"> Products </h3>
-      <a href="{% url 'add_products' %}">
-      <button class="btn btn-primary btn-icon-text" id="add-product-btn">
-        <i class="mdi mdi-plus btn-icon-prepend"></i> Add
-      </button>
-      </a>
+<div class="page-header">
+  <h3 class="page-title">Products</h3>
+  <a href="{% url 'add_products' %}" class="btn-add">
+    <i class="mdi mdi-plus"></i> Add Product
+  </a>
+</div>
+
+{% if products %}
+<div class="product-grid">
+  {% for product in products %}
+  <div class="product-card js-open-modal"
+       data-name="{{ product.name }}"
+       data-brand="{{ product.brand }}"
+       data-category="{{ product.category }}"
+       data-subcategory="{{ product.subcategory.name|default:'N/A' }}"
+       data-desc="{{ product.description }}"
+       data-feature="{{ product.feature }}"
+       data-price="{{ product.price }}"
+       data-listed="{{ product.is_listed|yesno:'true,false,false' }}"
+       data-edit-url="{% url 'edit_product' product.id %}"
+       data-variant-url="{% url 'list_variant' product.id %}"
+       data-toggle-url="{% if product.is_listed %}{% url 'unlist_product' product.id %}{% else %}{% url 'list_product' product.id %}{% endif %}">
+    
+    <div class="card-header">
+      <span class="card-brand">{{ product.brand }}</span>
+      {% if product.is_listed %}
+        <span class="status-badge listed">Listed</span>
+      {% else %}
+        <span class="status-badge unlisted">Unlisted</span>
+      {% endif %}
     </div>
 
-    <div class="card dark-theme">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-dark">
-            <thead>
-              <tr>
-                <th> Product Name </th>
-                <th> Description</th>
-                <th> Brand </th>
-                <th> Category </th>
-                <th> subcategoy </th>
-                <th> Feature</th>
-                <th> Price </th>
-                <th> Status</th>
-                <th> Actions</th>
-                
-              </tr>
-            </thead>
-            <tbody>
-            {% for product in products %}
-              <tr>
-                <td> {{product.name}} </td>
-                <td class="wrap-text"> {{product.description}} </td>
-                <td>{{ product.brand }}</td>
-                <td> {{product.category}} </td>
-                <td> {{ product.subcategory.name }}</td>
-                <td class="wrap-text"> {{product.feature}} </td>
-                <td> {{product.price}} </td>
-                <td>
-                {% if product.is_listed%}
-                <span class="badge badge-success">List</span>
-                {% else %}
-                  <span class="badge badge-danger">Unlist</span>
-                {% endif %}
-                </td>
-                <td>
-                 <a href="{% url 'edit_product' product.id %}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
-                  <a href="{% url 'list_variant' product.id %}"><button class="btn btn-outline-warning btn-sm"> variant</button></a>
-                  {% if product.is_listed %}
-                  <a href="{% url 'unlist_product' product.id %}"><button class="btn btn-outline-danger btn-sm">Unlist</button></a>
-                  {% else %}
-                  <a href="{% url 'list_product' product.id %}"><button class="btn btn-outline-success btn-sm">List</button></a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-           
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <h3 class="card-title">{{ product.name }}</h3>
+    <p class="card-category">{{ product.category }}</p>
+    
+    <div class="card-bottom">
+      <span class="card-price">{{ product.price }}</span>
+      <button class="view-btn">Details</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">No products found.</div>
+{% endif %}
+
+
+<div class="custom-modal-overlay" id="custom-modal-overlay">
+  <div class="custom-modal">
+    <button class="custom-modal-close" id="custom-modal-close-btn">&#10005;</button>
+
+    <div class="c-modal-name" id="m-name"></div>
+    <div class="c-modal-brand" id="m-brand"></div>
+
+    <div class="c-modal-row"><span class="c-modal-label">Category</span><span class="c-modal-value" id="m-category"></span></div>
+    <div class="c-modal-row"><span class="c-modal-label">Subcategory</span><span class="c-modal-value" id="m-subcategory"></span></div>
+    <div class="c-modal-row"><span class="c-modal-label">Price</span><span class="c-modal-value" id="m-price"></span></div>
+    <div class="c-modal-row"><span class="c-modal-label">Status</span><span class="c-modal-value" id="m-status"></span></div>
+    <div class="c-modal-row"><span class="c-modal-label">Description</span><span class="c-modal-value" id="m-desc"></span></div>
+    <div class="c-modal-row"><span class="c-modal-label">Feature</span><span class="c-modal-value" id="m-feature"></span></div>
+
+    <hr class="c-modal-divider">
+
+    <div class="c-modal-actions">
+      <a id="m-edit" href="#" class="c-btn-sm c-btn-outline-info">Edit</a>
+      <a id="m-variant" href="#" class="c-btn-sm c-btn-outline-warning">Variant</a>
+      <a id="m-toggle" href="#" class="c-btn-sm"></a>
     </div>
   </div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    const overlay = document.getElementById('custom-modal-overlay');
+    const closeBtn = document.getElementById('custom-modal-close-btn');
+    const cards = document.querySelectorAll('.js-open-modal');
 
-{% endblock %}
+    cards.forEach(card => {
+      card.addEventListener('click', function() {
+        const data = this.dataset;
+
+        document.getElementById('m-name').textContent = data.name;
+        document.getElementById('m-brand').textContent = data.brand;
+        document.getElementById('m-category').textContent = data.category;
+        document.getElementById('m-subcategory').textContent = data.subcategory;
+        document.getElementById('m-price').textContent = data.price;
+        document.getElementById('m-desc').textContent = data.desc;
+        document.getElementById('m-feature').textContent = data.feature;
+        
+        document.getElementById('m-edit').href = data.editUrl;
+        document.getElementById('m-variant').href = data.variantUrl;
+        
+        const toggle = document.getElementById('m-toggle');
+        const status = document.getElementById('m-status');
+        toggle.href = data.toggleUrl;
+
+        if (data.listed === 'true') {
+          status.innerHTML = '<span class="status-badge listed">Listed</span>';
+          toggle.textContent = 'Unlist';
+          toggle.className = 'c-btn-sm c-btn-outline-danger';
+        } else {
+          status.innerHTML = '<span class="status-badge unlisted">Unlisted</span>';
+          toggle.textContent = 'List';
+          toggle.className = 'c-btn-sm c-btn-outline-success';
+        }
+
+        overlay.classList.add('open');
+      });
+    });
+
+    function closeModal() {
+      overlay.classList.remove('open');
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal();
+    });
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+  });
+</script>
+
+{% endblock content %}

@@ -2,174 +2,306 @@
 {% block content %}
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
 <style>
-    .preview img {
-        max-width: 300px; 
-        max-height: 300px; 
-        display: block;
-        margin: auto;
-    }
-    .preview {
-        width: 300px;
-        height: 300px;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 10px;
-        position: relative;
-    }
-    .remove-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background-color: red;
-        color: white;
-        border: none;
-        padding: 5px 8px;
-        cursor: pointer;
-        font-size: 12px;
-        border-radius: 3px;
-    }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .form-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-control {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    width: 100%;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  .dark-control:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+  
+  select.dark-control option { background: #1e2433; color: #fff; }
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
+  .image-upload-card {
+    background: rgba(16, 20, 29, 0.3);
+    border: 1px dashed #2a3045;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .preview-container {
+    margin-top: 12px;
+  }
+  .preview-box {
+    width: 100%;
+    height: 250px;
+    background: #10141d;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .preview-box img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+
+  .img-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+  }
+
+  .btn-action {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.2s;
+  }
+  .btn-crop { color: #38bdf8; border-color: #38bdf8; background: transparent; }
+  .btn-crop:hover { background: #38bdf8; color: #fff; }
+  
+  .btn-remove { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-remove:hover { background: #f87171; color: #fff; }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    margin-top: 24px;
+  }
+  .btn-submit:hover { background: #2563eb; }
+
+  .cropper-modal { background-color: rgba(0,0,0,0.8); }
 </style>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Edit Variant</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <!-- Color Selection -->
-        <div class="form-group">
-            <label for="color">Color</label>
-            <select class="form-control" id="color" name="color">
-                <option value="Black" {% if variant.color == "Black" %}selected{% endif %}>Black</option>
-                <option value="White" {% if variant.color == "White" %}selected{% endif %}>White</option>
-                <option value="Red" {% if variant.color == "Red" %}selected{% endif %}>Red</option>
-                <option value="Blue" {% if variant.color == "Blue" %}selected{% endif %}>Blue</option>
-            </select>
-        </div>
-
-        <!-- Stock Input -->
-        <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" class="form-control" id="stock" name="stock" value="{{ variant.stock }}">
-        </div>
-
-        <!-- Image 1 Upload and Preview -->
-        <div class="form-group">
-            <label for="image1">Image 1</label>
-            <input type="file" class="form-control image-input" id="image1" name="image1" accept="image/*">
-            <div id="preview1" class="preview mt-2">
-                {% if variant.image1 %}
-                    <img src="{{ variant.image1.url }}" alt="Image 1">
-                {% endif %}
-            </div>
-            <input type="hidden" id="cropped-image1" name="cropped_image1">
-        </div>
-
-        <!-- Image 2 Upload and Preview -->
-        <div class="form-group">
-            <label for="image2">Image 2</label>
-            <input type="file" class="form-control image-input" id="image2" name="image2" accept="image/*">
-            <div id="preview2" class="preview mt-2">
-                {% if variant.image2 %}
-                    <img src="{{ variant.image2.url }}" alt="Image 2">
-                {% endif %}
-            </div>
-            <input type="hidden" id="cropped-image2" name="cropped_image2">
-        </div>
-
-        <!-- Image 3 Upload and Preview -->
-        <div class="form-group">
-            <label for="image3">Image 3</label>
-            <input type="file" class="form-control image-input" id="image3" name="image3" accept="image/*">
-            <div id="preview3" class="preview mt-2">
-                {% if variant.image3 %}
-                    <img src="{{ variant.image3.url }}" alt="Image 3">
-                {% endif %}
-            </div>
-            <input type="hidden" id="cropped-image3" name="cropped_image3">
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Update Variant</button>
-    </form>
+<div class="page-header">
+  <h3 class="page-title">Edit Variant</h3>
+  <a href="{% url 'list_product' %}" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Products
+  </a>
 </div>
 
-<!-- Include Cropper.js -->
+<div class="form-card">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+      <div class="form-group mb-0">
+        <label for="color">Color</label>
+        <select class="dark-control" id="color" name="color">
+          <option value="Black" {% if variant.color == "Black" %}selected{% endif %}>Black</option>
+          <option value="White" {% if variant.color == "White" %}selected{% endif %}>White</option>
+          <option value="Red" {% if variant.color == "Red" %}selected{% endif %}>Red</option>
+          <option value="Blue" {% if variant.color == "Blue" %}selected{% endif %}>Blue</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-0">
+        <label for="stock">Stock Quantity</label>
+        <input type="number" class="dark-control" id="stock" name="stock" value="{{ variant.stock }}">
+      </div>
+    </div>
+
+    <hr style="border-top: 1px solid #2a3045; margin: 24px 0;">
+
+    <div class="form-group">
+      <label>Variant Images</label>
+      <div class="image-grid">
+        
+        <div class="image-upload-card">
+          <input type="file" class="dark-control image-input" style="padding: 6px;" id="image1" name="image1" accept="image/*">
+          <div class="preview-container" id="container1">
+            <div id="preview1" class="preview-box">
+              {% if variant.image1 %}
+                <img src="{{ variant.image1.url }}" alt="Image 1">
+              {% else %}
+                <span style="color:#64748b; font-size:12px;">No Image</span>
+              {% endif %}
+            </div>
+            <div id="actions1" class="img-actions"></div>
+          </div>
+          <input type="hidden" id="cropped-image1" name="cropped_image1">
+        </div>
+
+        <div class="image-upload-card">
+          <input type="file" class="dark-control image-input" style="padding: 6px;" id="image2" name="image2" accept="image/*">
+          <div class="preview-container" id="container2">
+            <div id="preview2" class="preview-box">
+              {% if variant.image2 %}
+                <img src="{{ variant.image2.url }}" alt="Image 2">
+              {% else %}
+                <span style="color:#64748b; font-size:12px;">No Image</span>
+              {% endif %}
+            </div>
+            <div id="actions2" class="img-actions"></div>
+          </div>
+          <input type="hidden" id="cropped-image2" name="cropped_image2">
+        </div>
+
+        <div class="image-upload-card">
+          <input type="file" class="dark-control image-input" style="padding: 6px;" id="image3" name="image3" accept="image/*">
+          <div class="preview-container" id="container3">
+            <div id="preview3" class="preview-box">
+              {% if variant.image3 %}
+                <img src="{{ variant.image3.url }}" alt="Image 3">
+              {% else %}
+                <span style="color:#64748b; font-size:12px;">No Image</span>
+              {% endif %}
+            </div>
+            <div id="actions3" class="img-actions"></div>
+          </div>
+          <input type="hidden" id="cropped-image3" name="cropped_image3">
+        </div>
+
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit">Update Variant</button>
+  </form>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const inputs = document.querySelectorAll('.image-input');
+  document.addEventListener('DOMContentLoaded', function () {
+    const inputs = document.querySelectorAll('.image-input');
 
-        inputs.forEach(input => {
-            input.addEventListener('change', function (e) {
-                const previewId = "preview" + this.id.replace("image", ""); // Match ID with preview div
-                const preview = document.getElementById(previewId);
+    inputs.forEach(input => {
+      input.addEventListener('change', function (e) {
+        
+        const index = this.id.replace("image", ""); 
+        const previewBox = document.getElementById("preview" + index);
+        const actionBox = document.getElementById("actions" + index);
+        const hiddenInput = document.getElementById('cropped-image' + index);
 
-                // Clear the previous preview
-                preview.innerHTML = '';
+        previewBox.innerHTML = '';
+        actionBox.innerHTML = '';
 
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        const img = document.createElement('img');
-                        img.src = event.target.result;
-                        preview.appendChild(img);
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            previewBox.appendChild(img);
 
-                        // Initialize Cropper.js
-                        const cropper = new Cropper(img, {
-                            aspectRatio: 1, 
-                            viewMode: 1,
-                            autoCropArea: 1,
-                            cropBoxResizable: false,
-                        });
-
-                        // Add Crop Button
-                        const cropButton = document.createElement('button');
-                        cropButton.textContent = "Crop";
-                        cropButton.classList.add('btn', 'btn-secondary', 'mt-2');
-                        preview.appendChild(cropButton);
-
-                        cropButton.addEventListener('click', function () {
-                            const croppedCanvas = cropper.getCroppedCanvas({
-                                width: 300,
-                                height: 300,
-                            });
-                            const croppedImage = document.createElement('img');
-                            croppedImage.src = croppedCanvas.toDataURL();
-                            preview.innerHTML = '';
-                            preview.appendChild(croppedImage);
-
-                            // Update hidden input with cropped image data URL
-                            const hiddenInputId = 'cropped-image' + input.id.replace('image', '');
-                            const hiddenInput = document.getElementById(hiddenInputId);
-                            hiddenInput.value = croppedCanvas.toDataURL();
-
-                            addRemoveButton(preview, input);
-                        });
-
-                        addRemoveButton(preview, input);
-                    };
-                    reader.readAsDataURL(file);
-                }
+            const cropper = new Cropper(img, {
+              aspectRatio: 1, 
+              viewMode: 1,
+              autoCropArea: 1,
+              cropBoxResizable: false,
+              background: false 
             });
-        });
 
-        function addRemoveButton(preview, input) {
+            const cropButton = document.createElement('button');
+            cropButton.textContent = "Crop & Save";
+            cropButton.type = "button";
+            cropButton.classList.add('btn-action', 'btn-crop');
+            
             const removeButton = document.createElement('button');
             removeButton.textContent = "Remove";
-            removeButton.classList.add('remove-btn');
-            preview.appendChild(removeButton);
+            removeButton.type = "button";
+            removeButton.classList.add('btn-action', 'btn-remove');
 
-            removeButton.addEventListener('click', function () {
-                preview.innerHTML = ''; 
-                input.value = ''; 
+            actionBox.appendChild(cropButton);
+            actionBox.appendChild(removeButton);
+
+            cropButton.addEventListener('click', function () {
+              const croppedCanvas = cropper.getCroppedCanvas({
+                width: 500, 
+                height: 500,
+              });
+              
+              // Replace the cropper view with the final cropped image
+              const croppedImage = document.createElement('img');
+              croppedImage.src = croppedCanvas.toDataURL();
+              previewBox.innerHTML = '';
+              previewBox.appendChild(croppedImage);
+
+              // Update hidden input
+              hiddenInput.value = croppedCanvas.toDataURL();
+
+              // Hide crop button after cropping, leave remove button
+              cropButton.style.display = 'none';
             });
+
+            // Remove Action
+            removeButton.addEventListener('click', function () {
+              previewBox.innerHTML = '<span style="color:#64748b; font-size:12px;">No Image</span>'; 
+              actionBox.innerHTML = ''; 
+              input.value = ''; 
+              hiddenInput.value = '';
+            });
+          };
+          reader.readAsDataURL(file);
         }
+      });
     });
+  });
 </script>
 
 {% endblock %}

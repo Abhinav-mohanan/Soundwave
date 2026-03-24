@@ -1,41 +1,170 @@
 {% extends 'admin/navbar.html' %}
+{% load static %}
+
 {% block content %}
-<div class="main-panel">
-    <div class="content-wrapper">
-      <div class="page-header">
-        <h3 class="page-title">Brands</h3>
-        <a href="{% url 'add_brand' %}" class="btn btn-primary add-button">+ Add</a>
-      </div>
+
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
   
-      <div class="card dark-theme">
-        <div class="card-body">
-          <table class="table brand-table">
-            <thead>
-              <tr>
-                <th>Brand Name</th>
-                <th class="text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for brand in brands %}
-              <tr>
-                <td>{{ brand.name }}</td>
-                <td class="text-right">
-                  <a href="{% url 'edit_brand' brand.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
-                  {% if brand.is_listed %}
-                  <a href="{% url 'unlist_brand' brand.id %}" class="btn btn-outline-danger btn-sm">Unlist</a>
-                  {% else %}
-                  <a href="{% url 'list_brand' brand.id %}" class="btn btn-outline-danger btn-sm">List</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-add {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-add:hover { background: #2563eb; color: #fff; text-decoration: none; }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr {
+    transition: background 0.2s;
+  }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .status-badge.listed { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.unlisted { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .action-group { 
+    display: flex; 
+    gap: 8px; 
+    justify-content: flex-end; 
+  }
+  
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.2s;
+    display: inline-block;
+  }
+  
+  .btn-edit { color: #38bdf8; border-color: #38bdf8; background: transparent; }
+  .btn-edit:hover { background: #38bdf8; color: #fff; }
+
+  .btn-toggle-list { color: #4ade80; border-color: #4ade80; background: transparent; }
+  .btn-toggle-list:hover { background: #4ade80; color: #14532d; }
+
+  .btn-toggle-unlist { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-toggle-unlist:hover { background: #f87171; color: #fff; }
+
+  .empty-state { text-align: center; padding: 48px; color: #64748b; font-size: 14px; }
+</style>
+
+<div class="page-header">
+  <h3 class="page-title">Brands</h3>
+  <a href="{% url 'add_brand' %}" class="btn-add">
+    <i class="mdi mdi-plus"></i> Add Brand
+  </a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Brand Name</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for brand in brands %}
+        <tr>
+          
+          <td style="font-weight: 500;">{{ brand.name }}</td>
+          
+          <td>
+            {% if brand.is_listed %}
+              <span class="status-badge listed">Listed</span>
+            {% else %}
+              <span class="status-badge unlisted">Unlisted</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-group">
+              <a href="{% url 'edit_brand' brand.id %}" class="btn-action btn-edit">Edit</a>
+              
+              {% if brand.is_listed %}
+                <a href="{% url 'unlist_brand' brand.id %}" class="btn-action btn-toggle-unlist">Unlist</a>
+              {% else %}
+                <a href="{% url 'list_brand' brand.id %}" class="btn-action btn-toggle-list">List</a>
+              {% endif %}
+            </div>
+          </td>
+          
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3">
+            <div class="empty-state">No brands found. Click 'Add Brand' to get started.</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  
+</div>
 
 {% endblock content %}

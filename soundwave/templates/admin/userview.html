@@ -1,67 +1,171 @@
 {% extends 'admin/navbar.html' %}
 {% load static %}
 
-
-
 {% block content %}
-  <div class="content-wrapper">
-    <div class="row">
-      <div class="col-12 grid-margin">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">User Management</h4>
-            <div class="table-responsive">
-              
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for user in user_info %}
-                  <tr>
-                    <td>{{user.first_name}}</td>
-                    <td>{{user.username}}</td>
-                    <td>{{user.email}}</td>
-                    <td>{{user.phone_number}}</td>
-                    <td>
-                      {% if user.is_active %}
-                      <span class="badge badge-success">Active</span>
-                      {% else %}
-                      <span class="badge badge-danger">InActive</span>
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if user.is_active %}
-                      <a href="{% url 'block_user' user.id %}">
-                      <button class="btn btn-danger btn-sm">Block</button>
-                      </a>
-                      {% else %}
-                      <a href="{% url 'unblock_user' user.id %}">
-                        <button class="btn btn-success btn-sm">Unblock</button>
-                      </a>
-                      {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                  <!-- End of user block -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+  .user-subtitle { font-size: 13px; color: #94a3b8; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr {
+    transition: background 0.2s;
+  }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .status-badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.inactive { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .action-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .action-btns form { margin: 0; } 
+  
+  .btn-action {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.2s;
+  }
+  
+  .btn-block { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-block:hover { background: #f87171; color: #fff; }
+
+  .btn-unblock { color: #4ade80; border-color: #4ade80; background: transparent; }
+  .btn-unblock:hover { background: #4ade80; color: #14532d; }
+
+  .empty-state { text-align: center; padding: 48px; color: #64748b; font-size: 14px; }
+  
+</style>
+
+<div class="page-header">
+  <div class="header-left">
+    <h3 class="page-title">User Management</h3>
+    <p class="user-subtitle">Total Users: {{ page_obj.paginator.count }}</p>
   </div>
+</div>
 
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in page_obj %}
+        <tr>
+          <td style="font-weight: 500;">{{ user.first_name|default:"--" }}</td>
+          <td style="color: #94a3b8;">{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone_number|default:"--" }}</td>
+          
+          <td>
+            {% if user.is_active %}
+              <span class="status-badge active">Active</span>
+            {% else %}
+              <span class="status-badge inactive">Inactive</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-btns">
+              {% if user.is_active %}
+                <form method="POST" action="{% url 'block_user' user.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-block">Block</button>
+                </form>
+              {% else %}
+                <form method="POST" action="{% url 'unblock_user' user.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-action btn-unblock">Unblock</button>
+                </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">No users found in the system.</div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+    {% include 'admin/components/pagination.html' %}
 
+</div>
 
-
-
-{% endblock content %}
+{% endblock %}

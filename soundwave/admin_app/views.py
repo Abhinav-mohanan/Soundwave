@@ -30,6 +30,7 @@ from io import BytesIO
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear,TruncDate
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 import json
 from dateutil import parser
@@ -352,14 +353,18 @@ def admin_home(request):
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def user_managment(request):
-    user_info=CustomUser.objects.filter(is_staff=False)
-    return render(request,'admin/userview.html',{'user_info':user_info})
+    user = CustomUser.objects.filter(is_staff=False).order_by('-id')
+
+    paginator = Paginator(user, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request,'admin/userview.html',{'page_obj':page_obj})
 
 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
 def block_user(request,id):
-    user=get_object_or_404(User,id=id)
+    user=get_object_or_404(CustomUser,id=id)
     user.is_active=False
     user.save()
     return redirect('list_user')
@@ -367,8 +372,8 @@ def block_user(request,id):
 
 @never_cache
 @user_passes_test(lambda u : u.is_superuser,login_url='/adminn/')
-def unblock_user(requset,id):
-    user=get_object_or_404(User,id=id)
+def unblock_user(request,id):
+    user=get_object_or_404(CustomUser,id=id)
     user.is_active=True
     user.save()
     return redirect('list_user')

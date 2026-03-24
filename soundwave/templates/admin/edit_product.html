@@ -1,73 +1,178 @@
 {% extends 'admin/navbar.html' %}
 {% load static %}
+
 {% block content %}
+
 <style>
-  .main-panel{
-    padding-top: 30px !important;
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+
+  .form-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 800px; 
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .full-width { grid-column: 1 / -1; }
+
+  .form-group { margin-bottom: 0; }
+  
+  .form-group label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-control {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  .dark-control:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  .dark-control::placeholder { color: #475569; }
+  
+  select.dark-control option { background: #1e2433; color: #fff; }
+
+  textarea.dark-control {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+  }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .btn-submit:hover { background: #2563eb; transform: translateY(-1px); }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
   }
 </style>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Edit Product</h2>
-    <a href="{% url 'list_product' %}" class="btn btn-outline-light back-link">
-        <i class="mdi mdi-arrow-left mb-4"></i> Back
-      </a>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="name">Product Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" placeholder="Enter product name">
-        </div>
-        
-        <div class="form-group">
-            <label for="category">Category</label>
-            <select class="form-control" id="category" name="category">
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category.id == product.category.id %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="brand">Brand</label>
-            <select class="form-control" id="brand" name="brand">
-                {% for brand in brands %}
-                    <option value="{{ brand.id }}" {% if brand.id == product.brand.id %}selected{% endif %}>{{ brand.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" name="description" placeholder="Enter product description">{{product.description}}</textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="subcategory">Subcategory</label>
-            <select class="form-control" id="subcategory" name="subcategory">
-                {% for sub in subcategory %}
-                    <option value="{{ sub.id }}" {% if sub.id == product.subcategory.id %}selected{% endif %}>{{ sub.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="features">Features</label>
-            <input type="text" class="form-control" id="features" name="features" value="{{ product.feature }}"  placeholder="Enter product features">
-        </div>
-
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="text" class="form-control" id="price" name="price" value="{{ product.price }}" placeholder="Enter product price">
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Edit Product</button>
-    </form>
+<div class="page-header" style="max-width: 800px; margin: 0 auto 24px auto;">
+  <h3 class="page-title">Edit Product</h3>
+  <a href="{% url 'list_product' %}" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Products
+  </a>
 </div>
 
+<div class="form-card">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-grid">
+      
+      <div class="form-group full-width">
+        <label for="name">Product Name</label>
+        <input type="text" class="dark-control" id="name" name="name" value="{{ product.name }}" placeholder="Enter product name" required>
+      </div>
 
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select class="dark-control" id="category" name="category">
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if category.id == product.category.id %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
+      <div class="form-group">
+        <label for="subcategory">Subcategory</label>
+        <select class="dark-control" id="subcategory" name="subcategory">
+          {% for sub in subcategory %}
+            <option value="{{ sub.id }}" {% if sub.id == product.subcategory.id %}selected{% endif %}>
+              {{ sub.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
+      <div class="form-group">
+        <label for="brand">Brand</label>
+        <select class="dark-control" id="brand" name="brand">
+          {% for brand in brands %}
+            <option value="{{ brand.id }}" {% if brand.id == product.brand.id %}selected{% endif %}>
+              {{ brand.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" step="0.01" class="dark-control" id="price" name="price" value="{{ product.price }}" placeholder="0.00" required>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="features">Features</label>
+        <input type="text" class="dark-control" id="features" name="features" value="{{ product.feature }}" placeholder="Enter product features (e.g. Wireless, Noise Cancelling)">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="description">Description</label>
+        <textarea class="dark-control" id="description" name="description" placeholder="Enter full product description">{{ product.description }}</textarea>
+      </div>
+
+    </div>
+
+    <button type="submit" class="btn-submit">Update Product</button>
+  </form>
+</div>
 
 {% endblock content %}

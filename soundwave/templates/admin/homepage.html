@@ -1,191 +1,241 @@
 {% extends 'admin/navbar.html' %}
 {% block content %}
 <style>
-  /* Dashboard Layout */
   .dashboard-container {
-    padding: 2rem;
-    background-color: #1a1a1a;
+    padding: 24px 20px;
+    background-color: transparent; 
   }
 
-  /* Stats Cards */
   .stats-card {
-    background: linear-gradient(145deg, #2a2a2a, #333);
-    border: 1px solid #404040;
-    border-radius: 10px;
-    padding: 1.5rem;
-    transition: transform 0.3s ease;
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.2s ease-in-out;
     height: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .stats-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    border-color: #3b82f6;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
+  .stats-card:hover::before { opacity: 1; }
 
   .stats-card h3 {
-    font-size: 2rem;
+    font-size: 28px;
+    font-weight: 700;
     color: #fff;
-    margin-bottom: 0.5rem;
-    font-family: 'Georgia', serif;
+    margin-bottom: 8px;
   }
 
   .stats-card h6 {
-    color: #888;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin: 0;
   }
 
-  /* Charts Section */
   .chart-section {
-    background: #2a2a2a;
-    border-radius: 10px;
-    padding: 2rem;
-    margin: 2rem 0;
-    border: 1px solid #404040;
+    background: #1e2433;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    border: 1px solid #2a3045;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .chart-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 24px;
   }
 
-  select {
-    background: #333;
-    border: 1px solid #404040;
+  .chart-title {
+    font-size: 18px;
+    font-weight: 600;
     color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .dark-select {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.2s;
   }
+  .dark-select:focus, .dark-select:hover { border-color: #3b82f6; outline: none; }
+  .dark-select option { background: #1e2433; color: #fff; }
 
-  select:hover {
-    background: #404040;
+  canvas {
+    width: 100% !important;
+    max-height: 350px;
+    display: none;
   }
+  canvas.active { display: block; }
 
-  /* Sales Report Section */
   .sales-report {
-    background: #2a2a2a;
+    background: rgba(16, 20, 29, 0.3);
     border-radius: 10px;
-    padding: 2rem;
-    margin-top: 2rem;
+    padding: 20px;
+    border: 1px solid #2a3045;
+    height: 100%;
   }
 
-  .form-control {
-    background: #333;
-    border: 1px solid #404040;
+  .sales-report h4 {
     color: #fff;
-    padding: 0.5rem;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
   }
 
-  .form-control:focus {
-    background: #404040;
-    border-color: #666;
+  .form-label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .dark-input {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
     color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 13px;
+    transition: 0.2s;
+    color-scheme: dark; 
+  }
+  .dark-input:focus { border-color: #3b82f6; outline: none; }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    transition: 0.2s;
+  }
+  .btn-submit:hover { background: #2563eb; }
+
+  .export-btns { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-export {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-pdf { background: rgba(248, 113, 113, 0.1); color: #f87171; border: 1px solid #f87171; }
+  .btn-pdf:hover { background: #f87171; color: #fff; }
+  
+  .btn-excel { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid #4ade80; }
+  .btn-excel:hover { background: #4ade80; color: #14532d; }
+
+  .widget-section {
+    background: #1e2433;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid #2a3045;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
-  /* Products Cards */
-  .products-section {
-    background: #2a2a2a;
-    border-radius: 10px;
-    padding: 2rem;
-    margin: 2rem 0;
-  }
-
-  .top-selling-cards {
-    overflow-x: auto;
-    padding: 1rem 0;
+  .widget-header {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2a3045;
+    padding-bottom: 12px;
   }
 
   .cards-grid {
-    display: flex;
-    gap: 1.5rem;
-    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
   }
 
-  .product-card {
-    background: linear-gradient(145deg, #333, #2a2a2a);
-    border: 1px solid #404040;
-    border-radius: 8px;
-    padding: 1rem;
-    min-width: 200px;
-    transition: transform 0.3s ease;
+  .data-card {
+    background: rgba(16, 20, 29, 0.3);
+    border: 1px solid #2a3045;
+    border-radius: 10px;
+    padding: 16px;
+    transition: 0.2s;
+    text-align: center;
   }
+  .data-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
 
-  .product-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .product-image {
+  .card-img-wrapper {
     width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 1rem;
+    height: 120px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    background: #10141d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .data-card img { width: 100%; height: 100%; object-fit: cover; }
+  .no-img-text { color: #64748b; font-size: 11px; }
 
-  .product-card h3 {
+  .data-card h3 {
     color: #fff;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-
-  .product-card p {
-    color: #888;
-    font-size: 0.9rem;
-    margin: 0.3rem 0;
+  .data-card p {
+    color: #94a3b8;
+    font-size: 12px;
+    margin: 4px 0;
   }
-
-  /* Buttons */
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-  }
-
-  .btn-outline-primary {
-    border: 1px solid #0d6efd;
-    color: #0d6efd;
-  }
-
-  .btn-danger {
-    background: #dc3545;
-    border: none;
-  }
-
-  .btn-success {
-    background: #198754;
-    border: none;
-  }
-
-  /* Canvas/Charts */
-  canvas {
-    background: #2a2a2a;
-    border-radius: 8px;
-    padding: 1rem;
-    max-height: 400px;
-  }
-
-  canvas.active {
-    display: block !important;
-  }
-
-  /* Section Headers */
-  .section-header {
-    color: #0dcaf0;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    font-family: 'Georgia', serif;
-    border-bottom: 2px solid #404040;
-    padding-bottom: 0.5rem;
+  .stat-highlight {
+    color: #38bdf8;
+    font-weight: 700;
   }
 </style>
 
 <div class="dashboard-container">
-  <!-- Stats Cards -->
+  
   <div class="row">
     <div class="col-xl-3 col-sm-6 mb-4">
       <div class="stats-card">
@@ -201,152 +251,150 @@
     </div>
     <div class="col-xl-3 col-sm-6 mb-4">
       <div class="stats-card">
-        <h3>{{ total_revenue }}</h3>
+        <h3>₹{{ total_revenue }}</h3>
         <h6>TOTAL REVENUE</h6>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-4">
       <div class="stats-card">
-        <h3>{{ overall_discount|floatformat:0 }}</h3>
+        <h3>₹{{ overall_discount|floatformat:0 }}</h3>
         <h6>OVERALL DISCOUNT</h6>
       </div>
     </div>
   </div>
 
-  <!-- Sales Chart Section -->
   <div class="chart-section">
-    <div class="chart-controls">
-      <h5 style="color: white;">Sales Chart</h5>
-      <select id="viewSelector" class="form-select" onchange="updateChart()">
-        <option value="day" selected>Day-wise</option>
-        <option value="week">Week-wise</option>
-        <option value="month">Month-wise</option>
-        <option value="year">Year-wise</option>
-      </select>
-    </div>
-
     <div class="row">
-      <div class="col-md-8">
+      
+      <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="chart-controls">
+          <h5 class="chart-title">Sales Analytics</h5>
+          <select id="viewSelector" class="dark-select" onchange="updateChart()">
+            <option value="day" selected>Daily View</option>
+            <option value="week">Weekly View</option>
+            <option value="month">Monthly View</option>
+            <option value="year">Yearly View</option>
+          </select>
+        </div>
+        
         <canvas id="daySalesChart" class="line-chart active"></canvas>
         <canvas id="weekSalesChart" class="line-chart"></canvas>
         <canvas id="monthSalesChart" class="line-chart"></canvas>
         <canvas id="yearSalesChart" class="line-chart"></canvas>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-lg-4">
         <div class="sales-report">
-          <h4 class="text-center mb-4">Sales Report</h4>
-          <form method="get" class="mb-4">
-            <div class="row">
-              <div class="col-12 mb-3">
-                <label for="filter_type" class="form-label">Filter By:</label>
-                <select name="filter_type" id="filter_type" class="form-select" onchange="toggleDateInputs()">
-                  <option value="day" {% if filter_type == 'day' %}selected{% endif %}>Daily</option>
-                  <option value="month" {% if filter_type == 'month' %}selected{% endif %}>Monthly</option>
-                  <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Yearly</option>
-                  <option value="custom" {% if filter_type == 'custom' %}selected{% endif %}>Custom Range</option>
-                </select>
-              </div>
+          <h4>Sales Report Config</h4>
+          
+          <form method="get">
+            <div class="mb-3">
+              <label class="form-label">Date Range Filter</label>
+              <select name="filter_type" id="filter_type" class="dark-select w-100" onchange="toggleDateInputs()">
+                <option value="day" {% if filter_type == 'day' %}selected{% endif %}>Daily</option>
+                <option value="month" {% if filter_type == 'month' %}selected{% endif %}>Monthly</option>
+                <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Yearly</option>
+                <option value="custom" {% if filter_type == 'custom' %}selected{% endif %}>Custom Range</option>
+              </select>
+            </div>
 
-              <div class="col-12" id="date-filters" {% if filter_type != 'custom' %}style="display: none;"{% endif %}>
-                <div class="mb-3">
-                  <label for="start_date" class="form-label">Start Date:</label>
-                  <input type="date" name="start_date" id="start_date" value="{{ start_date|date:'Y-m-d' }}" class="form-control">
-                </div>
-                <div class="mb-3">
-                  <label for="end_date" class="form-label">End Date:</label>
-                  <input type="date" name="end_date" id="end_date" value="{{ end_date|date:'Y-m-d' }}" class="form-control">
-                </div>
+            <div id="date-filters" {% if filter_type != 'custom' %}style="display: none;"{% endif %}>
+              <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <input type="date" name="start_date" id="start_date" value="{{ start_date|date:'Y-m-d' }}" class="dark-input">
               </div>
-
-              <div class="col-12 mb-3">
-                <button type="submit" class="btn btn-outline-primary w-100">Apply Filter</button>
-              </div>
-
-              <div class="col-12">
-                <div class="d-flex justify-content-between gap-2">
-                  <a href="?download=pdf&filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}" class="btn btn-danger flex-grow-1">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </a>
-                  <a href="?download=excel&filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}" class="btn btn-success flex-grow-1">
-                    <i class="fas fa-file-excel"></i> Excel
-                  </a>
-                </div>
+              <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input type="date" name="end_date" id="end_date" value="{{ end_date|date:'Y-m-d' }}" class="dark-input">
               </div>
             </div>
+
+            <button type="submit" class="btn-submit mb-2">Apply Filters</button>
+
+            <div class="export-btns">
+              <a href="?download=pdf&filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}" class="btn-export btn-pdf">
+                PDF
+              </a>
+              <a href="?download=excel&filter_type={{ filter_type }}&start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}" class="btn-export btn-excel">
+                Excel
+              </a>
+            </div>
           </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="widget-section">
+        <h4 class="widget-header">Top 5 Best-Selling Products</h4>
+        <div class="cards-grid">
+          {% for product in products %}
+            <div class="data-card">
+              <div class="card-img-wrapper">
+                {% if product.image %}
+                  <img src="{{ product.image }}" alt="{{ product.name }}">
+                {% else %}
+                  <span class="no-img-text">No Image</span>
+                {% endif %}
+              </div>
+              <h3>{{ product.name }}</h3>
+              <p>Price: ₹{{ product.price }}</p>
+              <p>Sold: <span class="stat-highlight">{{ product.total_sold }}</span></p>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Top Products Section -->
-  <div class="products-section">
-    <h4 class="section-header">Top 5 Best-Selling Products</h4>
-    <div class="top-selling-cards">
-      <div class="cards-grid">
-        {% for product in products %}
-          <div class="product-card">
-            {% if product.image %}
-              <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
-            {% else %}
-              <div class="no-image">No image available</div>
-            {% endif %}
-            <h3>{{ product.name }}</h3>
-            <p>Price: ₹{{ product.price }}</p>
-            <p>Total Sold: {{ product.total_sold }}</p>
-          </div>
-        {% endfor %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="widget-section h-100 mb-0">
+        <h4 class="widget-header">Top 5 Brands</h4>
+        <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));">
+          {% for brand in top_selling_brands %}
+            <div class="data-card">
+              <h3>{{ brand.variant__product__brand__name }}</h3>
+              <p>Sold: <span class="stat-highlight">{{ brand.total_sold }}</span></p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mt-4 mt-md-0">
+      <div class="widget-section h-100 mb-0">
+        <h4 class="widget-header">Top 5 Categories</h4>
+        <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));">
+          {% for category in top_selling_categories %}
+            <div class="data-card">
+              <h3>{{ category.variant__product__category__name }}</h3>
+              <p>Sold: <span class="stat-highlight">{{ category.total_sold }}</span></p>
+            </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Top Brands Section -->
-  <div class="products-section">
-    <h4 class="section-header">Top 5 Best-Selling Brands</h4>
-    <div class="top-selling-cards">
-      <div class="cards-grid">
-        {% for brand in top_selling_brands %}
-          <div class="product-card">
-            <h3>{{ brand.variant__product__brand__name }}</h3>
-            <p>Total Sold: {{ brand.total_sold }}</p>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Top Categories Section -->
-  <div class="products-section">
-    <h4 class="section-header">Top 5 Best-Selling Categories</h4>
-    <div class="top-selling-cards">
-      <div class="cards-grid">
-        {% for category in top_selling_categories %}
-          <div class="product-card">
-            <h3>{{ category.variant__product__category__name }}</h3>
-            <p>Total Sold: {{ category.total_sold }}</p>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   let myLineChart;
-  let myPieChart;
-  const dayLabels = JSON.parse('{{ day_labels|escapejs }}');
-  const dayData = JSON.parse('{{ day_data|escapejs }}');
-  const weekLabels = JSON.parse('{{ week_labels|escapejs }}');
-  const weekData = JSON.parse('{{ week_data|escapejs }}');
-  const monthLabels = JSON.parse('{{ month_labels|escapejs }}');
-  const monthData = JSON.parse('{{ month_data|escapejs }}');
-  const yearLabels = JSON.parse('{{ year_labels|escapejs }}');
-  const yearData = JSON.parse('{{ year_data|escapejs }}');
+  
+  const dayLabels = JSON.parse('{{ day_labels|escapejs }}' || '[]');
+  const dayData = JSON.parse('{{ day_data|escapejs }}' || '[]');
+  const weekLabels = JSON.parse('{{ week_labels|escapejs }}' || '[]');
+  const weekData = JSON.parse('{{ week_data|escapejs }}' || '[]');
+  const monthLabels = JSON.parse('{{ month_labels|escapejs }}' || '[]');
+  const monthData = JSON.parse('{{ month_data|escapejs }}' || '[]');
+  const yearLabels = JSON.parse('{{ year_labels|escapejs }}' || '[]');
+  const yearData = JSON.parse('{{ year_data|escapejs }}' || '[]');
 
-  // Initialize chart on page load
   document.addEventListener('DOMContentLoaded', function() {
     updateChart();
   });
@@ -355,33 +403,39 @@
     document.querySelectorAll('canvas.line-chart').forEach(canvas => {
       canvas.classList.remove('active');
     });
+    
     const view = document.getElementById('viewSelector').value;
     const selectedCanvas = document.getElementById(`${view}SalesChart`);
     selectedCanvas.classList.add('active');
+    
     const ctx = selectedCanvas.getContext('2d');
+    
     let labels, data;
     switch (view) {
       case 'day': labels = dayLabels; data = dayData; break;
       case 'week': labels = weekLabels; data = weekData; break;
       case 'month': labels = monthLabels; data = monthData; break;
-      case 'year': labels = yearLabels; data = yearData; break ;
+      case 'year': labels = yearLabels; data = yearData; break;
     }
+    
     if (myLineChart) {
       myLineChart.destroy();
     }
+    
     myLineChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [{
-          label: 'Sales',
+          label: 'Sales Revenue',
           data: data,
-          borderColor: 'rgba(13, 202, 240, 1)',
-          backgroundColor: 'rgba(13, 202, 240, 0.1)',
-          tension: 0.1,
-          pointBackgroundColor: '#fff',
-          pointBorderColor: 'rgba(13, 202, 240, 1)',
-          pointHoverBackgroundColor: 'rgba(13, 202, 240, 1)',
+          borderColor: '#38bdf8', 
+          backgroundColor: 'rgba(56, 189, 248, 0.1)',
+          fill: true,
+          tension: 0.3, 
+          pointBackgroundColor: '#1e2433',
+          pointBorderColor: '#38bdf8',
+          pointHoverBackgroundColor: '#38bdf8',
           borderWidth: 2,
           pointRadius: 4,
           pointHoverRadius: 6
@@ -392,35 +446,39 @@
         maintainAspectRatio: false,
         scales: {
           x: { 
-            ticks: { color: '#fff' }, 
-            grid: { color: 'rgba(255, 255, 255, 0.1)' } 
+            ticks: { color: '#94a3b8', font: {size: 11} }, 
+            grid: { color: '#2a3045', drawBorder: false } 
           },
           y: { 
-            ticks: { color: '#fff' }, 
-            grid: { color: 'rgba(255, 255, 255, 0.1)' } 
+            beginAtZero: true,
+            ticks: { 
+              color: '#94a3b8', 
+              font: {size: 11},
+              callback: function(value) { return '₹' + value; }
+            }, 
+            grid: { color: '#2a3045', drawBorder: false } 
           }
         },
         plugins: {
-          legend: { 
-            labels: { color: '#fff' },
-            position: 'top'
-          },
+          legend: { display: false }, 
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: '#1e2433',
             titleColor: '#fff',
-            bodyColor: '#fff',
-            borderColor: 'rgba(13, 202, 240, 0.5)',
-            bborderWidth: 1,
-            padding: 10
+            bodyColor: '#38bdf8',
+            borderColor: '#2a3045',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return 'Revenue: ₹' + context.parsed.y;
+              }
+            }
           }
         },
         interaction: {
           intersect: false,
           mode: 'index'
-        },
-        animation: {
-          duration: 1000,
-          easing: 'easeInOutQuart'
         }
       }
     });

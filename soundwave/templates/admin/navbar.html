@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOUNDWAVE</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
     <link rel="stylesheet" href="{% static 'assets/vendors/mdi/css/materialdesignicons.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
@@ -32,15 +31,128 @@
       .toast .btn-close {
         color: #000; 
       }
+      .table td,
+      .table th {
+        color: #ffffff !important;
+      } 
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .nav-link.active {
+        background: linear-gradient(135deg, #101010 0%, #353535 100%);
+        color: #ffffff !important;
+        border-radius: 6px;
+      }
+      .nav-link.active i {
+        color: #ffffff !important;
+      }
+      .nav-link {
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 6px;
+      }
+      .menu-title{
+        color: #ffffff !important;
+      }
+      .nav-link i{
+        color: whitesmoke!important;
+      }
+      .global-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 999999;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+      }
+      .global-modal-overlay.open { display: flex; }
+
+      .global-modal-box {
+        background: #1e2433;
+        border: 1px solid #2a3045;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 380px;
+        padding: 32px 24px;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+
+      .global-modal-icon {
+        font-size: 54px;
+        line-height: 1;
+        margin-bottom: 16px;
+      }
+      .global-modal-icon.success { color: #4ade80; text-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
+      .global-modal-icon.error { color: #f87171; text-shadow: 0 0 20px rgba(248, 113, 113, 0.3); }
+      .global-modal-icon.info { color: #38bdf8; text-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+
+      .global-modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #fff;
+        margin: 0 0 12px 0;
+      }
+
+      .global-modal-message {
+        color: #94a3b8;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+        white-space: pre-wrap; 
+      }
+
+      .global-modal-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        background: transparent;
+      }
+
+      /* Dynamic Button Colors */
+      .global-modal-btn.success { border: 1px solid #4ade80; color: #4ade80; }
+      .global-modal-btn.success:hover { background: #4ade80; color: #14532d; }
+
+      .global-modal-btn.error { border: 1px solid #f87171; color: #f87171; }
+      .global-modal-btn.error:hover { background: #f87171; color: #fff; }
+
+      .global-modal-btn.info { border: 1px solid #38bdf8; color: #38bdf8; }
+      .global-modal-btn.info:hover { background: #38bdf8; color: #1e2433; }
     </style>
   </head>
   <body>
+
+    <div id="globalAlertModal" class="global-modal-overlay">
+      <div class="global-modal-box">
+        <div id="globalModalIcon" class="global-modal-icon"></div>
+        <h4 id="globalModalTitle" class="global-modal-title"></h4>
+        <div id="globalModalMessage" class="global-modal-message"></div>
+        <button id="globalModalBtn" class="global-modal-btn">OK</button>
+      </div>
+    </div>
+
     <div class="container-scroller">
-      <!-- Sidebar -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-flex align-items-center justify-content-center">
           <a class="sidebar-brand brand-logo" href="#">
-            <!-- <img src="{% static 'assets/images/logo.svg' %}" alt="Logo"> -->
              <p class="text-white">SOUNDWAVE</p>
           </a>
           <a class="sidebar-brand brand-logo-mini" href="#">
@@ -48,7 +160,6 @@
           </a>
         </div>
         <ul class="nav">
-          <!-- User Profile -->
           <li class="nav-item profile">
             <div class="profile-desc">
               <div class="profile-pic">
@@ -58,61 +169,65 @@
               </div>
             </div>
           </li>
-          <!-- Navigation Items -->
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'dashboard' %}">
-              <span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+              <span class="menu-icon"><i class="mdi mdi-speedometer" style="color: wheat;"></i></span>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'list_user' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_user' %}active{% endif %}" href="{% url 'list_user' %}">
+              <span class="menu-icon"><i class="mdi mdi-account-group"></i></span>
               <span class="menu-title"> Users</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'list_category' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_category' %}active{% endif %}" href="{% url 'list_category' %}">
+              <span class="menu-icon"><i class="mdi mdi-shape"></i></span>
               <span class="menu-title"> Category</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'list_brand' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_brand' %}active{% endif %}" href="{% url 'list_brand' %}">
+              <span class="menu-icon"><i class="mdi mdi-tag-multiple"></i></span>
               <span class="menu-title"> Brand</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'list_product' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'list_product' %}active{% endif %}" href="{% url 'list_product' %}">
+              <span class="menu-icon"><i class="mdi mdi-cube-outline"></i></span>
               <span class="menu-title"> Products</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'view_orders' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'view_orders' %}active{% endif %}"  href="{% url 'view_orders' %}">
+              <span class="menu-icon"><i class="mdi mdi-cart"></i></span>
               <span class="menu-title"> Orders</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'view_offers' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'view_offers' %}active{% endif %}"  href="{% url 'view_offers' %}">
+              <span class="menu-icon"><i class="mdi mdi-sale"></i></span>
               <span class="menu-title"> Offers</span>
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="{% url 'view_coupons' %}">
-              <span class="menu-icon"><i class="mdi mdi-laptop"></i></span>
+            <a class="nav-link {% if request.resolver_match.url_name == 'view_coupons' %}active{% endif %}" href="{% url 'view_coupons' %}">
+              <span class="menu-icon"><i class="mdi mdi-ticket-percent"></i></span>
               <span class="menu-title"> Coupons</span>
             </a>
           </li>
-          <li class="nav-item menu-items">
-            <form method="POST" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-block mt-3">Logout</button>
-            </form>
-          </li>
+         <li class="nav-item menu-items">
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-link logout-btn" style="background-color: rgba(255, 255, 255, 0.05);">
+              <span class="menu-icon">
+                <i class="mdi mdi-logout" style="color: red !important;"></i>
+              </span>
+              <span class="menu-title" style="color: red !important;">Logout</span>
+            </button>
+          </form>
+        </li>
         </ul>
       </nav>
 
@@ -161,7 +276,6 @@
       {% endif %}
     </nav>
 
-        <!-- Main Content -->
         <div class="main-panel">
           <div class="content-wrapper">
             {% block content %}
@@ -172,12 +286,7 @@
       </div>
     </div>
 
-    <!-- Scripts -->
 
-    <!-- Bootstrap CSS -->
-     
-
-     <!-- Bootstrap JS -->
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -188,9 +297,40 @@
           toast.show();
           setTimeout(function() {
             toast.hide();
-          },  7000); // Here, 5000ms means 5 seconds
+          },  7000);
         });
       });
+      window.showGlobalModal = function(title, message, type = 'info') {
+        return new Promise((resolve) => {
+          const overlay = document.getElementById('globalAlertModal');
+          const titleEl = document.getElementById('globalModalTitle');
+          const msgEl = document.getElementById('globalModalMessage');
+          const iconEl = document.getElementById('globalModalIcon');
+          const btn = document.getElementById('globalModalBtn');
+
+          // Set Text
+          titleEl.textContent = title;
+          msgEl.textContent = message;
+
+          // Set Styling (success, error, info)
+          iconEl.className = 'global-modal-icon ' + type;
+          btn.className = 'global-modal-btn ' + type;
+
+          // Set Icons (Checkmark, X, Info)
+          if (type === 'success') iconEl.innerHTML = '&#10004;';
+          else if (type === 'error') iconEl.innerHTML = '&#10006;';
+          else iconEl.innerHTML = '&#8505;';
+
+          // Button Click Event
+          btn.onclick = function() {
+            overlay.classList.remove('open');
+            resolve(); // Tells the browser "The user clicked OK, continue executing code!"
+          };
+
+          // Show Modal
+          overlay.classList.add('open');
+        });
+      };
 
 
     </script>

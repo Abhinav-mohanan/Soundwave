@@ -1,53 +1,211 @@
-<!-- admin/subcategory.html -->
 {% extends 'admin/navbar.html' %}
+{% load static %}
 
 {% block content %}
-  <h2>SubCategories</h2>
 
-  {% if subcategory %}
-    <table class="table table-striped">
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+  .category-subtitle { font-size: 13px; color: #94a3b8; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .btn-add {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-add:hover { background: #2563eb; color: #fff; text-decoration: none; }
+
+  .table-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .modern-table th {
+    background: rgba(42, 48, 69, 0.5);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a3045;
+  }
+  
+  .modern-table td {
+    padding: 14px 20px;
+    color: #e2e8f0;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3045;
+    vertical-align: middle;
+  }
+  
+  .modern-table tbody tr {
+    transition: background 0.2s;
+  }
+  .modern-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .modern-table tbody tr:last-child td { border-bottom: none; }
+
+  .item-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #2a3045;
+  }
+  
+  .no-img {
+    background: #2a3045;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .status-badge.listed { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+  .status-badge.unlisted { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+  .action-group { 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap;
+  }
+  
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: 0.2s;
+    display: inline-block;
+  }
+  
+  .btn-edit { color: #38bdf8; border-color: #38bdf8; background: transparent; }
+  .btn-edit:hover { background: #38bdf8; color: #fff; }
+
+  .btn-toggle-list { color: #4ade80; border-color: #4ade80; background: transparent; }
+  .btn-toggle-list:hover { background: #4ade80; color: #14532d; }
+
+  .btn-toggle-unlist { color: #f87171; border-color: #f87171; background: transparent; }
+  .btn-toggle-unlist:hover { background: #f87171; color: #fff; }
+
+  .empty-state { text-align: center; padding: 48px; color: #64748b; font-size: 14px; }
+</style>
+
+<div class="page-header">
+  <div class="header-left">
+    <h3 class="page-title">Subcategories</h3>
+    {% if category %}
+      <p class="category-subtitle">Parent: {{ category.name }}</p>
+    {% endif %}
+  </div>
+  <a href="{% url 'add_subcategory' category.id %}" class="btn-add">
+    <i class="mdi mdi-plus"></i> Add Subcategory
+  </a>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="modern-table">
       <thead>
         <tr>
-          <th>subcategory image</th>
-          <th>SubCategory Name</th>
-          <th>Category</th>
+          <th>Image</th>
+          <th>Subcategory Name</th>
+          <th>Parent Category</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for sub in subcategory %}
-          <tr>
-            {%  if sub.image %}
-            <td><img class="product-img" src="{{ sub.image.url }}" alt="Image"></td>
+        <tr>
+          
+          <td>
+            {% if sub.image %}
+              <img class="item-thumb" src="{{ sub.image.url }}" alt="{{ sub.name }}">
             {% else %}
-            <td>No image is available</td>
+              <div class="item-thumb no-img">No Img</div>
             {% endif %}
-            <td>{{ sub.name }}</td>
-            <td>{{ sub.category.name }}</td>
-            <td>
+          </td>
+          
+          <td style="font-weight: 500;">{{ sub.name }}</td>
+          <td style="color: #94a3b8;">{{ sub.category.name }}</td>
+          
+          <td>
+            {% if sub.is_listed %}
+              <span class="status-badge listed">Listed</span>
+            {% else %}
+              <span class="status-badge unlisted">Unlisted</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            <div class="action-group">
+              <a href="{% url 'edit_subcategory' sub.id %}" class="btn-action btn-edit">Edit</a>
+              
               {% if sub.is_listed %}
-                <span class="badge badge-success">Listed</span>
+                <a href="{% url 'unlist_subcategory' sub.id %}" class="btn-action btn-toggle-unlist">Unlist</a>
               {% else %}
-                <span class="badge badge-danger">Unlisted</span>
+                <a href="{% url 'list_subcategory' sub.id %}" class="btn-action btn-toggle-list">List</a>
               {% endif %}
-            </td>
-            <td>
-              <a href="{% url 'edit_subcategory' sub.id %}" class="btn btn-primary btn-sm">Edit</a>
-              {% if not sub.is_listed %}
-                <a href="{% url 'list_subcategory' sub.id %}"><button class="btn btn-outline-success btn-sm">List</button></a>
-              {% else %}
-                <a href="{% url 'unlist_subcategory' sub.id %}"><button class="btn btn-outline-danger btn-sm">Unlist</button></a>
-              {% endif %}
-            </td>
-          </tr>
+            </div>
+          </td>
+          
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">No subcategories found. Click 'Add Subcategory' to create one.</div>
+          </td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
-  {% else %}
-    <p>No subcategories found.</p>
-  {% endif %}
+  </div>
+</div>
 
-  <hr>
-  <a href="{% url 'add_subcategory' category.id %}" class="btn btn-success">Add New SubCategory</a>
 {% endblock %}

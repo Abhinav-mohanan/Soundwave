@@ -1,83 +1,194 @@
 {% extends 'admin/navbar.html' %}
+{% load static %}
+
 {% block content %}
 
-<h2>Edit Brand Offer</h2>
-<br>
-<a href="{% url 'view_offers' %}">
-    <button class="btn btn-primary btn-icon-text" id="back-btn">
-      <i class="mdi mdi-arrow-left btn-icon-prepend"></i> Back to List
-    </button>
-</a>
-<br><br>
-<form id="edit-offer-form">
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .page-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+
+  .btn-back {
+    padding: 8px 16px;
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #2a3045;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+  }
+  .btn-back:hover { background: #2a3045; color: #fff; text-decoration: none; }
+
+  .form-card {
+    background: #1e2433;
+    border: 1px solid #2a3045;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .full-width { grid-column: 1 / -1; }
+
+  .form-group { margin-bottom: 0; }
+  
+  .form-group label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-control {
+    background: rgba(16, 20, 29, 0.5);
+    border: 1px solid #2a3045;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    width: 100%;
+    font-size: 14px;
+    transition: 0.2s;
+    color-scheme: dark; 
+  }
+  .dark-control:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  .dark-control::placeholder { color: #475569; }
+  
+  select.dark-control option { background: #1e2433; color: #fff; }
+
+  .btn-submit {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .btn-submit:hover { background: #2563eb; transform: translateY(-1px); }
+
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="page-header" style="max-width: 800px; margin: 0 auto 24px auto;">
+  <h3 class="page-title">Edit Brand Offer</h3>
+  <a href="{% url 'view_offers' %}?section=brand" class="btn-back">
+    <i class="mdi mdi-arrow-left"></i> Back to Offers
+  </a>
+</div>
+
+<div class="form-card">
+  <form id="edit-offer-form">
     {% csrf_token %}
-    <div class="form-group">
-        <label for="offer_name">Offer Name:</label>
-        <input type="text" id="offer_name" name="offer_name" value="{{ brand_offer.offer_name }}" class="form-control" placeholder="Enter offer name">
-    </div>
-
-    <div class="form-group">
-        <label for="offer_percentage">Offer Price:</label>
-        <input type="text" id="offer_price" name="offer_percentage" value="{{ brand_offer.offer_percentage }}" class="form-control" placeholder="Enter offer Percentage">
-    </div>
-
     
-    
+    <div class="form-grid">
+      
+      <div class="form-group full-width">
+        <label for="offer_name">Offer Name</label>
+        <input type="text" id="offer_name" name="offer_name" value="{{ brand_offer.offer_name }}" class="dark-control" placeholder="e.g., Festival Sale">
+      </div>
 
-    <div class="form-group">
-        <label for="brand">Select Brand:</label>
-        <select id="brand" name="brand" class="form-control">
-            <option value="{{ brand_offer.brand.id }}">{{ brand_offer.brand.name }}</option>
-            {% for brand in brands %}
-                <option value="{{ brand.id }}">{{ brand.name }}</option>
-            {% endfor %}
+      <div class="form-group">
+        <label for="brand">Select Brand</label>
+        <select id="brand" name="brand" class="dark-control">
+          {% for brand in brands %}
+            <option value="{{ brand.id }}" {% if brand.id == brand_offer.brand.id %}selected{% endif %}>
+              {{ brand.name }}
+            </option>
+          {% endfor %}
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="offer_percentage">Discount Percentage (%)</label>
+        <input type="number" id="offer_percentage" name="offer_percentage" value="{{ brand_offer.offer_percentage }}" class="dark-control" min="0" max="100" placeholder="e.g., 15">
+      </div>
+
+      <div class="form-group">
+        <label for="start_date">Start Date</label>
+        <input type="date" id="start_date" name="start_date" value="{{ brand_offer.started_date|date:'Y-m-d' }}" class="dark-control">
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">End Date</label>
+        <input type="date" id="end_date" name="end_date" value="{{ brand_offer.end_date|date:'Y-m-d' }}" class="dark-control">
+      </div>
+
+      <div class="form-group full-width">
+        <label for="offer_description">Offer Details</label>
+        <input type="text" id="offer_description" name="offer_details" value="{{ brand_offer.offer_details }}" class="dark-control" placeholder="Enter brief terms or details">
+      </div>
+
     </div>
 
-    <div class="form-group">
-        <label for="offer_description">Offer Description</label>
-        <input type="text" id="offer_description" name="offer_details" class="form-control" value="{{ brand_offer.offer_details }}" placeholder="Enter offer Details">
-    </div>
-
-    <div class="form-group">
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" value="{{ brand_offer.started_date|date:'Y-m-d' }}" class="form-control">
-    </div>
-
-    <div class="form-group">
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" value="{{ brand_offer.end_date|date:'Y-m-d' }}" class="form-control">
-    </div>
-
-    <button type="button" class="btn btn-primary" id="submit-btn">Edit Offer</button>
-</form>
+    <button type="button" class="btn-submit" id="submit-btn">Save Changes</button>
+  </form>
+</div>
 
 <script>
-document.getElementById('submit-btn').addEventListener('click', function() {
+  document.getElementById('submit-btn').addEventListener('click', function() {
     const form = document.getElementById('edit-offer-form');
     const formData = new FormData(form);
+    
+    const btn = this;
+    const originalText = btn.textContent;
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
 
     fetch("{% url 'edit_brand_offer' brand_offer.id %}", {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-        },
-        body: formData
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+      },
+      body: formData
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            alert(data.message);
-            window.location.reload();
-        } else {
-            alert(data.error.join('\n'));
-        }
+      if (data.success) {
+        showGlobalModal(data.message);  
+        window.location.href = "{% url 'view_offers' %}?section=brand"; 
+      } else {
+        const errorMsg = data.error ? (Array.isArray(data.error) ? data.error.join('\n') : data.error) : 'Failed to update offer.';
+        showGlobalModal(errorMsg);
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     })
     .catch(error => {
-        alert('An error occurred. Please try again.');
-        console.error(error);
+      showGlobalModal('An error occurred. Please try again.');
+      console.error('Error:', error);
+      btn.textContent = originalText;
+      btn.disabled = false;
     });
-});
+  });
 </script>
 
 {% endblock %}
