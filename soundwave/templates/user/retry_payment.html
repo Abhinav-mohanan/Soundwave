@@ -124,8 +124,8 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         var options = {
-            "key": "{{ razorpay_key_id }}", // Your Razorpay Key ID
-            "amount": "{{ total|floatformat:0 }}" * 100, 
+            "key": "{{ razorpay_key }}", // Your Razorpay Key ID
+            "amount": "{{ amount|floatformat:0 }}" * 100, 
             "currency": "INR",
             "order_id": "{{ razorpay_order_id }}", // Razorpay Order ID
             "name": "{{ user.username }}",

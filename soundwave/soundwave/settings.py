@@ -31,6 +31,8 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
 
+CSRF_TRUSTED_ORIGINS=[o for o in os.getenv("CSRF_TRUSTED_ORIGINS").split(",") if o]
+
 
 # Application definition
 

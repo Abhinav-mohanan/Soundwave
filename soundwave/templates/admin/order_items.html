@@ -244,7 +244,7 @@
           <td>
             <div class="action-group">
               
-              {% if item.status == 'Order Pending' or item.status == 'pending' %}
+              {% if item.status == 'Order Pending' or item.status == 'Pending' %}
                 {% if order.payment_status != 'Failure' %}
                   <form method="POST" action="{% url 'change_order_status' item.Orderitem_id 'Order Confirmed' %}">
                     {% csrf_token %}

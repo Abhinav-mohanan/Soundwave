@@ -133,13 +133,19 @@ def otp_generation(request):
         if otp_stored==otp_enterd:
 
             if now()<otp_expiration:
-                user=User.objects.create(
+                user, created =User.objects.get_or_create(
                     username=username,
-                    email=email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    phone_number=phone_number
+                    defaults = {
+                        "email": email,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "phone_number": phone_number
+                    }
                 )
+                if not created:
+                    messages.error(request, "user already exisit please login")
+                    return redirect('user_login')
+                
                 user.set_password(password)
                 user.save()
                 request.session.flush()
