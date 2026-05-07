@@ -152,7 +152,7 @@ def apply_coupon(request):
 
                 if coupon.usage_count >= coupon.usage_limit:
                     return JsonResponse({'success': False, 'message': 'Coupon usage limit exceeded.'})
-                total_amount=sum(item.total_price for item in cart_items)
+                total_amount=sum(item.line_total for item in cart_items)
                 
 
                 if total_amount < coupon.min_purchase_amount:
@@ -185,7 +185,7 @@ def apply_coupon(request):
                 return JsonResponse({'success': False, 'message': 'Invalid coupon code.'})
 
             except Exception as e:
-                return JsonResponse({'success': False, 'message': f'An error occurred: {str(e)}'})
+                return JsonResponse({'success': False, 'message': f'An error occurred: Please try again later'})
 
     return JsonResponse({'success': False, 'message': 'Invalid request or authentication required.'})
 
