@@ -70,12 +70,15 @@ def update_cart_item(request, item_id):
             "error": f"Only {cart_item.variant.stock} item(s) available in stock"
         },
         status=400)
+    
     cart_item.quantity = quantity
     cart_item.save()
 
-    new_total = cart_item.total_price
-    cart = cart_item.cart
-    total_cart_price = cart.total_price
+    new_total = cart_item.line_total
+
+    total_cart_price = sum(
+        item.line_total for item in cart_item.cart.items.all()
+    )
 
     return JsonResponse({
         "success": True,
@@ -92,56 +95,7 @@ def cart_detail(request):
     cart,create=Cart.objects.get_or_create(user=request.user)
     cart_items=Cartitem.objects.filter(cart=cart)
 
-    total=0
-    
-
-    current_date=now().date()
-
-    for cart_item in cart_items:
-        variant= cart_item.variant
-        product=variant.product
-        quantity=cart_item.quantity
-
-        
-
-        product_offer=Product_offer.objects.filter(
-            product=product,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
-
-        brand_offer=Brand_offer.objects.filter(
-            brand=product.brand,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
-
-        product_discount_price=None
-        brand_discount_price=None
-
-        if product_offer:
-            product_discount_price=(product.price * (1-(product_offer.offer_percentage/100)))
-        
-        if brand_offer:
-            brand_discount_price=(product.price * (1-(brand_offer.offer_percentage/100)))
-
-        if product_discount_price is not None and brand_discount_price is not None:
-            final_discount_price = min(product_discount_price, brand_discount_price)
-        elif product_discount_price is not None:
-            final_discount_price = product_discount_price
-        elif brand_discount_price is not None:
-            final_discount_price = brand_discount_price
-        else:
-            final_discount_price = product.price
-
-        cart_item.effective_price = round(final_discount_price, 0)
-        cart_item.line_total = cart_item.effective_price * cart_item.quantity
-
-
-
-        total=sum(item.line_total for item  in cart_items)
+    total = sum(item.line_total for item in cart_items)
 
     return render(request,'user/cart.html',{'cart_items':cart_items,'total':total})
 

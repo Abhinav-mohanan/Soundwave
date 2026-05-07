@@ -94,7 +94,7 @@ def checkout(request):
         
         cart_item.variant.product.price=round(final_discount_price,0)
 
-    total=round(sum(item.total_price for item in cart_items),0)
+    total=round(sum(item.line_total for item in cart_items),0)
     for item in cart_items:
         if item.quantity >item.variant.stock:
             messages.error(request,f'{item.variant.product.name} {item.variant.color} is exceeds available stock')
@@ -303,7 +303,7 @@ def place_order(request):
         offer_price=product.price - final_discount_price
         cart_item.variant.product.price =final_discount_price
     
-    total_price=sum(item.total_price for item in cart_items)
+    total_price=sum(item.line_total for item in cart_items)
         
 
    
@@ -443,7 +443,7 @@ def place_order(request):
 
     coupons=Coupon.objects.filter(is_active=True)
     form = Addressform()
-    return render(request, 'user/checkout.html', {'cart_items': cart_items, 'addresses': addresses, 'total': cart.total_price, 'form': form,'coupons':coupons})
+    return render(request, 'user/checkout.html', {'cart_items': cart_items, 'addresses': addresses, 'total': total_price, 'form': form,'coupons':coupons})
 
 
 #=======================Place order End===========================# 
