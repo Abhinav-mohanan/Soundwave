@@ -262,12 +262,12 @@
 
     <div class="filter-section">
         <form method="GET" action="{% url 'list_order'%}">
-            <button class="filter-button" type="submit" name="status" value="Order Pending">Pending</button>
-            <button class="filter-button" type="submit" name="status" value="Order Confirmed">Confirmed</button>
-            <button class="filter-button" type="submit" name="status" value="Shipped">Shipped</button>
-            <button class="filter-button" type="submit" name="status" value="Delivered">Delivered</button>
-            <button class="filter-button" type="submit" name="status" value="Cancelled">Cancelled</button>
-            <button type="submit" name="status" value="" class="btn btn-info">All Orders</button> 
+            <button {% if status_val == 'Order Pending'%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="Order Pending">Pending</button>
+            <button {% if status_val == 'Order Confirmed'%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="Order Confirmed">Confirmed</button>
+            <button {% if status_val == 'Shipped'%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="Shipped">Shipped</button>
+            <button {% if status_val == 'Delivered'%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="Delivered">Delivered</button>
+            <button {% if status_val == 'Cancelled'%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="Cancelled">Cancelled</button>
+            <button {% if status_val == ''%} class="btn-info" {% else %} class="filter-button"{%endif%} type="submit" name="status" value="">All Orders</button> 
         </form>
     </div>
 

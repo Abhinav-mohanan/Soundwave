@@ -174,7 +174,7 @@ def order_list(request):
         orders = Order.objects.filter(order_items__status=status_filter, user=request.user)
     else:
         orders = Order.objects.filter(user=request.user)
-    return render(request, 'user/order_details.html', {'orders': orders})
+    return render(request, 'user/order_details.html', {'orders': orders, 'status_val': status_filter})
 
 
 
