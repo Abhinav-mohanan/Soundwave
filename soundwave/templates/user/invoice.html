@@ -136,29 +136,29 @@
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>Subtotal</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in order_items %}
-                    {% if item.status != 'Cancelled' %}
                         <tr>
                             <td data-label="Product Name">{{ item.variant.product.name | capfirst }}</td>
                             <td data-label="Quantity">{{ item.quantity }}</td>
                             <td data-label="Price">MRP {{ item.price }}</td>
                             <td data-label="Subtotal">MRP {{ item.subtotal_price }}</td>
+                            <td data-label="Subtotal"> {{ item.status }}</td>
                         </tr>
-                    {% endif %}
                 {% endfor %}
                 {% if order.coupon_price != 0 %}
                     <tr>
-                        <td colspan="3" style="text-align: right;">Coupon Discount</td>
+                        <td colspan="4" style="text-align: right;">Coupon Discount</td>
                         <td>MRP {{ order.coupon_price|floatformat:0 }}</td>
                     </tr>
                 {% endif %}
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3" style="text-align: right;">Grand Total</td>
+                    <td colspan="4" style="text-align: right;">Grand Total</td>
                     <td>MRP {{ order.total_price }}</td>
                 </tr>
             </tfoot>
