@@ -394,8 +394,19 @@
             <ul class="list-group">
                 {% for item in cart_items %}
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>{{ item.variant.product.name }} x{{ item.quantity }}</span>
-                    <span>₹{{ item.variant.product.price }}</span>
+                    <span>{{ item.variant.product.name }}  x {{ item.quantity }}</span>
+                    {% if item.effective_price < item.variant.product.price %}
+                        <span class="text-dark text-decoration-line-through me-2">
+                            ₹{{ item.variant.product.price }}
+                        </span>
+                        <span class="fw-semibold text-success">
+                            ₹{{ item.effective_price }}
+                        </span>
+                    {% else %}
+                        <span class="fw-semibold">
+                            ₹{{ item.variant.product.price }}
+                        </span>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
@@ -404,6 +415,7 @@
             </div>
         </div>
     </div>
+    
 
     <div class="coupons-section mt-4">
         <form method="POST" id="apply-coupon-form" action="{% url 'apply_coupon' %}">

@@ -66,45 +66,14 @@ def checkout(request):
             messages.error(request,'Please remove unavailable Product')
             return redirect('cart_detail')
         
-        product_offer=Product_offer.objects.filter(
-            product=product,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
+    total = round(sum(item.line_total for item in cart_items), 0)
 
-        brand_offer=Brand_offer.objects.filter(
-            brand=product.brand,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
-
-        product_discount_price=(product.price * (1-(product_offer.offer_percentage/100))) if product_offer else None
-        brand_discount_price=(product.price* (1-brand_offer.offer_percentage/100)) if brand_offer else None
-
-        if product_discount_price is not None and brand_discount_price is not None:
-            final_discount_price=min(product_discount_price,brand_discount_price)
-        elif product_discount_price is not None:
-            final_discount_price=product_discount_price
-        elif brand_discount_price is not None:
-            final_discount_price=brand_discount_price
-        else:
-            final_discount_price=product.price
-        
-        cart_item.variant.product.price=round(final_discount_price,0)
-
-    total=round(sum(item.line_total for item in cart_items),0)
-    for item in cart_items:
-        if item.quantity >item.variant.stock:
-            messages.error(request,f'{item.variant.product.name} {item.variant.color} is exceeds available stock')
-            return redirect('cart_detail') 
         
     coupons=Coupon.objects.filter(is_active=True)
         
-    
     form=Addressform()
     wallet=Wallet.objects.filter(user=user).first()
+    
     return render(request, 'user/checkout.html', {'cart_items': cart_items, 'addresses': addresses, 'total': total,'form':form,'coupons':coupons,'wallet':wallet})
 
 
