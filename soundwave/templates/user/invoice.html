@@ -126,7 +126,7 @@
         <div class="details">
             <p><strong>Customer:</strong> {{ order.user.username | capfirst }}</p>
             <p><strong>Payment Method:</strong> {{ order.payment_type }}</p>
-            <p><strong>Shipping Address:</strong> {{ order.shipping_address | capfirst }}</p>
+            <p><strong>Shipping Address:</strong> {{ order.shipping_name | capfirst}}, {{order.shipping_city | capfirst}}, {{order.shipping_state| capfirst}}, {{order.shipping_pin }}</p>
         </div>
 
         <table>

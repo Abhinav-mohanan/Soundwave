@@ -256,13 +256,13 @@
 
         <div class="shipping-address">
             <h4>Shipping Address</h4>
-            <p><strong>Name:</strong> {{ order.shipping_address.name }}</p>
-            <p><strong>Address Title:</strong> {{ order.shipping_address.address_title }}</p>
-            <p><strong>City:</strong> {{ order.shipping_address.city }}</p>
-            <p><strong>State:</strong> {{ order.shipping_address.state }}</p>
-            <p><strong>Pin:</strong> {{ order.shipping_address.pin }}</p>
-            <p><strong>Landmark:</strong> {{ order.shipping_address.landmark }}</p>
-            <p><strong>Phone Number:</strong> {{ order.shipping_address.phone_number }}</p>
+            <p><strong>Name:</strong> {{ order.shipping_name }}</p>
+            <p><strong>Address Title:</strong> {{ order.shipping_address_title }}</p>
+            <p><strong>City:</strong> {{ order.shipping_city }}</p>
+            <p><strong>State:</strong> {{ order.shipping_state }}</p>
+            <p><strong>Pin:</strong> {{ order.shipping_pin }}</p>
+            <p><strong>Landmark:</strong> {{ order.shipping_landmark }}</p>
+            <p><strong>Phone Number:</strong> {{ order.shipping_phone_number }}</p>
         </div>
 
         <div class="order-items">

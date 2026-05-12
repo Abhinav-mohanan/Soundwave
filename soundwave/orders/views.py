@@ -21,7 +21,7 @@ from decimal import Decimal
 from django.db.models import F
 from django.db import transaction
 from wallet.models import Wallet,Transaction
-
+from .utils import get_address_snapshot
 from django.core.paginator import Paginator
 # Create your views here. 
 
@@ -310,6 +310,7 @@ def place_order(request):
             order = Order.objects.create(
                 user=user,
                 shipping_address=address,
+                **get_address_snapshot(address),
                 payment_type=payment_method,
                 total_price=total_price,
                 payment_status=payment_status,
@@ -374,6 +375,7 @@ def place_order(request):
                     order=Order.objects.create(
                         user=user,
                         shipping_address=address,
+                        **get_address_snapshot(address),
                         total_price=total_price,
                         payment_type=payment_method,
                         payment_status=payment_status,
@@ -388,6 +390,8 @@ def place_order(request):
                             price=item.variant.product.price,
                             subtotal_price=(item.variant.product.price * item.quantity)-coupon_discount
                         )
+                        item.variant.stock-=item.quantity
+                        item.variant.save()
                     wallet.balance-=total_price
                     wallet.save()
                     Transaction.objects.create(
@@ -396,8 +400,6 @@ def place_order(request):
                     amount=total_price,
                     details=f'The {total_price} is debited for the order {order.tracking_number}'
                     )
-                    item.variant.stock-=item.quantity
-                    item.variant.save()
                     cart_items.delete()
                     if coupon:
                         Couponusage.objects.create(user=user,coupon=coupon,is_used=True)
@@ -458,6 +460,7 @@ def verify_payment(request):
                 total_price=order_data.get('total_price'),
                 payment_status=payment_status,
                 shipping_address=address,
+                **get_address_snapshot(address),
                 offer_price=order_data.get('offer_price'),
                 coupon_price=coupon_discount
             )
@@ -502,6 +505,7 @@ def verify_payment(request):
                 total_price=order_data.get('total_price'),
                 payment_status=payment_status,
                 shipping_address=address,
+                **get_address_snapshot(address)
             )
 
             cart = Cart.objects.get(user=request.user)
