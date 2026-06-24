@@ -34,6 +34,8 @@ ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
 
 CSRF_TRUSTED_ORIGINS=[o for o in os.getenv("CSRF_TRUSTED_ORIGINS").split(",") if o]
 
+WHITENOISE_MANIFEST_STRICT = False
+
 
 # Application definition
 
