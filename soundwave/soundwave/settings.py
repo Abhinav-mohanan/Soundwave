@@ -34,7 +34,6 @@ ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
 
 CSRF_TRUSTED_ORIGINS=[o for o in os.getenv("CSRF_TRUSTED_ORIGINS").split(",") if o]
 
-WHITENOISE_MANIFEST_STRICT = False
 
 
 # Application definition
@@ -162,9 +161,12 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+WHITENOISE_MANIFEST_STRICT = False
+
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
