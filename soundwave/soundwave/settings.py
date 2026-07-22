@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import dj_database_url
+import cloudinary
 
 load_dotenv()
 
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'anymail',
+    'cloudinary',
+    'cloudinary_storage',
 
     'products',
     'user',
@@ -68,6 +71,13 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL= 'user.CustomUser'
 
 SITE_ID = 2
+
+cloudinary.config(
+    cloud_name = os.getenv('CLOUD_NAME'),
+    api_key = os.getenv('API_KEY'),
+    api_secret = os.getenv('API_SECRET'),
+    secure = True
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -158,7 +168,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
