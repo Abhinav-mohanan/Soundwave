@@ -263,7 +263,8 @@
               role="alert" 
               aria-live="assertive" 
               aria-atomic="true" 
-              data-bs-autohide="true">
+              data-autohide="true"
+              data-delay="10000">
                 <div class="d-flex">
                   <div class="toast-body">
                     {{ message }}
@@ -295,9 +296,6 @@
         toastElements.forEach(function (toastElement) {
           const toast = new bootstrap.Toast(toastElement);
           toast.show();
-          setTimeout(function() {
-            toast.hide();
-          },  7000);
         });
       });
       window.showGlobalModal = function(title, message, type = 'info') {

@@ -281,8 +281,15 @@ def add_products(request):
 
             except (ValueError, ValidationError) as e:
                 messages.error(request, f"Error: {e}")
+        
+        context = {
+            'categories': categories, 
+            'brands': brands, 
+            'subcategories': subcategories,
+            'form_data':request.POST,
+            }
 
-    return render(request,'admin/addproducts.html',{'categories': categories, 'brands': brands, 'subcategories': subcategories})
+    return render(request,'admin/addproducts.html',context)
 
 
 
