@@ -267,20 +267,28 @@
             // Crop Action
             cropButton.addEventListener('click', function () {
               const croppedCanvas = cropper.getCroppedCanvas({
-                width: 500, // Slightly higher res for better quality
+                width: 500,
                 height: 500,
               });
-              
-              // Replace the cropper view with the final cropped image
-              const croppedImage = document.createElement('img');
-              croppedImage.src = croppedCanvas.toDataURL();
-              previewBox.innerHTML = '';
-              previewBox.appendChild(croppedImage);
 
-              // Update hidden input
-              hiddenInput.value = croppedCanvas.toDataURL();
+              croppedCanvas.toBlob(function(blob){
+                
+                const file = new File([blob], "cropped.png",{
+                  type: "image/png"
+                })
 
-              cropButton.style.display = 'none';
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                input.files = dataTransfer.files;
+
+                const croppedImage = document.createElement('img');
+                croppedImage.src = URL.createObjectURL(file)
+
+                previewBox.innerHTML = "";
+                previewBox.appendChild(croppedImage);
+                cropButton.style.display = "none"
+              },"image/png");
             });
 
             // Remove Action
