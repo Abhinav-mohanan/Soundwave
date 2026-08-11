@@ -130,106 +130,82 @@ a{
             </a>
           </div>
         </div>
-      </div>
+    </div>
       
-
-  
-  
-
-<div class="new-arrivals mt-5">
-    <h2 class="fw-bold mb-4 text-white">New Arrivals</h2>
-    <div class="row align-items-center">
-       
-        {% if hero_product %}
-        <div class="col-md-6">
-            <div class="featured-product position-relative">
-                {% with hero_product.variants.first as variant %}
-                    {% if variant %}
-                    <img src="{{ variant.image1.url }}" class="img-fluid rounded" alt="{{ hero_product.name }}">
-                    <div class="text-overlay position-absolute top-50 start-50 translate-middle text-light text-center">
-                        <h1 class="fw-bold text-light">{{ hero_product.name }}</h1>
-                        <p class="fs-5 text-secondary">Be Pro Anywhere</p>
-                        <a href="{% url 'product_details' hero_product.id variant.id %}" 
-                        class="btn btn-light fw-bold px-4 py-2 text-dark">
-                            From {{ hero_product.price }}
-                        </a>
-                    </div>
-                {% else %}
-                <p>No variants available for this product.</p>
+    <div class="new-arrivals mt-5">
+        <h2 class="fw-bold mb-4 text-white">New Arrivals</h2>
+        <div class="row align-items-center"> 
+            {% if hero_product %}
+            <div class="col-md-6">
+                <div class="featured-product position-relative">
+                    {% with hero_product.variants.first as variant %}
+                        {% if variant %}
+                        <img src="{{ variant.image1.url }}" class="img-fluid rounded" alt="{{ hero_product.name }}">
+                        <div class="text-overlay position-absolute top-50 start-50 translate-middle text-light text-center">
+                            <h1 class="fw-bold text-light">{{ hero_product.name }}</h1>
+                            <p class="fs-5 text-secondary">Be Pro Anywhere</p>
+                            <a href="{% url 'product_details' hero_product.id variant.id %}" 
+                            class="btn btn-light fw-bold px-4 py-2 text-dark">
+                                From {{ hero_product.price }}
+                            </a>
+                        </div>
+                        {% else %}
+                        <p>No variants available for this product.</p>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+            {% else %}
+            <p class="text-white">No featured product available.</p>
             {% endif %}
-        {% endwith %}
-    </div>
-</div>
-{% else %}
-<p class="text-white">No featured product available.</p>
-{% endif %}
 
 
+            
+            <div class="col-md-6">
+            <div class="row g-2">
+                {% for product in new_arrivals %}
+                    {% with variant=product.display_variant %}
+                        {% if variant %}
+                            <div class="col-12">
+                                <div class="d-flex align-items-center product-card" style="background-color: gray;">
+                                    <a href="{% url 'product_details' product.id variant.id %}">
+                                        <img src="{{ variant.image1.url }}" class="img-thumbnail me-2" alt="{{ product.name }}" style="width: 60px; height: 60px;">
+                                    </a>
+                                    <div>
+                                        <a href="{% url 'product_details' product.id variant.id %}" style="text-decoration: none;">
+                                            <h6 class="mb-1 text-dark">{{ product.name }}</h6>
+                                            <p class="text-warning mb-1 small">⭐⭐⭐⭐⭐</p>
+                                            <p class="text-dark fe_head mb-0">₹{{ product.price }}</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+        </div>
         
-        <div class="col-md-6">
-          <div class="row g-2">
-              {% for product in new_arrivals %}
-                  {% with variant=product.display_variant %}
-                      {% if variant %}
-                          <div class="col-12">
-                              <div class="d-flex align-items-center product-card" style="background-color: gray;">
-                                  <a href="{% url 'product_details' product.id variant.id %}">
-                                      <img src="{{ variant.image1.url }}" class="img-thumbnail me-2" alt="{{ product.name }}" style="width: 60px; height: 60px;">
-                                  </a>
-                                  <div>
-                                      <a href="{% url 'product_details' product.id variant.id %}" style="text-decoration: none;">
-                                          <h6 class="mb-1 text-dark">{{ product.name }}</h6>
-                                          <p class="text-warning mb-1 small">⭐⭐⭐⭐⭐</p>
-                                          <p class="text-dark fe_head mb-0">₹{{ product.price }}</p>
-                                      </a>
-                                  </div>
-                              </div>
-                          </div>
-                      {% endif %}
-                  {% endwith %}
-              {% endfor %}
-          </div>
-      </div>
 
-      </div>
-      
-<div class="discount-banner mt-5 p-3 rounded d-flex align-items-center" style="background: linear-gradient(90deg, #b7b8ba, #453f3f); border: 1px solid #cce5ff;">
-
-    <div class="text-center me-4" style="flex: 1; border-right: 1px dashed #a3c1ff;">
-        <h1 class="fw-bold text-black" style="font-size: 3rem;">20<span style="font-size: 1.5rem;">%</span></h1>
-        <p class="fw-semibold text-black">OFF</p>
-    </div>
- 
-    <div class="text-start ps-4" style="flex: 2;">
-        <h4 class="fw-bold text-dark mb-2">SEASONAL WEEKLY SALE 2025</h4>
-        <!-- <p class="mb-0 text-muted">Use code <strong class="text-primary">Sale2024</strong> to get the best offer</p> -->
-    </div>
-
-    <div class="ms-auto">
-        <img src="{% static 'images/hero_headphone.png' %}" alt="Discounted Headphones" class="img-fluid" style="max-height: 80px;">
+        <section class="new-arrivals py-5">
+            <div class="container">
+                <h2 class="section-title text-white">Featured Products</h2>
+                <div class="row">
+                {% for product in featured_products %}
+                    {% with variant=product.display_variant %}
+                        {% if variant %}
+                            {% include 'user/product_block.html' %}
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+                </div>
+            </div>
+        </section>
+    
     </div>
 </div>
-
-  
-
-<section class="new-arrivals py-5">
-  <div class="container">
-    <h2 class="section-title text-white">Featured Products</h2>
-      <div class="row">
-          {% for product in featured_products %}
-              {% with variant=product.display_variant %}
-                  {% if variant %}
-                      {% include 'user/product_block.html' %}
-                  {% endif %}
-              {% endwith %}
-          {% endfor %}
-      </div>
-  </div>
-
-</div>
-</div>
-  </div>
-</section>
 
 
 

@@ -3,100 +3,419 @@
 {% block content %}
 
 <style>
+    :root {
+        --shop-panel: #1b1d21;
+        --shop-panel-alt: #24262b;
+        --shop-steel: #9aa0a6;
+        --shop-steel-dim: #6f7379;
+        --shop-text: #f2f2f0;
+        --shop-text-dim: #a7a9ad;
+        --shop-line: rgba(255, 255, 255, 0.08);
+        --shop-amber: #f2a93b;
+        --shop-amber-soft: rgba(242, 169, 59, 0.14);
+        --shop-amber-line: rgba(242, 169, 59, 0.45);
+        --shop-font-display: 'Space Grotesk', sans-serif;
+        --shop-font-body: 'Inter', sans-serif;
+        --shop-font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    .shop-page {
+        font-family: var(--shop-font-body);
+        color: var(--shop-text);
+    }
+
     .filters {
-        background-color: #909294;
-        padding: 20px;
-        border-radius: 5px;
+        position: relative;
+        background: linear-gradient(165deg, var(--shop-panel) 0%, #16171a 100%);
+        border: 1px solid var(--shop-line);
+        border-radius: 14px;
+        padding: 24px;
         margin-bottom: 20px;
     }
 
+    @media (min-width: 769px) {
+        .filters { position: sticky; top: 20px; }
+    }
+
     .filters h4 {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 15px;
-        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--shop-font-display);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--shop-text-dim);
+        margin-bottom: 18px;
+    }
+
+    .filters h4::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--shop-amber);
+        box-shadow: 0 0 8px 1px var(--shop-amber-line);
+        flex-shrink: 0;
     }
 
     .filters .filter-group {
-        margin-bottom: 20px; 
+        border-bottom: 1px solid var(--shop-line);
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+    }
+
+    .filters .filter-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
     }
 
     .filters .filter-title {
-        font-weight: bold;
+        font-family: var(--shop-font-mono);
+        font-weight: 500;
         display: flex;
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
-        font-size: 16px;
-        color: #333;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--shop-text);
+        padding: 4px 0;
+        transition: color 0.2s ease;
     }
 
     .filters .filter-title:hover {
-        color: #070707;
+        color: var(--shop-amber);
     }
 
     .filters .filter-title i {
         margin-left: 10px;
-        font-size: 14px;
+        font-size: 11px;
+        color: var(--shop-steel-dim);
+        transition: transform 0.25s ease, color 0.2s ease;
+    }
+
+    .filters .filter-title:hover i {
+        color: var(--shop-amber);
     }
 
     .filters .filter-options {
-        display: none;
         list-style: none;
-        padding-left: 20px;
-        margin-top: 5px;
+        padding-left: 4px;
+        margin: 0;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.3s ease;
+    }
+
+    .filters .filter-options.open {
+        max-height: 480px;
+        opacity: 1;
+        margin-top: 10px;
     }
 
     .filters .filter-options li {
-        margin-bottom: 8px;
+        margin-bottom: 2px;
     }
 
     .filters .filter-options li a {
+        display: block;
         text-decoration: none;
-        color: #333;
-        font-size: 14px;
+        color: var(--shop-text-dim);
+        font-size: 13.5px;
+        padding: 6px 10px;
+        margin-left: -10px;
+        border-radius: 6px;
+        border-left: 2px solid transparent;
+        transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .filters .filter-options li a:hover {
-        color: #020202;
+        color: var(--shop-text);
+        background: var(--shop-panel-alt);
+        border-left-color: var(--shop-amber);
+        transform: translateX(3px);
     }
 
+    .btn-clear-filters {
+        display: inline-block;
+        font-family: var(--shop-font-mono);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--shop-amber);
+        background: transparent;
+        border: 1px solid var(--shop-amber-line);
+        border-radius: 8px;
+        padding: 8px 14px;
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-clear-filters:hover {
+        background: var(--shop-amber-soft);
+        color: var(--shop-amber);
+    }
+
+    /* ---------- Offers carousel: "display panel" ---------- */
+    .offer-panel-wrap {
+        position: relative;
+        margin-top: 8px;
+    }
+
+    .offer-panel-wrap::before {
+        content: '';
+        position: absolute;
+        inset: -40px -20px auto -20px;
+        height: 160px;
+        background: radial-gradient(ellipse at center, var(--shop-amber-soft) 0%, transparent 70%);
+        filter: blur(10px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .offer-banner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        background: linear-gradient(120deg, var(--shop-panel) 0%, #101114 100%);
+        border: 1px solid var(--shop-line);
+        border-radius: 14px;
+        padding: 22px 26px;
+    }
+
+    .offer-percentage {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--shop-amber-soft);
+        border: 1px solid var(--shop-amber-line);
+    }
+
+    .offer-percentage .num {
+        font-family: var(--shop-font-display);
+        font-weight: 700;
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--shop-amber);
+    }
+
+    .offer-percentage .num span {
+        font-size: 1rem;
+    }
+
+    .offer-percentage .label {
+        font-family: var(--shop-font-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--shop-text-dim);
+        margin-top: 2px;
+    }
+
+    .offer-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .offer-details h4 {
+        font-family: var(--shop-font-display);
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: var(--shop-text);
+        margin-bottom: 6px;
+    }
+
+    .offer-details .offer-sub {
+        color: var(--shop-steel);
+        font-weight: 600;
+        margin-bottom: 2px;
+        font-size: 0.95rem;
+    }
+
+    .offer-details .offer-note {
+        color: var(--shop-text-dim);
+        font-size: 0.88rem;
+        margin-bottom: 0;
+    }
+
+    .offer-image {
+        flex-shrink: 0;
+        max-height: 84px;
+        filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+    }
+
+    #offerCarousel .carousel-indicators {
+        position: static;
+        margin: 12px 0 0;
+    }
+
+    #offerCarousel .carousel-indicators [data-bs-target] {
+        width: 20px;
+        height: 3px;
+        border-radius: 2px;
+        background-color: var(--shop-line);
+        border: none;
+        opacity: 1;
+    }
+
+    #offerCarousel .carousel-indicators .active {
+        background-color: var(--shop-amber);
+    }
+
+    #offerCarousel .carousel-control-prev,
+    #offerCarousel .carousel-control-next {
+        width: 40px;
+        opacity: 0.7;
+    }
+
+    #offerCarousel .carousel-control-prev:hover,
+    #offerCarousel .carousel-control-next:hover {
+        opacity: 1;
+    }
+
+    /* ---------- Product section ---------- */
     .product-section {
-        margin-top: 20px;
+        margin-top: 32px;
+    }
+
+    .product-section-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--shop-line);
+    }
+
+    .product-section-header h2 {
+        font-family: var(--shop-font-display);
+        font-weight: 600;
+        font-size: 1.5rem;
+        color: var(--shop-text);
+        margin: 0;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .product-section-header h2::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 36px;
+        height: 3px;
+        border-radius: 2px;
+        background: var(--shop-amber);
+    }
+
+    .product-count {
+        font-family: var(--shop-font-mono);
+        font-size: 12.5px;
+        color: var(--shop-steel-dim);
+        letter-spacing: 0.02em;
     }
 
     .product-grid {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
         gap: 20px;
+        align-items: stretch;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        border: 1px dashed var(--shop-line);
+        border-radius: 14px;
+        color: var(--shop-text-dim);
+    }
+
+    .empty-state i {
+        font-size: 28px;
+        color: var(--shop-steel-dim);
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .empty-state p {
+        font-size: 14.5px;
+        margin-bottom: 16px;
     }
 
     @media (max-width: 768px) {
-        .product-grid {
-            justify-content: space-between;
+        .offer-banner {
+            flex-wrap: wrap;
+        }
+        .offer-image {
+            margin-left: auto;
+        }
+    }
+
+    .shop-page a:focus-visible,
+    .shop-page button:focus-visible {
+        outline: 2px solid var(--shop-amber);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .shop-page * {
+            transition: none !important;
         }
     }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid shop-page">
     <div class="row">
         <div class="col-md-3">
             <div class="filters">
                 <h4>Filters</h4>
                 <div class="filter-group">
-                    <div class="filter-title" onclick="toggleFilter(this)">
-                        Price
+                    <div class="filter-title" onclick="toggleFilter(this)" aria-expanded="false">
+                        Category
                         <i class="fa fa-chevron-down"></i>
                     </div>
                     <ul class="filter-options">
-                        <li><a href="?price=10000_30000">₹10000 - ₹30000</a></li>
-                        <li><a href="?price=under_50000">₹30000 - ₹50000</a></li>
-                        <li><a href="?price=above_50000">Above ₹50000</a></li>
+                        {% for category in categories %}
+                        <li>
+                            <a href="?category={{category.id}}">
+                                {{category.name}}
+                            </a>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
 
                 <div class="filter-group">
-                    <div class="filter-title" onclick="toggleFilter(this)">
+                    <div class="filter-title" onclick="toggleFilter(this)" aria-expanded="false">
+                        Brand
+                        <i class="fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="filter-options">
+                        {% for brand in brands %}
+                        <li>
+                            <a href="?brand={{brand.id}}">
+                                {{brand.name}}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title" onclick="toggleFilter(this)" aria-expanded="false">
                         Color
                         <i class="fa fa-chevron-down"></i>
                     </div>
@@ -108,36 +427,111 @@
                 </div>
 
                 <div class="filter-group">
-                    <div class="filter-title" onclick="toggleFilter(this)">
+                    <div class="filter-title" onclick="toggleFilter(this)" aria-expanded="false">
                         Sort by
                         <i class="fa fa-chevron-down"></i>
                     </div>
                     <ul class="filter-options">
                         <li><a href="?sort=asc">Alphabetical (A-Z)</a></li>
                         <li><a href="?sort=desc">Alphabetical (Z-A)</a></li>
-                    </ul>
-                    <br><br>
-                    <ul>
-                        {% if filter_applied %}
-                            <a href="{% url 'products' %}" class="btn btn-outline-secondary text-dark mb-3">Clear All Filters</a>
-                        {% endif %}
+                        <li><a href="?sort=price_asc">Price (₹-₹₹)</a></li>
+                        <li><a href="?sort=price_desc">Price (₹₹-₹)</a></li>
                     </ul>
                 </div>
+
+                {% if filter_applied %}
+                <div class="mt-3">
+                    <a href="{% url 'products' %}" class="btn-clear-filters">Clear all filters</a>
+                </div>
+                {% endif %}
             </div>
         </div>
 
         <!-- Products Section -->
         <div class="col-md-9">
-            <div class="product-section" style="color: white;">
-                <h2>All Products</h2>
+
+            {% if offers %}
+            <div class="offer-panel-wrap">
+                <div id="offerCarousel"
+                    class="carousel slide"
+                    data-bs-ride="carousel"
+                    data-bs-interval="5000">
+
+                    <div class="carousel-inner">
+                        {% for offer in offers %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="offer-banner">
+                                <div class="offer-percentage">
+                                    <div class="num">{{ offer.percentage|floatformat:0 }}<span>%</span></div>
+                                    <div class="label">Off</div>
+                                </div>
+
+                                <div class="offer-details">
+                                    <h4>
+                                        {% if offer.name %}{{ offer.name }}{% else %}Special Offer{% endif %}
+                                    </h4>
+
+                                    {% if offer.type == 'product' %}
+                                        <p class="offer-sub">{{ offer.product.name }}</p>
+                                        {% if offer.details %}<p class="offer-note">{{ offer.details }}</p>{% endif %}
+                                    {% elif offer.type == 'brand' %}
+                                        <p class="offer-sub">{{ offer.brand.name }}</p>
+                                        {% if offer.details %}<p class="offer-note">{{ offer.details }}</p>{% endif %}
+                                    {% endif %}
+                                </div>
+
+                                {% if offer.image %}
+                                <img src="{{ offer.image.url }}" alt="{{ offer.product.name }}" class="offer-image">
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if offers|length > 1 %}
+                    <div class="carousel-indicators">
+                        {% for offer in offers %}
+                            <button type="button" data-bs-target="#offerCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                                class="{% if forloop.first %}active{% endif %}"
+                                aria-current="{% if forloop.first %}true{% endif %}"
+                                aria-label="Offer {{ forloop.counter }}">
+                            </button>
+                        {% endfor %}
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#offerCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#offerCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="product-section">
+                <div class="product-section-header">
+                    <h2>All Products</h2>
+                    {% if products %}<span class="product-count">{{ products|length }} items</span>{% endif %}
+                </div>
 
                 <div class="product-grid">
                     {% for product in products %}
                         {% with variant=product.display_variant %}
                             {% include 'user/product_block.html' %}
                         {% endwith %}
+                    {% empty %}
+                        <div class="empty-state">
+                            <i class="fa fa-search"></i>
+                            <p>No products match these filters yet.</p>
+                            {% if filter_applied %}
+                                <a href="{% url 'products' %}" class="btn-clear-filters">Clear all filters</a>
+                            {% endif %}
+                        </div>
                     {% endfor %}
-
                 </div>
             </div>
         </div>
@@ -145,30 +539,29 @@
 </div>
 
 <script>
-    // Toggle filter visibility
     function toggleFilter(element) {
         const options = element.nextElementSibling;
-        if (options.style.display === "none" || !options.style.display) {
-            options.style.display = "block";
-            element.querySelector("i").classList.replace("fa-chevron-down", "fa-chevron-up");
+        const isOpen = options.classList.contains('open');
+        if (isOpen) {
+            options.classList.remove('open');
+            element.setAttribute('aria-expanded', 'false');
+            element.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
         } else {
-            options.style.display = "none";
-            element.querySelector("i").classList.replace("fa-chevron-up", "fa-chevron-down");
+            options.classList.add('open');
+            element.setAttribute('aria-expanded', 'true');
+            element.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
         }
     }
 
-    // Update URL dynamically for filter combinations
     document.querySelectorAll('.filter-options a').forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
             const url = new URL(window.location.href);
             const params = new URLSearchParams(url.search);
 
-            // Add or update the filter parameter
             const [filter, value] = this.href.split('?')[1].split('=');
             params.set(filter, value);
 
-            // Redirect to the updated URL
             window.location.href = `${url.pathname}?${params.toString()}`;
         });
     });

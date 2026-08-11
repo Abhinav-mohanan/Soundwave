@@ -1,51 +1,179 @@
 {% load static %}
 <style>
-    .wishlist-icon {
-        color: gray; 
-        transition: all 0.3s ease; 
+
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        background: #1b1d21;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        text-decoration: none;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
-    .wishlist-icon:hover {
-        color: red; 
+
+    .product-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(242, 169, 59, 0.45);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .row > .product-card {
+        flex: 1 1 230px;
+        width: auto;
+        max-width: 300px;
+        margin: 0 10px 20px;
+    }
+
+    .product-card-media {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        background: #24262b;
+    }
+
+    .product-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card:hover .product-card-img {
+        transform: scale(1.05);
+    }
+
+    .product-card-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 10, 11, 0.35);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+
+    .product-card:hover .product-card-overlay,
+    .product-card:focus-within .product-card-overlay {
+        opacity: 1;
+    }
+
+    .btn-shop-now {
+        font-family: 'IBM Plex Mono', 'Courier New', monospace;
+        font-size: 12.5px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #14151a;
+        background: #f2a93b;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 18px;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-shop-now:hover {
+        background: #ffbf5c;
+        transform: translateY(-1px);
+    }
+
+    .product-card-wishlist {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(14, 15, 17, 0.55);
+        color: #9aa0a6;
+        text-decoration: none;
+        transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .product-card-wishlist:hover {
+        color: #f2a93b;
+        background: rgba(14, 15, 17, 0.8);
+    }
+
+    .product-card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 14px 16px 16px;
+    }
+
+    .product-card-title {
+        font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+        font-size: 15px;
+        line-height: 1.3;
+        font-weight: 500;
+        color: #f2f2f0;
+        margin-bottom: 4px;
+    }
+
+    .product-card-rating {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    .product-card-price {
+        font-family: 'IBM Plex Mono', 'Courier New', monospace;
+        font-weight: 600;
+        font-size: 14px;
+        color: #f2a93b;
+        margin-bottom: 10px;
+    }
+
+    .product-card-cart {
+        margin-top: auto;
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: #24262b;
+        color: #f2f2f0;
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .product-card-cart:hover {
+        background: #f2a93b;
+        color: #14151a;
     }
 </style>
-<div class="col-md-3">
-    <div class="card border-0 shadow-sm position-relative" style="width: 100%; max-width: 300px; color: white;background-color: #2E2E2E;">
-        <div class="position-relative overflow-hidden" style="height: 280px;">
 
-           
-            <img src="{{ variant.image1.url }}" class="card-img-top rounded product-image" alt="Product Image" style="object-fit: cover; height: 100%; width: 100%;">
+<div class="product-card">
+    <div class="product-card-media">
+        <img src="{{ variant.image1.url }}" alt="{{ product.name }}" class="product-card-img">
 
-            <div class="shop-now-overlay position-absolute top-50 start-50 translate-middle text-center">
-                <a href="{% url 'product_details' product.id variant.id %}"><button class="btn btn-primary px-4 py-2">Shop Now</button></a> 
-            </div>
-
-           
-            <div class="wishlist-icon position-absolute top-0 end-0 p-2">
-                <a href="{% url 'add_to_wishlist' variant.id %}" class="wishlist-link">
-                    <i class="fa-heart far wishlist-icon" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="card-body" style="padding: 15px;">
-          
-            <h6 class="card-title text-muted text-start" style="font-size: 16px; line-height: 1.3; ">{{ product.name }}</h6>
-
-          
-            <div class="rating text-start mb-2">
-                <p class="text-warning mb-1 small">⭐⭐⭐⭐⭐</p>
-            </div>
-
-           
-            <p class="fw-bold text-start" style="font-size: 14px; ">M.R.P ₹{{ product.price }}</p>
-
-            <a href="{% url 'add_to_cart' variant.id %}">
-            <div class="text-start">
-                <span class="cart-icon">
-                    <i class="fa fa-shopping-cart text-light" style="font-size: 24px; cursor: pointer;"></i>
-                </span>
-            </div>
+        <div class="product-card-overlay">
+            <a href="{% url 'product_details' product.id variant.id %}">
+                <button class="btn-shop-now" type="button">Shop Now</button>
             </a>
         </div>
+
+        <a href="{% url 'add_to_wishlist' variant.id %}" class="product-card-wishlist" aria-label="Add {{ product.name }} to wishlist">
+            <i class="far fa-heart" aria-hidden="true"></i>
+        </a>
+    </div>
+
+    <div class="product-card-body">
+        <h6 class="product-card-title">{{ product.name }}</h6>
+        <p class="product-card-rating" aria-hidden="true">⭐⭐⭐⭐⭐</p>
+        <p class="product-card-price">M.R.P ₹{{ product.price }}</p>
+
+        <a href="{% url 'add_to_cart' variant.id %}" class="product-card-cart" aria-label="Add {{ product.name }} to cart">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        </a>
     </div>
 </div>

@@ -338,6 +338,7 @@ def product_page(request):
     filter_applied = False
 
     category_id = request.GET.get('category')
+    brand_id = request.GET.get('brand')
     search_query = request.GET.get('query')
     price_filter = request.GET.get('price')
     color_filter = request.GET.get('color')
@@ -356,8 +357,15 @@ def product_page(request):
         variants__stock__gt=0,
     )
 
+    categories = Category.objects.filter(is_listed=True)
+    brands = Brand.objects.filter(is_listed=True)
+
     if category_id:
         products = products.filter(category_id=category_id)
+        filter_applied = True
+
+    if brand_id:
+        products = products.filter(brand=brand_id)
         filter_applied = True
 
     if search_query:
@@ -387,6 +395,12 @@ def product_page(request):
     elif sort_filter == 'desc':
         products = products.order_by('-name')
         filter_applied = True
+    elif sort_filter == 'price_asc':
+        products = products.order_by('price')
+        filter_applied = True
+    elif sort_filter == 'price_desc':
+        products = products.order_by('-price')
+        filter_applied = True
 
     products = products.prefetch_related(
         Prefetch('variants', queryset=listed_variants)
@@ -401,11 +415,57 @@ def product_page(request):
 
     selected_category = Category.objects.filter(id=category_id).first() if category_id else None
 
+    now = timezone.now()
+    available_product_offers = Product_offer.objects.filter(
+        status=True
+    ).filter(
+        Q(started_date__isnull=True) | Q(started_date__lte=now),
+        Q(end_date__isnull=True) | Q(end_date__gte=now),
+    ).select_related('product')
+
+    available_brand_offers = Brand_offer.objects.filter(
+        status=True
+    ).filter(
+        Q(started_date__isnull=True) | Q(started_date__lte=now),
+        Q(end_date__isnull=True) | Q(end_date__gte=now),
+    ).select_related('brand')
+
+    offers = []
+
+    for offer in available_product_offers:
+        variant = offer.product.variants.filter(
+            is_listed=True,
+            stock__gt=0
+        ).first()
+
+        offers.append({
+            'type': 'product',
+            'name': offer.offer_name,
+            'percentage': offer.offer_percentage,
+            'details': offer.offer_details,
+            'product': offer.product,
+            'brand': None,
+            'image': variant.image1 if variant else None
+        })
+
+    for offer in available_brand_offers:
+        offers.append({
+            'type': 'brand',
+            'name': offer.offer_name,
+            'percentage': offer.offer_percentage,
+            'details': offer.offer_details,
+            'product': None,
+            'brand': offer.brand,
+        })
+
     return render(request, 'user/product_list.html', {
         'products': display_products,
         'selected_category': selected_category,
         'search_query': search_query,
-        'filter_applied': filter_applied
+        'filter_applied': filter_applied,
+        'brands' : brands,
+        'categories' : categories,
+        'offers': offers,
     })
 
 
