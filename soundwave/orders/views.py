@@ -62,6 +62,11 @@ def checkout(request):
         if variant.stock == 0:
             messages.error(request,'Please remove outof stock product')
             return redirect('cart_detail')
+        
+        if cart_item.quantity > 20:
+            messages.error(request, f'You can purchase a maximum of 20 units of {variant.product.name}.')
+            return redirect('cart_detail')
+        
         if variant.is_listed==False:
             messages.error(request,'Please remove unavailable Product')
             return redirect('cart_detail')
