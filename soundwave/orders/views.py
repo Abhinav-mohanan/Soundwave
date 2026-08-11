@@ -21,7 +21,7 @@ from decimal import Decimal
 from django.db.models import F
 from django.db import transaction
 from wallet.models import Wallet,Transaction
-from .utils import get_address_snapshot
+from .utils import get_address_snapshot, calculate_total_amount
 from django.core.paginator import Paginator
 # Create your views here. 
 
@@ -71,7 +71,7 @@ def checkout(request):
             messages.error(request,'Please remove unavailable Product')
             return redirect('cart_detail')
         
-    total = round(sum(item.line_total for item in cart_items), 0)
+    total = calculate_total_amount(cart_items)
 
         
     coupons=Coupon.objects.filter(is_active=True)
@@ -235,52 +235,9 @@ def place_order(request):
 
     if not cart_items.exists():
         return redirect('cart_detail')
-
-
-    for cart_item in cart_items:
-        variant=cart_item.variant
-        product=variant.product
-
-       
-
-        product_offer=Product_offer.objects.filter(
-            product=product,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
-
-        brand_offer=Brand_offer.objects.filter(
-            brand=product.brand,
-            started_date__lte=current_date,
-            end_date__gte=current_date,
-            status=True
-        ).first()
-        product_discount_price=None
-        brand_discount_price=None
-
-        if product_offer:
-            product_discount_price = (product.price * (1-(product_offer.offer_percentage/100)))
-        
-        if brand_offer:
-            brand_discount_price=(product.price* (1-(brand_offer.offer_percentage/100)))
-
-        if product_discount_price is not None and brand_discount_price is not None:
-            final_discount_price=min(product_discount_price,brand_discount_price)
-        elif product_discount_price is not None:
-            final_discount_price =product_discount_price
-        elif brand_discount_price is not None:
-            final_discount_price= brand_discount_price
-        else:
-            final_discount_price=product.price
-
-        offer_price=product.price - final_discount_price
-        cart_item.variant.product.price =final_discount_price
     
-    total_price=sum(item.line_total for item in cart_items)
+    total_price=calculate_total_amount(cart_items)
         
-
-   
     applied_coupon_id=request.session.get('applied_coupon_id')
     
     if applied_coupon_id:
@@ -524,10 +481,6 @@ def verify_payment(request):
                     subtotal_price=(item.variant.product.price * item.quantity)-coupon_discount
                 )
 
-                item.variant.stock -= item.quantity
-                item.variant.save()
-
-            cart_items.delete()
             if 'applied_coupon_id' in request.session:
                 del request.session['applied_coupon_id']
 
